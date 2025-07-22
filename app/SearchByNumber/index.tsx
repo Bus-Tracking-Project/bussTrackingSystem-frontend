@@ -1,13 +1,14 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import FromToSearch from '@/components/FromTo'
 import BottomNavBar from '@/components/Navbar'
+import { SafeAreaView } from 'react-native-safe-area-context'
+
 
 const index = () => {
   return (
-    <View className=''>
-        <BottomNavBar/>
-      <Text>index</Text>
-    </View>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
+      <BottomNavBar />
+      <FromToSearch/>
+    </SafeAreaView>
   )
 }
 
