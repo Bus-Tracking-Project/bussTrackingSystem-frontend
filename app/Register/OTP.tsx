@@ -1,7 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, TextInput, Pressable, Alert } from 'react-native';
-import { SafeAreaView } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import React, { useEffect, useRef, useState } from 'react';
+import { Alert, Pressable, SafeAreaView, Text, TextInput, View } from 'react-native';
 
 export default function VerifyOtpScreen() {
   const { phone } = useLocalSearchParams();
@@ -103,41 +102,47 @@ export default function VerifyOtpScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white justify-center px-6">
-      <Text className="text-2xl font-bold text-blue-600 mb-4 text-center">Verify OTP</Text>
-      <Text className="text-center text-gray-600 mb-6">
-        OTP sent to <Text className="font-semibold text-blue-600">{getMaskedPhone()}</Text>
-      </Text>
 
-      {/* OTP Inputs */}
-      <View className="flex-row justify-between mb-6">
-        {otp.map((digit, index) => (
-          <TextInput
-            key={index}
-            ref={(el) => { inputs.current[index] = el; }}
-            className="w-12 h-12 text-xl text-center border border-blue-500 rounded-lg"
-            keyboardType="numeric"
-            maxLength={1}
-            value={digit}
-            onChangeText={(text) => handleOtpChange(text, index)}
-          />
-        ))}
-      </View>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#1d1a23', }}>
+      <View className='bg-[#1d1a23] px-6 flex-1 flex-col justify-between'>
+        <View className='flex-1 justify-center'>
+          <Text className="text-2xl font-bold text-[#6644b5] mb-4 text-center">Verify OTP</Text>
+          <Text className="text-center text-gray-600 mb-6">
+            OTP sent to <Text className="font-semibold text-[#6644b5]">{getMaskedPhone()}</Text>
+          </Text>
 
-      {/* Verify Button */}
-      <Pressable onPress={handleVerify} className="bg-blue-600 py-3 rounded-xl">
-        <Text className="text-white text-center text-lg font-semibold">Verify & Register</Text>
-      </Pressable>
-
-      {/* Resend OTP */}
-      <View className="mt-5 flex-row justify-center">
-        {resendDisabled ? (
-          <Text className="text-gray-500">Resend OTP in {timer}s</Text>
-        ) : (
-          <Pressable onPress={handleResend}>
-            <Text className="text-blue-600 font-semibold underline">Resend OTP</Text>
+          {/* OTP Inputs */}
+          <View className="flex-row justify-between mb-6">
+            {otp.map((digit, index) => (
+              <TextInput
+                key={index}
+                ref={(el) => { inputs.current[index] = el; }}
+                className="w-12 h-12 text-xl text-white text-center border border-[#6644b5] rounded-lg"
+                keyboardType="numeric"
+                maxLength={1}
+                value={digit}
+                onChangeText={(text) => handleOtpChange(text, index)}
+              />
+            ))}
+          </View>
+        </View>
+        <View>
+          {/* Verify Button */}
+          <Pressable onPress={handleVerify} className="bg-[#6644b5] py-3 rounded-3xl">
+            <Text className="text-gray-300 text-center text-lg font-semibold">Verify</Text>
           </Pressable>
-        )}
+
+          {/* Resend OTP */}
+          <View className="my-2.5 flex-row justify-center">
+            {resendDisabled ? (
+              <Text className="text-gray-500">Resend OTP in {timer}s</Text>
+            ) : (
+              <Pressable onPress={handleResend}>
+                <Text className="text-[#6644b5] font-semibold underline">Resend OTP</Text>
+              </Pressable>
+            )}
+          </View>
+        </View>
       </View>
     </SafeAreaView>
   );
