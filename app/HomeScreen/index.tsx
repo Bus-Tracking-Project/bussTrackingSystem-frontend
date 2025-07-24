@@ -2,7 +2,7 @@ import BottomNavBar from '@/components/Navbar'
 import { useRouter } from 'expo-router'
 import { X } from 'lucide-react-native'
 import React, { useRef, useState } from 'react'
-import { Animated, Dimensions, Image, Text, TouchableOpacity, View } from 'react-native'
+import { Animated, Dimensions, Text, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 
 
@@ -41,7 +41,7 @@ const Home = () => {
         <View className='pt-5 px-1 h-full w-screen flex-1 flex-row flex-wrap justify-center items-center gap-10 '>
           <TouchableOpacity className='border border-gray-200 rounded-lg w-[40%] h-[25%]' onPress={() => router.push('../SearchByNumber')} >
             <View>
-              <Image source={require('../../assets/images/search.png')} className='w-full h-[90%]' />
+              {/* <Image source={require('../../assets/images/search.png')} className='w-full h-[90%]' /> */}
               <Text className='text-1xl font-semibold text-center'>Search By Number</Text>
             </View>
           </TouchableOpacity>

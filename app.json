@@ -16,7 +16,10 @@
       }
     },
     "android": {
-      "permissions": ["ACCESS_FINE_LOCATION"],
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_FINE_LOCATION"
+      ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -26,7 +29,8 @@
         "googleMaps": {
           "apiKey": "AIzaSyDZNKiJhmxhMP0TikvbX6zCMef-1SlUwHQ"
         }
-      }
+      },
+      "package": "com.anonymous.practice"
     },
     "web": {
       "bundler": "metro",
