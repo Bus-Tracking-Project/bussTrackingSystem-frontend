@@ -32,6 +32,7 @@ const BottomNavBar = () => {
 
 
     return (
+        // <SafeAreaView style={{ flex: 1, backgroundColor: '#1d1a23', }}>
         <View className='z-10 bg-[#060b22]'>
             {/* Navbar */}
             <View className="flex-row items-center justify-between px-4 py-3">

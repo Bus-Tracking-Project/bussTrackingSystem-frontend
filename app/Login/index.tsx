@@ -90,7 +90,7 @@ console.log(isPhone,'from isPhone')
               placeholder="Phone Number"
               value={Phone}
               onChangeText={setPhone}
-              keyboardType="email-address"
+              keyboardType="phone-pad"
               autoCapitalize="none"
               placeholderTextColor="#9CA3AF"
             />

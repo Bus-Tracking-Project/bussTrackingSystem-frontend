@@ -33,8 +33,8 @@ const Home = () => {
     { title: 'contact us', img: 'support' },
   ]
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
-       <View className='h-screen text-black'>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#060b22' }}>
+       <View className='h-screen text-black bg-gray-100'>
         {/* Navbar */}
         <BottomNavBar/>
         {/* Body */}
@@ -45,12 +45,12 @@ const Home = () => {
               <Text className='text-1xl font-semibold text-center'>Search By Number</Text>
             </View>
           </TouchableOpacity>
-          <View className='border border-gray-200 rounded-lg w-[40%] h-[25%]'>
+          <TouchableOpacity className='border border-gray-200 rounded-lg w-[40%] h-[25%]' onPress={() => router.push('../SearchByRout')} >
             <View>
               {/* <Image source={require('../../assets/images/rout.png')} className='w-full h-[90%]  ' /> */}
               <Text className='text-1xl font-semibold text-center'>Search By rout</Text>
             </View>
-          </View>
+          </TouchableOpacity>
           <View className='border border-gray-200 rounded-lg w-[40%] h-[25%]'>
             <View>
               {/* <Image source={require('../../assets/images/stop.png')} className='w-full h-[90%]' /> */}

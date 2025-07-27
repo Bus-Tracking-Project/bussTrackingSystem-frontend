@@ -13,6 +13,7 @@ import {
   TouchableOpacity,
   View
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 
 const ProfileScreen = () => {
@@ -85,104 +86,106 @@ const ProfileScreen = () => {
   };
 
   return (
-    <>
-      <BottomNavBar />
-      <View className="flex-1 bg-blue-100 p-6 items-center pt-[20%]">
-        <TouchableOpacity onPress={pickImage}>
-          <Image
-            source={{ uri: form.avatar }}
-            className="w-32 h-32 rounded-full border-4 border-blue-500"
-          />
-          <Text className="text-blue-500 text-sm text-center mt-1">Change Avatar</Text>
-        </TouchableOpacity>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#060b22', }}>
+      <>
+        <BottomNavBar />
+        <View className="flex-1 bg-blue-100 p-6 items-center pt-[20%]">
+          <TouchableOpacity onPress={pickImage}>
+            <Image
+              source={{ uri: form.avatar }}
+              className="w-32 h-32 rounded-full border-4 border-blue-500"
+            />
+            <Text className="text-blue-500 text-sm text-center mt-1">Change Avatar</Text>
+          </TouchableOpacity>
 
-        <Text className="text-2xl font-bold text-blue-900 mt-4">{form.name}</Text>
-        <Text className="text-base text-blue-800 mt-1">{form.email}</Text>
+          <Text className="text-2xl font-bold text-blue-900 mt-4">{form.name}</Text>
+          <Text className="text-base text-blue-800 mt-1">{form.email}</Text>
 
-        <View className="bg-blue-200 w-full mt-6 rounded-xl p-4">
-          <Text className="text-blue-900 font-semibold">
-            📅 DOB: <Text className="font-normal">{form.dob}</Text>
-          </Text>
-          <Text className="text-blue-900 font-semibold mt-2">
-            ⚧ Gender: <Text className="font-normal">{form.gender}</Text>
-          </Text>
-        </View>
+          <View className="bg-blue-200 w-full mt-6 rounded-xl p-4">
+            <Text className="text-blue-900 font-semibold">
+              📅 DOB: <Text className="font-normal">{form.dob}</Text>
+            </Text>
+            <Text className="text-blue-900 font-semibold mt-2">
+              ⚧ Gender: <Text className="font-normal">{form.gender}</Text>
+            </Text>
+          </View>
 
-        <TouchableOpacity
-          className="mt-8 bg-blue-600 px-6 py-3 rounded-xl shadow-md"
-          onPress={() => setModalVisible(true)}
-        >
-          <Text className="text-white font-bold text-lg">Update</Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            className="mt-8 bg-blue-600 px-6 py-3 rounded-xl shadow-md"
+            onPress={() => setModalVisible(true)}
+          >
+            <Text className="text-white font-bold text-lg">Update</Text>
+          </TouchableOpacity>
 
-        {/* Modal */}
-        <Modal
-          visible={modalVisible}
-          animationType="slide"
-          transparent
-          onRequestClose={() => setModalVisible(false)}
-        >
-          <View className="flex-1 justify-center items-center bg-black/50">
-            <View className="bg-white p-6 rounded-xl w-11/12">
-              <Text className="text-xl font-bold text-blue-700 mb-4">Update Profile</Text>
+          {/* Modal */}
+          <Modal
+            visible={modalVisible}
+            animationType="slide"
+            transparent
+            onRequestClose={() => setModalVisible(false)}
+          >
+            <View className="flex-1 justify-center items-center bg-black/50">
+              <View className="bg-white p-6 rounded-xl w-11/12">
+                <Text className="text-xl font-bold text-blue-700 mb-4">Update Profile</Text>
 
-              <TextInput
-                className="border border-blue-400 rounded-lg p-2 mb-3"
-                placeholder="Name"
-                value={form.name}
-                onChangeText={(val) => setForm({ ...form, name: val })}
-              />
-              <TextInput
-                className="border border-blue-400 rounded-lg p-2 mb-3"
-                placeholder="Email"
-                value={form.email}
-                onChangeText={(val) => setForm({ ...form, email: val })}
-                keyboardType="email-address"
-              />
-
-              {/* DOB Date Picker */}
-              <TouchableOpacity
-                className="border border-blue-400 rounded-lg p-3 mb-3"
-                onPress={() => setShowDatePicker(true)}
-              >
-                <Text className="text-blue-600">{form.dob || "Select DOB"}</Text>
-              </TouchableOpacity>
-
-              {showDatePicker && (
-                <DateTimePicker
-                  mode="date"
-                  value={new Date(form.dob)}
-                  display={Platform.OS === "ios" ? "spinner" : "default"}
-                  onChange={onDateChange}
+                <TextInput
+                  className="border border-blue-400 rounded-lg p-2 mb-3"
+                  placeholder="Name"
+                  value={form.name}
+                  onChangeText={(val) => setForm({ ...form, name: val })}
                 />
-              )}
+                <TextInput
+                  className="border border-blue-400 rounded-lg p-2 mb-3"
+                  placeholder="Email"
+                  value={form.email}
+                  onChangeText={(val) => setForm({ ...form, email: val })}
+                  keyboardType="email-address"
+                />
 
-              <TextInput
-                className="border border-blue-400 rounded-lg p-2 mb-5"
-                placeholder="Gender"
-                value={form.gender}
-                onChangeText={(val) => setForm({ ...form, gender: val })}
-              />
+                {/* DOB Date Picker */}
+                <TouchableOpacity
+                  className="border border-blue-400 rounded-lg p-3 mb-3"
+                  onPress={() => setShowDatePicker(true)}
+                >
+                  <Text className="text-blue-600">{form.dob || "Select DOB"}</Text>
+                </TouchableOpacity>
 
-              <View className="flex-row justify-between">
-                <TouchableOpacity
-                  className="bg-blue-500 px-4 py-2 rounded-lg"
-                  onPress={handleSubmit}
-                >
-                  <Text className="text-white font-semibold">Save</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  className="bg-gray-300 px-4 py-2 rounded-lg"
-                  onPress={() => setModalVisible(false)}
-                >
-                  <Text className="text-gray-700 font-semibold">Cancel</Text>
-                </TouchableOpacity>
+                {showDatePicker && (
+                  <DateTimePicker
+                    mode="date"
+                    value={new Date(form.dob)}
+                    display={Platform.OS === "ios" ? "spinner" : "default"}
+                    onChange={onDateChange}
+                  />
+                )}
+
+                <TextInput
+                  className="border border-blue-400 rounded-lg p-2 mb-5"
+                  placeholder="Gender"
+                  value={form.gender}
+                  onChangeText={(val) => setForm({ ...form, gender: val })}
+                />
+
+                <View className="flex-row justify-between">
+                  <TouchableOpacity
+                    className="bg-blue-500 px-4 py-2 rounded-lg"
+                    onPress={handleSubmit}
+                  >
+                    <Text className="text-white font-semibold">Save</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    className="bg-gray-300 px-4 py-2 rounded-lg"
+                    onPress={() => setModalVisible(false)}
+                  >
+                    <Text className="text-gray-700 font-semibold">Cancel</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
-          </View>
-        </Modal>
-      </View>
-    </>
+          </Modal>
+        </View>
+      </>
+    </SafeAreaView>
   );
 };
 
