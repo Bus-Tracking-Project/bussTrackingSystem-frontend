@@ -98,7 +98,7 @@ export default function VerifyOtpScreen() {
 
   const getMaskedPhone = () => {
     const str = phone?.toString() || '';
-    return '+91 *******' + str.slice(-3);
+    return '9*******' + str.slice(-3);
   };
 
   return (

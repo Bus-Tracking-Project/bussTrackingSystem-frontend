@@ -2,7 +2,7 @@ import BottomNavBar from '@/components/Navbar'
 import { useRouter } from 'expo-router'
 import { X } from 'lucide-react-native'
 import React, { useRef, useState } from 'react'
-import { Animated, Dimensions, Text, TouchableOpacity, View } from 'react-native'
+import { Animated, Dimensions, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 
 
@@ -34,50 +34,57 @@ const Home = () => {
   ]
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#060b22' }}>
-       <View className='h-screen text-black bg-gray-100'>
+      <View className='h-screen text-black bg-gray-100'>
         {/* Navbar */}
-        <BottomNavBar/>
+        <BottomNavBar />
         {/* Body */}
-        <View className='pt-5 px-1 h-full w-screen flex-1 flex-row flex-wrap justify-center items-center gap-10 '>
-          <TouchableOpacity className='border border-gray-200 rounded-lg w-[40%] h-[25%]' onPress={() => router.push('../SearchByNumber')} >
-            <View>
-              {/* <Image source={require('../../assets/images/search.png')} className='w-full h-[90%]' /> */}
-              <Text className='text-1xl font-semibold text-center'>Search By Number</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity className='border border-gray-200 rounded-lg w-[40%] h-[25%]' onPress={() => router.push('../SearchByRout')} >
-            <View>
-              {/* <Image source={require('../../assets/images/rout.png')} className='w-full h-[90%]  ' /> */}
-              <Text className='text-1xl font-semibold text-center'>Search By rout</Text>
-            </View>
-          </TouchableOpacity>
-          <View className='border border-gray-200 rounded-lg w-[40%] h-[25%]'>
-            <View>
-              {/* <Image source={require('../../assets/images/stop.png')} className='w-full h-[90%]' /> */}
-              <Text className='text-1xl font-semibold text-center '>Search By stops</Text>
-            </View>
-          </View>
-          <View className='border border-gray-200 rounded-lg w-[40%] h-[25%]'>
-            <View>
+        <ScrollView className='w-full p-4'>
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}>
+            <TouchableOpacity className='border border-gray-200 rounded-lg w-[48%] mb-4 h-[100%]' onPress={() => router.push('../SearchByNumber')} >
+              <View>
+                {/* <Image source={require('../../assets/images/search.png')} className='w-full h-[90%]' /> */}
+                <Text className='text-1xl font-semibold text-center'>Search By Number</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity className='border border-gray-200 rounded-lg w-[48%] mb-4 h-[100%]' onPress={() => router.push('../SearchByRout')} >
+              <View>
+                {/* <Image source={require('../../assets/images/rout.png')} className='w-full h-[90%]  ' /> */}
+                <Text className='text-1xl font-semibold text-center'>Search By rout</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity className='border border-gray-200 rounded-lg w-[48%] mb-4 h-[100%]'>
+              <View>
+                {/* <Image source={require('../../assets/images/stop.png')} className='w-full h-[90%]' /> */}
+                <Text className='text-1xl font-semibold text-center '>Nearby by Bus Stops</Text>
+              </View>
+            </TouchableOpacity>
+            {/* <TouchableOpacity className='border border-gray-200 rounded-lg w-[48%] mb-4 h-[100%]'>
+              <View>
+                {/* <Image source={require('../../assets/images/stop.png')} className='w-full h-[90%]' /> 
+                <Text className='text-1xl font-semibold text-center '>Schedule</Text>
+              </View>
+            </TouchableOpacity> */}
+            <TouchableOpacity className='border border-gray-200 rounded-lg w-[48%] mb-4 h-[100%]'>
+              <View>
                 {/* <Image source={require('../../assets/images/support.png')} className='w-full h-[90%]' /> */}
-              <Text className='text-1xl font-semibold text-center'>support</Text>
-            </View>
-          </View>
-          <View className='border border-gray-200 rounded-lg w-[40%] h-[25%]'>
-            <View>
+                <Text className='text-1xl font-semibold text-center'>SOS</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity className='border border-gray-200 rounded-lg w-[48%] mb-4 h-[100%]'>
+              <View>
                 {/* <Image source={require('../../assets/images/emergency.png')} className='w-full h-[90%]' /> */}
-              <Text className='text-1xl font-semibold text-center'>emergency</Text>
-            </View>
-          </View>
-          <View className='border border-gray-200 rounded-lg w-[40%] h-[25%]'>
-            <View>
+                <Text className='text-1xl font-semibold text-center'>emergency</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity className='border border-gray-200 rounded-lg w-[48%] mb-4 h-[100%]'>
+              <View>
                 {/* <Image source={require('../../assets/images/support.png')} className='w-full h-[90%]' /> */}
-              <Text className='text-1xl font-semibold text-center'>contact us</Text>
-            </View>
+                <Text className='text-1xl font-semibold text-center'>contact us</Text>
+              </View>
+            </TouchableOpacity>
           </View>
-        </View>
-        {/* </View> */}
-      </View> 
+        </ScrollView >
+      </View>
 
       {/* Sidebar */}
       <Animated.View
