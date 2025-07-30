@@ -1,6 +1,6 @@
-import { View, Text, Pressable, TextInput } from "react-native";
 import { useRouter } from "expo-router";
 import { useEffect } from "react";
+import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function HomeScreen() {

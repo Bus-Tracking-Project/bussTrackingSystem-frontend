@@ -23,15 +23,7 @@ const Home = () => {
       useNativeDriver: true,
     }).start();
   };
-
-  const data = [
-    { title: 'Search By Number', img: 'search' },
-    { title: 'Search By rout', img: 'rout' },
-    { title: 'Search By stops', img: 'stop' },
-    { title: 'support', img: 'support' },
-    { title: 'emergency', img: 'emergency' },
-    { title: 'contact us', img: 'support' },
-  ]
+  
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#060b22' }}>
       <View className='h-screen text-black bg-gray-100'>
@@ -52,25 +44,19 @@ const Home = () => {
                 <Text className='text-1xl font-semibold text-center'>Search By rout</Text>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity className='border border-gray-200 rounded-lg w-[48%] mb-4 h-[100%]'>
+            <TouchableOpacity className='border border-gray-200 rounded-lg w-[48%] mb-4 h-[100%]' onPress={() => router.push('../GoogleMap')} >
               <View>
                 {/* <Image source={require('../../assets/images/stop.png')} className='w-full h-[90%]' /> */}
-                <Text className='text-1xl font-semibold text-center '>Nearby by Bus Stops</Text>
+                <Text className='text-1xl font-semibold text-center'>Nearby by Bus Stops</Text>
               </View>
             </TouchableOpacity>
-            {/* <TouchableOpacity className='border border-gray-200 rounded-lg w-[48%] mb-4 h-[100%]'>
-              <View>
-                {/* <Image source={require('../../assets/images/stop.png')} className='w-full h-[90%]' /> 
-                <Text className='text-1xl font-semibold text-center '>Schedule</Text>
-              </View>
-            </TouchableOpacity> */}
             <TouchableOpacity className='border border-gray-200 rounded-lg w-[48%] mb-4 h-[100%]'>
               <View>
                 {/* <Image source={require('../../assets/images/support.png')} className='w-full h-[90%]' /> */}
                 <Text className='text-1xl font-semibold text-center'>SOS</Text>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity className='border border-gray-200 rounded-lg w-[48%] mb-4 h-[100%]'>
+            <TouchableOpacity className='border border-gray-200 rounded-lg w-[48%] mb-4 h-[100%]' onPress={() => router.push('../emergency')}>
               <View>
                 {/* <Image source={require('../../assets/images/emergency.png')} className='w-full h-[90%]' /> */}
                 <Text className='text-1xl font-semibold text-center'>emergency</Text>

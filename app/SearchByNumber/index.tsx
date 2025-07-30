@@ -1,18 +1,150 @@
 import BottomNavBar from '@/components/Navbar';
 import { Bus, Search } from 'lucide-react-native';
 import { useState } from 'react';
-import { KeyboardAvoidingView, Platform, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 
+
+
 const index = () => {
+  // dummy data 
+  type Bus = {
+    busNumber: string;
+    basicInfo: {
+      driverName: string;
+      conductor: string;
+      busType: string;
+      routeName: string;
+      busStatus: string;
+    };
+    moreInfo: {
+      currentLocation: string;
+      nextStop: string;
+      lastUpdated: string;
+      etaToNextStop: string;
+      startTime: string;
+      endTime: string;
+      totalStops: string[];
+      currentStop: string;
+      driverContact: string;
+      busFrequency: string;
+      passengerCountStatus: string;
+      alerts: string[];
+      isFavorite: boolean;
+    };
+  };
+  const res = [
+    {
+      busNumber: 'TG1234',
+      basicInfo: {
+        driverName: 'Raju',
+        conductor: 'Laxman',
+        busType: 'Palle Velugu',
+        routeName: 'Hanamkonda to Warangal',
+        busStatus: 'Not Yet Started',
+      },
+      moreInfo: {
+        currentLocation: 'Hanamkonda Bus Stand',
+        nextStop: 'Kazipet X Road',
+        lastUpdated: '2 mins ago',
+        etaToNextStop: '7 mins',
+        startTime: '06:00 AM',
+        endTime: '10:00 PM',
+        totalStops: [
+          'Hanamkonda Bus Stand',
+          'Kazipet X Road',
+          'Fathe Sagar',
+          'Warangal Bus Stand',
+        ],
+        currentStop: 'Hanamkonda Bus Stand',
+        driverContact: 'xxxxxx1234',
+        busFrequency: 'Every 20 mins',
+        passengerCountStatus: 'Moderate',
+        alerts: ['Traffic at Kazipet', 'Route diversion near Fathe Sagar'],
+        isFavorite: false,
+      },
+    },
+    {
+      busNumber: 'TS4521',
+      basicInfo: {
+        driverName: 'Srinivas',
+        conductor: 'Kiran',
+        busType: 'Express',
+        routeName: 'Warangal to Hyderabad',
+        busStatus: 'Running',
+      },
+      moreInfo: {
+        currentLocation: 'Jangaon',
+        nextStop: 'Aleru',
+        lastUpdated: '1 min ago',
+        etaToNextStop: '12 mins',
+        startTime: '05:30 AM',
+        endTime: '09:00 PM',
+        totalStops: [
+          'Warangal',
+          'Jangaon',
+          'Aleru',
+          'Bhongir',
+          'Uppal',
+          'Hyderabad MGBS',
+        ],
+        currentStop: 'Jangaon',
+        driverContact: 'xxxxxx5678',
+        busFrequency: 'Every 1 hour',
+        passengerCountStatus: 'Crowded',
+        alerts: ['Heavy rain near Aleru'],
+        isFavorite: true,
+      },
+    },
+    {
+      busNumber: 'TS9090',
+      basicInfo: {
+        driverName: 'Kamal',
+        conductor: 'Praveen',
+        busType: 'Metro Deluxe',
+        routeName: 'Khammam to Bhadrachalam',
+        busStatus: 'Delayed',
+      },
+      moreInfo: {
+        currentLocation: 'Wyra',
+        nextStop: 'Sathupalli',
+        lastUpdated: '5 mins ago',
+        etaToNextStop: '20 mins',
+        startTime: '07:00 AM',
+        endTime: '08:00 PM',
+        totalStops: [
+          'Khammam',
+          'Wyra',
+          'Sathupalli',
+          'Kothagudem',
+          'Bhadrachalam',
+        ],
+        currentStop: 'Wyra',
+        driverContact: 'xxxxxx8765',
+        busFrequency: 'Every 2 hours',
+        passengerCountStatus: 'Empty',
+        alerts: ['Bus delayed due to engine issue'],
+        isFavorite: false,
+      },
+    },
+  ];
+
   const [Number, setNumber] = useState('');
+  const [busData, setBusData] = useState<Bus[]>([]);
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
 
   const handleSubmit = () => {
-    setNumber('')
     console.log("number :", Number);
     // Plug this into your API or nav flow
+    const filteredData = res.filter((bus) =>
+      bus.busNumber.toLowerCase().includes(Number.toLowerCase())
+    );
+    setBusData(filteredData);
+  };
+  const toggleExpand = (index: number) => {
+    setExpanded((prev) => ({ ...prev, [index]: !prev[index] }));
   };
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#060b22' }}>
@@ -22,12 +154,12 @@ const index = () => {
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           className="flex-1 items-center pt-5 bg-[#1d1a23]"
         >
-          <View className="w-full px-5 gap-5">
+          <View className="w-full px-5 gap-5 h-full">
             <Text className="font-bold text-center text-2xl text-[#6644b5]">Enter Bus Number</Text>
 
             {/* From Input */}
             <View className="flex-row items-center border-b-2 border-gray-600 px-4 py-3 space-x-3">
-              <Bus  size={20} color="#6644b5" />
+              <Bus size={20} color="#6644b5" />
               <TextInput
                 className="flex-1 text-gray-300"
                 placeholder=" eg : TG10932"
@@ -37,26 +169,62 @@ const index = () => {
               />
             </View>
 
-            {/* To Input 
-            <View className="flex-row items-center border-b-2 border-gray-600 px-4 py-3 space-x-3">
-              <MapPin size={20} color="#6644b5" />
-              <TextInput
-                className="flex-1 text-gray-300"
-                placeholder="To"
-                placeholderTextColor="#94a3b8"
-                value={to}
-                onChangeText={setTo}
-              />
-            </View>*/}
-
             {/* Search Button */}
             <TouchableOpacity
               onPress={handleSubmit}
               className="bg-[#6644b5] py-3 rounded-xl flex-row justify-center items-center space-x-2"
             >
               <Search size={18} color="#fff" />
-              <Text className="text-gray-300 px-2 font-bold text-base">Find my Bus</Text>
+              <Text className="px-2 font-bold text-base">Find my Bus</Text>
             </TouchableOpacity>
+
+            {/* result component */}
+            <View className='bg-[#040c2f] border-none rounded-lg w-full my-2'>
+              <ScrollView className="p-4">
+                {busData.length === 0 ? (
+                  <Text className="text-center text-gray-500">No buses found.</Text>
+                ) : (
+                  busData.map((bus, index) => (
+                    <View key={index} className="bg-white rounded-2xl shadow-md p-4 mb-4">
+                      <Text className="text-xl font-bold text-blue-700">🚌 {bus.busNumber}</Text>
+                      <Text className="text-base">Route: {bus.basicInfo.routeName}</Text>
+                      <Text className="text-sm text-gray-600">Status: {bus.basicInfo.busStatus}</Text>
+                      <Text className="text-sm text-gray-600">Type: {bus.basicInfo.busType}</Text>
+                      <Text className="text-sm text-gray-600">Driver: {bus.basicInfo.driverName}</Text>
+
+                      <TouchableOpacity
+                        className="mt-2 bg-blue-500 rounded-xl px-4 py-1"
+                        onPress={() => toggleExpand(index)}
+                      >
+                        <Text className="text-white text-center">
+                          {expanded[index] ? 'Hide Details' : 'See More'}
+                        </Text>
+                      </TouchableOpacity>
+
+                      {expanded[index] && (
+                        <View className="mt-3 space-y-1">
+                          <Text>📍 Current: {bus.moreInfo.currentLocation}</Text>
+                          <Text>➡️ Next Stop: {bus.moreInfo.nextStop}</Text>
+                          <Text>🕒 ETA: {bus.moreInfo.etaToNextStop}</Text>
+                          <Text>⏰ Time: {bus.moreInfo.startTime} - {bus.moreInfo.endTime}</Text>
+                          <Text>🛑 Stops:</Text>
+                          {bus.moreInfo.totalStops.map((stop, i) => (
+                            <Text key={i} className="ml-2">• {stop}</Text>
+                          ))}
+                          <Text>📞 Driver Contact: {bus.moreInfo.driverContact}</Text>
+                          <Text>📈 Frequency: {bus.moreInfo.busFrequency}</Text>
+                          <Text>👥 Crowd: {bus.moreInfo.passengerCountStatus}</Text>
+                          <Text>🚨 Alerts:</Text>
+                          {bus.moreInfo.alerts.map((alert, i) => (
+                            <Text key={i} className="ml-2 text-red-500">• {alert}</Text>
+                          ))}
+                        </View>
+                      )}
+                    </View>
+                  )))}
+              </ScrollView>
+            </View>
+
           </View>
         </KeyboardAvoidingView>
       </>
