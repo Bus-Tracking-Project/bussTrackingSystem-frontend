@@ -18,7 +18,7 @@ export default function HomeScreen() {
     <SafeAreaView style={{ flex: 1, backgroundColor: '#060b22' }}>
       <View className="flex-1 justify-center items-center bg-[#060b22] px-4">
         <Text className="text-3xl font-bold text-gray-200 mb-2">
-          Bus YatraQ 🚍
+          YatraQ 🚍
         </Text>
         <Text className="text-base text-gray-400">
           Quick Track. Smart Travel.

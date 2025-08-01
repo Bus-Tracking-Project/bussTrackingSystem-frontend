@@ -83,19 +83,32 @@ export default function LoginScreen() {
           <Text className='text-md font-bold text-gray-500 my-2'>New account or Already have a Bus yatra account? start with your mobile number</Text>
 
           {/* Phone Input */}
-          <Text className='text-gray-300 font-bold my-2'>Enter mobile number</Text>
+          <Text className="text-gray-300 font-bold my-2">Enter mobile number</Text>
           <View className="flex-row items-center px-3 py-2 border-b-2 border-gray-600 my-2">
             <Feather name="phone" size={20} color="#6644b5" />
             <TextInput
-              className="ml-3 flex-1 text-base  text-gray-300"
+              className="ml-3 flex-1 text-base text-gray-300"
               placeholder="Phone Number"
               value={Phone}
-              onChangeText={setPhone}
+              onChangeText={(text) => {
+                const cleaned = text.replace(/\D/g, "");
+
+                // Regex: starts with 6–9, max 10 digits, and no digit repeated more than 5 times consecutively
+                const isValid =
+                  cleaned === "" ||
+                  (/^[6-9]/.test(cleaned) &&
+                    !/(\d)\1{5,}/.test(cleaned) &&
+                    cleaned.length <= 10);
+
+                if (isValid) {
+                  setPhone(cleaned);
+                }
+              }}
               keyboardType="phone-pad"
+              maxLength={10}
               autoCapitalize="none"
               placeholderTextColor="#9CA3AF"
             />
-
           </View>
           {/* <Text className='text-gray-300 font-bold my-2'>Select Role</Text>
           <View className="flex-row items-center border-b-2 border-gray-600 my-2 px-3 py-2">

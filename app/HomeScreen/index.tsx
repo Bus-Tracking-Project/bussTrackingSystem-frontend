@@ -50,7 +50,7 @@ const Home = () => {
                 <Text className='text-1xl font-semibold text-center'>Nearby by Bus Stops</Text>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity className='border border-gray-200 rounded-lg w-[48%] mb-4 h-[100%]'>
+            <TouchableOpacity className='border border-gray-200 rounded-lg w-[48%] mb-4 h-[100%]' onPress={() => router.push('../Sos')}>
               <View>
                 {/* <Image source={require('../../assets/images/support.png')} className='w-full h-[90%]' /> */}
                 <Text className='text-1xl font-semibold text-center'>SOS</Text>
