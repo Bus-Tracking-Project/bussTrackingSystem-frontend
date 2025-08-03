@@ -85,12 +85,11 @@ const BottomNavBar = () => {
                                 <Text className="text-white text-2xl font-bold">Menu</Text>
                                 <Text className="text-white text-md font-semibold mt-10" onPress={() => router.push('../HomeScreen')}>Home</Text>
                                 <Text className="text-white text-md font-semibold mt-10" onPress={() => router.push('../Profile')}>My Profile</Text>
-                                <Text className="text-white text-md font-semibold mt-10" onPress={() => showPopup("Hey! This is Trips")}>My Trips</Text>
-                                <Text className="text-white text-md font-semibold mt-10" onPress={() => showPopup("Hey! These are your Favorites")}>My Fvt</Text>
+                                <Text onPress={() => router.push('../Trips')} className="text-white text-md font-semibold mt-10">My Trips</Text>
+                                <Text onPress={() => router.push('../MyFvt')} className="text-white text-md font-semibold mt-10">My fvt</Text>
                                 <Text className="text-white text-md font-semibold mt-10" onPress={() => showPopup("Hey! This is Notification Center")}>Notification</Text>
-                                <Text className="text-white text-md font-semibold mt-10" onPress={() => showPopup("Hey! This is Feedback Section")}>Feedback</Text>
+                                 <Text onPress={() => router.push('../Feedback')} className="text-white text-md font-semibold mt-10">Feedback</Text>
                                 <Text className="text-white text-md font-semibold mt-10" onPress={() => showPopup("You’ve been logged out (not really 😛)")}>Log Out</Text>
-
                             </View>
                         </View>
                 </Animated.View>
