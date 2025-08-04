@@ -35,13 +35,13 @@ const BottomNavBar = () => {
         // <SafeAreaView style={{ flex: 1, backgroundColor: '#1d1a23', }}>
         <View className='z-10 bg-[#060b22]'>
             {/* Navbar */}
-            <View className="flex-row items-center justify-between px-4 py-3">
+            <View className="flex-row items-center justify-between px-4 py-2">
                 {/* menu btn */}
                 <TouchableOpacity className="p-2" onPress={toggleSidebar}>
                     <Menu color="white" size={24} />
                 </TouchableOpacity>
                 {/* logo or heading */}
-                <Text className="text-white text-lg font-semibold">Bus Tracker</Text>
+                <Text className="text-white text-2xl font-semibold">Bus Tracker</Text>
                 {/* profile pic */}
                 <TouchableOpacity className="p-1" onPress={() => router.push('../Profile')}>
                     <Image
@@ -76,22 +76,78 @@ const BottomNavBar = () => {
                         zIndex: 10,
                     }}
                 >
-                        <View className='h-screen px-10 py-5 bg-[#060b22]'>
-                            <TouchableOpacity onPress={toggleSidebar} className="mb-4 self-end">
-                                <X color="white" size={28} />
-                            </TouchableOpacity>
+                    <View className='h-screen px-10 py-5 bg-[#060b22]'>
+                        <TouchableOpacity onPress={toggleSidebar} className="mb-4 self-end">
+                            <X color="white" size={28} />
+                        </TouchableOpacity>
 
-                            <View className='text-white'>
-                                <Text className="text-white text-2xl font-bold">Menu</Text>
-                                <Text className="text-white text-md font-semibold mt-10" onPress={() => router.push('../HomeScreen')}>Home</Text>
-                                <Text className="text-white text-md font-semibold mt-10" onPress={() => router.push('../Profile')}>My Profile</Text>
-                                <Text onPress={() => router.push('../Trips')} className="text-white text-md font-semibold mt-10">My Trips</Text>
-                                <Text onPress={() => router.push('../MyFvt')} className="text-white text-md font-semibold mt-10">My fvt</Text>
-                                <Text className="text-white text-md font-semibold mt-10" onPress={() => showPopup("Hey! This is Notification Center")}>Notification</Text>
-                                 <Text onPress={() => router.push('../Feedback')} className="text-white text-md font-semibold mt-10">Feedback</Text>
-                                <Text className="text-white text-md font-semibold mt-10" onPress={() => showPopup("You’ve been logged out (not really 😛)")}>Log Out</Text>
-                            </View>
+                        <View className='text-white'>
+                            <Text className="text-white text-2xl font-bold">Menu</Text>
+                            <Text
+                                className="text-white text-md font-semibold mt-10"
+                                onPress={() => {
+                                    router.push('../HomeScreen');
+                                    toggleSidebar();
+                                }}
+                            >
+                                Home
+                            </Text>
+                            <Text
+                                className="text-white text-md font-semibold mt-10"
+                                onPress={() => {
+                                    router.push('../Profile');
+                                    toggleSidebar();
+                                }}
+                            >
+                                My Profile
+                            </Text>
+                            <Text
+                                className="text-white text-md font-semibold mt-10"
+                                onPress={() => {
+                                    router.push('../Trips');
+                                    toggleSidebar();
+                                }}
+                            >
+                                My Trips
+                            </Text>
+                            <Text
+                                className="text-white text-md font-semibold mt-10"
+                                onPress={() => {
+                                    router.push('../MyFvt');
+                                    toggleSidebar();
+                                }}
+                            >
+                                My fvt
+                            </Text>
+                            <Text
+                                className="text-white text-md font-semibold mt-10"
+                                onPress={() => {
+                                    showPopup("Hey! This is Notification Center");
+                                    toggleSidebar();
+                                }}
+                            >
+                                Notification
+                            </Text>
+                            <Text
+                                className="text-white text-md font-semibold mt-10"
+                                onPress={() => {
+                                    router.push('../Feedback');
+                                    toggleSidebar();
+                                }}
+                            >
+                                Feedback
+                            </Text>
+                            <Text
+                                className="text-white text-md font-semibold mt-10"
+                                onPress={() => {
+                                    showPopup("You’ve been logged out (not really 😛)");
+                                    toggleSidebar();
+                                }}
+                            >
+                                Log Out
+                            </Text>
                         </View>
+                    </View>
                 </Animated.View>
             </View>
             {modalVisible && (

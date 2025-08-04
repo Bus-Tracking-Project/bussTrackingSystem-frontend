@@ -1,8 +1,7 @@
-import BottomNavBar from '@/components/Navbar';
+// import BottomNavBar from '@/components/Navbar';
 import { MapPin, Search } from 'lucide-react-native';
 import React, { useState } from 'react';
 import { KeyboardAvoidingView, Platform, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 const FromToSearch = () => {
     const [from, setFrom] = useState('');
@@ -16,8 +15,8 @@ const FromToSearch = () => {
     };
 
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: '#060b22' }}>
-            <BottomNavBar />
+        <>
+            {/* <SafeAreaView style={{ flex: 1, backgroundColor: '#060b22' }}> */}
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 className="flex-1 items-center pt-5 bg-[#1d1a23]"
@@ -59,7 +58,8 @@ const FromToSearch = () => {
                     </TouchableOpacity>
                 </View>
             </KeyboardAvoidingView>
-        </SafeAreaView>
+            {/* </SafeAreaView> */}
+        </>
     );
 };
 export default FromToSearch;

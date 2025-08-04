@@ -1,8 +1,8 @@
-import BottomNavBar from '@/components/Navbar';
+// import BottomNavBar from '@/components/Navbar';
 import { Bus, Search } from 'lucide-react-native';
 import { useState } from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+// import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 
@@ -147,9 +147,8 @@ const index = () => {
     setExpanded((prev) => ({ ...prev, [index]: !prev[index] }));
   };
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#060b22' }}>
+    // <SafeAreaView style={{ flex: 1, backgroundColor: '#060b22' }}>
       <>
-        <BottomNavBar />
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           className="flex-1 items-center pt-5 bg-[#1d1a23]"
@@ -228,7 +227,7 @@ const index = () => {
           </View>
         </KeyboardAvoidingView>
       </>
-    </SafeAreaView>
+    // </SafeAreaView>
   )
 }
 

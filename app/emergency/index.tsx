@@ -30,28 +30,31 @@ const EmergencyScreen = () => {
   ];
 
   return (
-    <ScrollView className="flex-1 bg-gray-100 px-4 py-6">
-      <Text className="text-2xl font-bold text-gray-800 text-center mt-10 mb-6">Emergency</Text>
-
-      <View className="flex-row flex-wrap justify-between">
-        {emergencyOptions.map((item, index) => (
-          <TouchableOpacity
-            key={index}
-            className="w-[48%] h-32 bg-gray-800 rounded-xl border border-gray-200 shadow-sm mb-4 items-center justify-center"
-            onPress={() => {
-            if (item.route) {
-              router.push(item.route as any); // ✅ Navigate on click
-            }
-          }}
-          >
-            <View className="mb-2">{item.icon}</View>
-            <Text className="text-sm text-white font-medium text-center">
-              {item.label}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-    </ScrollView>
+    <>
+      {/* <SafeAreaView style={{ flex: 1, backgroundColor: '#060b22' }}> */}
+      <ScrollView className="flex-1 bg-gray-100">
+        <Text className="text-2xl font-bold text-gray-800 text-center mt-10 mb-6">Emergency</Text>
+        <View className="flex-row flex-wrap justify-between px-3 py-2">
+          {emergencyOptions.map((item, index) => (
+            <TouchableOpacity
+              key={index}
+              className="w-[48%] h-32 bg-gray-200 rounded-xl border border-gray-200 shadow-sm mb-4 items-center justify-center"
+              onPress={() => {
+                if (item.route) {
+                  router.push(item.route as any); // ✅ Navigate on click
+                }
+              }}
+            >
+              <View className="mb-2">{item.icon}</View>
+              <Text className="text-sm text-black font-medium text-center">
+                {item.label}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </ScrollView>
+      {/* </SafeAreaView> */}
+    </>
   );
 };
 

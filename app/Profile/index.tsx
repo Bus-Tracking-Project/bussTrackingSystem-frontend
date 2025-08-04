@@ -1,4 +1,3 @@
-import BottomNavBar from "@/components/Navbar";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
@@ -13,7 +12,6 @@ import {
   TouchableOpacity,
   View
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 
 const ProfileScreen = () => {
@@ -86,9 +84,8 @@ const ProfileScreen = () => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#060b22', }}>
+    // <SafeAreaView style={{ flex: 1backgroundColor: '#060b22', }}>
       <>
-        <BottomNavBar />
         <View className="flex-1 bg-blue-100 p-6 items-center pt-[20%]">
           <TouchableOpacity onPress={pickImage}>
             <Image
@@ -185,7 +182,7 @@ const ProfileScreen = () => {
           </Modal>
         </View>
       </>
-    </SafeAreaView>
+    // </SafeAreaView>
   );
 };
 

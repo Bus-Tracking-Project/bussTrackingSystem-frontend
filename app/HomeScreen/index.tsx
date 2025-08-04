@@ -1,9 +1,8 @@
-import BottomNavBar from '@/components/Navbar'
 import { useRouter } from 'expo-router'
 import { X } from 'lucide-react-native'
 import React, { useRef, useState } from 'react'
-import { Animated, Dimensions, ScrollView, Text, TouchableOpacity, View } from 'react-native'
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
+import { Animated, Dimensions, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 
 const { width } = Dimensions.get('window');
@@ -25,46 +24,45 @@ const Home = () => {
   };
   
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#060b22' }}>
-      <View className='h-screen text-black bg-gray-100'>
-        {/* Navbar */}
-        <BottomNavBar />
+    // <SafeAreaView style={{ flex: 1, backgroundColor: '#060b22' }}>
+      <>
+      <View className='flex-1'>
         {/* Body */}
         <ScrollView className='w-full p-4'>
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}>
-            <TouchableOpacity className='border border-gray-200 rounded-lg w-[48%] mb-4 h-[100%]' onPress={() => router.push('../SearchByNumber')} >
+            <TouchableOpacity className='border border-gray-200 rounded-lg w-[48%] mb-4 ' onPress={() => router.push('../SearchByNumber')} >
               <View>
-                {/* <Image source={require('../../assets/images/search.png')} className='w-full h-[90%]' /> */}
+                <Image source={require('../../assets/images/search1.jpg')} className='w-full h-52' />
                 <Text className='text-1xl font-semibold text-center'>Search By Number</Text>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity className='border border-gray-200 rounded-lg w-[48%] mb-4 h-[100%]' onPress={() => router.push('../SearchByRout')} >
+            <TouchableOpacity className='border border-gray-200 rounded-lg w-[48%] mb-4 ' onPress={() => router.push('../SearchByRout')} >
               <View>
-                {/* <Image source={require('../../assets/images/rout.png')} className='w-full h-[90%]  ' /> */}
+                <Image source={require('../../assets/images/rout1.jpg')} className='w-full h-52' />
                 <Text className='text-1xl font-semibold text-center'>Search By rout</Text>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity className='border border-gray-200 rounded-lg w-[48%] mb-4 h-[100%]' onPress={() => router.push('../GoogleMap')} >
+            <TouchableOpacity className='border border-gray-200 rounded-lg w-[48%] mb-4 ' onPress={() => router.push('../GoogleMap')} >
               <View>
-                {/* <Image source={require('../../assets/images/stop.png')} className='w-full h-[90%]' /> */}
+                <Image source={require('../../assets/images/stop11.jpg')} className='w-full h-52' />
                 <Text className='text-1xl font-semibold text-center'>Nearby by Bus Stops</Text>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity className='border border-gray-200 rounded-lg w-[48%] mb-4 h-[100%]' onPress={() => router.push('../Sos')}>
+            <TouchableOpacity className='border border-gray-200 rounded-lg w-[48%] mb-4 ' onPress={() => router.push('../Sos')}>
               <View>
-                {/* <Image source={require('../../assets/images/support.png')} className='w-full h-[90%]' /> */}
+                <Image source={require('../../assets/images/support1.jpg')} className='w-full h-52'/>
                 <Text className='text-1xl font-semibold text-center'>SOS</Text>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity className='border border-gray-200 rounded-lg w-[48%] mb-4 h-[100%]' onPress={() => router.push('../emergency')}>
+            <TouchableOpacity className='border border-gray-200 rounded-lg w-[48%] mb-4 ' onPress={() => router.push('../emergency')}>
               <View>
-                {/* <Image source={require('../../assets/images/emergency.png')} className='w-full h-[90%]' /> */}
+                <Image source={require('../../assets/images/emergence1.png')} className='w-full h-52' />
                 <Text className='text-1xl font-semibold text-center'>emergency</Text>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity className='border border-gray-200 rounded-lg w-[48%] mb-4 h-[100%]'>
+            <TouchableOpacity className='border border-gray-200 rounded-lg w-[48%] mb-4 '>
               <View>
-                {/* <Image source={require('../../assets/images/support.png')} className='w-full h-[90%]' /> */}
+                <Image source={require('../../assets/images/support.png')} className='w-full h-52' />
                 <Text className='text-1xl font-semibold text-center'>contact us</Text>
               </View>
             </TouchableOpacity>
@@ -102,7 +100,8 @@ const Home = () => {
           </View>
         </View>
       </Animated.View>
-    </SafeAreaView >
+      </>
+    // </SafeAreaView >
   );
 };
 export default Home;
