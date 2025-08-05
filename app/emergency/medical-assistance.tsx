@@ -1,5 +1,5 @@
-// app/emergency/medical-assistance.tsx
-
+import { BlurView } from 'expo-blur';
+import { LinearGradient } from 'expo-linear-gradient';
 import * as Location from 'expo-location';
 import React, { useEffect, useState } from 'react';
 import { Alert, Text, TextInput, TouchableOpacity, View } from 'react-native';
@@ -41,7 +41,15 @@ const MedicalAssistanceForm = () => {
   };
 
   return (
-    <View className="flex-1 bg-gray-100 px-6 py-8">
+    
+    <LinearGradient
+      colors={['#FFF9C4', '#B3E5FC']} // light yellow to light blue
+      start={{ x: 0.5, y: 0 }} // top center
+      end={{ x: 0.5, y: 1 }}   // bottom center
+      className="flex-1 justify-center items-center py-10"
+    >
+      <BlurView intensity={50} tint="light" className='px-6 w-[85%] flex-1 border border-gray-300 rounded-2xl overflow-hidden'>
+    <View className="flex-1 px-6 py-8">
       <Text className="text-2xl font-bold text-gray-800 mt-10 mb-6">Medical Assistance</Text>
 
       <TextInput
@@ -73,6 +81,8 @@ const MedicalAssistanceForm = () => {
         </Text>
       )}
     </View>
+    </BlurView>
+    </LinearGradient>
   );
 };
 
