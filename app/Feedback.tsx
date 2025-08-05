@@ -1,7 +1,5 @@
-import BottomNavBar from '@/components/Navbar';
 import React, { useState } from 'react';
 import { Alert, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 const Feedback = () => {
     const [searchTerm, setSearchTerm] = useState('');
@@ -64,8 +62,8 @@ const Feedback = () => {
     });
 
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: 'black' }}>
-            <BottomNavBar />
+        // <SafeAreaView style={{ flex: 1, backgroundColor: 'black' }}>
+            // <BottomNavBar />
             <View className="flex-1 bg-white p-4">
                 <Text className="text-2xl font-bold text-black mt-4 mb-6">Submit Feedback 📝</Text>
 
@@ -105,7 +103,7 @@ const Feedback = () => {
                     </View>
                 )}
             </View>
-        </SafeAreaView>
+        // </SafeAreaView>
     );
 };
 

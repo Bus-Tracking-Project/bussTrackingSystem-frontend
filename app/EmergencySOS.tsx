@@ -4,7 +4,7 @@ import { Text, View } from 'react-native'
 const EmergencySOS = () => {
   return (
     <View>
-      <Text>EmergencySOS</Text>
+      <Text>scvfsd</Text>
     </View>
   )
 }

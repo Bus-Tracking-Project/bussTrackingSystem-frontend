@@ -1,6 +1,8 @@
+import { BlurView } from 'expo-blur';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
-import { Alert, Pressable, SafeAreaView, Text, TextInput, View } from 'react-native';
+import { Alert, Pressable, Text, TextInput, View } from 'react-native';
 
 export default function VerifyOtpScreen() {
   const { phone } = useLocalSearchParams();
@@ -102,13 +104,17 @@ export default function VerifyOtpScreen() {
   };
 
   return (
-
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#1d1a23', }}>
-      <View className='bg-[#1d1a23] px-6 flex-1 flex-col justify-between'>
+    <LinearGradient
+      colors={['#FFF9C4', '#B3E5FC']} // light yellow to light blue
+      start={{ x: 0.5, y: 0 }} // top center
+      end={{ x: 0.5, y: 1 }}   // bottom center
+      className='px-6 flex-1 flex-col justify-between py-11'
+    >
+      <BlurView intensity={50} tint="light" className='px-6 flex-1 flex-col justify-between border border-gray-300 rounded-2xl overflow-hidden'>
         <View className='flex-1 justify-center'>
-          <Text className="text-2xl font-bold text-[#6644b5] mb-4 text-center">Verify OTP</Text>
+          <Text className="text-4xl font-bold text-[#1E40AF] mb-4 text-center">Verify OTP</Text>
           <Text className="text-center text-gray-600 mb-6">
-            OTP sent to <Text className="font-semibold text-[#6644b5]">{getMaskedPhone()}</Text>
+            OTP sent to <Text className="font-semibold text-[#1E40AF]">{getMaskedPhone()}</Text>
           </Text>
 
           {/* OTP Inputs */}
@@ -117,7 +123,7 @@ export default function VerifyOtpScreen() {
               <TextInput
                 key={index}
                 ref={(el) => { inputs.current[index] = el; }}
-                className="w-12 h-12 text-xl text-white text-center border border-[#6644b5] rounded-lg"
+                className="w-12 h-12 text-xl text-black text-center border border-[#1E40AF] rounded-lg"
                 keyboardType="numeric"
                 maxLength={1}
                 value={digit}
@@ -128,7 +134,7 @@ export default function VerifyOtpScreen() {
         </View>
         <View>
           {/* Verify Button */}
-          <Pressable onPress={handleVerify} className="bg-[#6644b5] py-3 rounded-3xl">
+          <Pressable onPress={handleVerify} className="bg-[#1E40AF] py-3 rounded-3xl">
             <Text className="text-gray-300 text-center text-lg font-semibold">Verify</Text>
           </Pressable>
 
@@ -138,12 +144,13 @@ export default function VerifyOtpScreen() {
               <Text className="text-gray-500">Resend OTP in {timer}s</Text>
             ) : (
               <Pressable onPress={handleResend}>
-                <Text className="text-[#6644b5] font-semibold underline">Resend OTP</Text>
+                <Text className="text-[#1E40AF] font-semibold underline">Resend OTP</Text>
               </Pressable>
             )}
           </View>
         </View>
-      </View>
-    </SafeAreaView>
+      </BlurView>
+    </LinearGradient>
+    // </SafeAreaView>
   );
 }

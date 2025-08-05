@@ -33,15 +33,15 @@ const BottomNavBar = () => {
 
     return (
         // <SafeAreaView style={{ flex: 1, backgroundColor: '#1d1a23', }}>
-        <View className='z-10 bg-[#060b22]'>
+        <View className='z-10 py-2 bg-gray-50'>
             {/* Navbar */}
             <View className="flex-row items-center justify-between px-4 py-2">
                 {/* menu btn */}
                 <TouchableOpacity className="p-2" onPress={toggleSidebar}>
-                    <Menu color="white" size={24} />
+                    <Menu color="black" size={24} />
                 </TouchableOpacity>
                 {/* logo or heading */}
-                <Text className="text-white text-2xl font-semibold">Bus Tracker</Text>
+                <Text className="text-black text-3xl font-semibold">YatraQ Tracker</Text>
                 {/* profile pic */}
                 <TouchableOpacity className="p-1" onPress={() => router.push('../Profile')}>
                     <Image
@@ -58,9 +58,9 @@ const BottomNavBar = () => {
                             left: 0,
                             height: '100%',
                             width: '100%',
-                            backgroundColor: 'rgba(0,0,0,0.4)',
                             zIndex: 10,
-                        }} />
+                        }}
+                        />
                     </TouchableWithoutFeedback>
                 )}
 
@@ -72,19 +72,19 @@ const BottomNavBar = () => {
                         left: 0,
                         width: width * 0.75,
                         height: '100%',
-                        backgroundColor: '#060b22',
+                        backgroundColor: 'white',
                         zIndex: 10,
                     }}
                 >
-                    <View className='h-screen px-10 py-5 bg-[#060b22]'>
+                    <View className='h-screen px-10 py-5 bg-white'>
                         <TouchableOpacity onPress={toggleSidebar} className="mb-4 self-end">
-                            <X color="white" size={28} />
+                            <X color="black" size={28} />
                         </TouchableOpacity>
 
-                        <View className='text-white'>
-                            <Text className="text-white text-2xl font-bold">Menu</Text>
+                        <View>
+                            <Text className="text-black text-2xl font-bold">Menu</Text>
                             <Text
-                                className="text-white text-md font-semibold mt-10"
+                                className="text-black text-md font-semibold mt-10"
                                 onPress={() => {
                                     router.push('../HomeScreen');
                                     toggleSidebar();
@@ -93,7 +93,7 @@ const BottomNavBar = () => {
                                 Home
                             </Text>
                             <Text
-                                className="text-white text-md font-semibold mt-10"
+                                className="text-black text-md font-semibold mt-10"
                                 onPress={() => {
                                     router.push('../Profile');
                                     toggleSidebar();
@@ -102,7 +102,7 @@ const BottomNavBar = () => {
                                 My Profile
                             </Text>
                             <Text
-                                className="text-white text-md font-semibold mt-10"
+                                className="text-black text-md font-semibold mt-10"
                                 onPress={() => {
                                     router.push('../Trips');
                                     toggleSidebar();
@@ -111,7 +111,7 @@ const BottomNavBar = () => {
                                 My Trips
                             </Text>
                             <Text
-                                className="text-white text-md font-semibold mt-10"
+                                className="text-black text-md font-semibold mt-10"
                                 onPress={() => {
                                     router.push('../MyFvt');
                                     toggleSidebar();
@@ -120,7 +120,7 @@ const BottomNavBar = () => {
                                 My fvt
                             </Text>
                             <Text
-                                className="text-white text-md font-semibold mt-10"
+                                className="text-black text-md font-semibold mt-10"
                                 onPress={() => {
                                     showPopup("Hey! This is Notification Center");
                                     toggleSidebar();
@@ -129,7 +129,7 @@ const BottomNavBar = () => {
                                 Notification
                             </Text>
                             <Text
-                                className="text-white text-md font-semibold mt-10"
+                                className="text-black text-md font-semibold mt-10"
                                 onPress={() => {
                                     router.push('../Feedback');
                                     toggleSidebar();
@@ -138,7 +138,7 @@ const BottomNavBar = () => {
                                 Feedback
                             </Text>
                             <Text
-                                className="text-white text-md font-semibold mt-10"
+                                className="text-black text-md font-semibold mt-10"
                                 onPress={() => {
                                     showPopup("You’ve been logged out (not really 😛)");
                                     toggleSidebar();
@@ -156,7 +156,7 @@ const BottomNavBar = () => {
                         <View className="bg-white p-6 rounded-2xl w-[80%] shadow-lg">
                             <Text className="text-lg font-semibold text-center text-black">{modalMessage}</Text>
                             <TouchableOpacity onPress={() => setModalVisible(false)} className="mt-4 bg-blue-600 px-4 py-2 rounded-xl">
-                                <Text className="text-white text-center font-medium">Close</Text>
+                                <Text className="text-black text-center font-medium">Close</Text>
                             </TouchableOpacity>
                         </View>
                     </View>

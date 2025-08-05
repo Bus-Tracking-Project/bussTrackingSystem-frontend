@@ -1,12 +1,8 @@
-// import BottomNavBar from '@/components/Navbar';
+import { BlurView } from 'expo-blur';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Bus, Search } from 'lucide-react-native';
 import { useState } from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
-// import { SafeAreaView } from 'react-native-safe-area-context';
-
-
-
-
+import { ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 const index = () => {
   // dummy data 
@@ -147,22 +143,24 @@ const index = () => {
     setExpanded((prev) => ({ ...prev, [index]: !prev[index] }));
   };
   return (
-    // <SafeAreaView style={{ flex: 1, backgroundColor: '#060b22' }}>
       <>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          className="flex-1 items-center pt-5 bg-[#1d1a23]"
-        >
-          <View className="w-full px-5 gap-5 h-full">
-            <Text className="font-bold text-center text-2xl text-[#6644b5]">Enter Bus Number</Text>
+        <LinearGradient
+                colors={['#FFF9C4', '#B3E5FC']} // light yellow to light blue
+                start={{ x: 0.5, y: 0 }} // top center
+                end={{ x: 0.5, y: 1 }}   // bottom center
+                // className="flex-1 justify-center items-center py-5 px-3"
+                className="flex-1 items-center p-5 bg-[#1d1a23]"
+                >
+         <BlurView intensity={50} tint="light" className="w-full px-5 py-4 gap-5 h-full border border-gray-300 rounded-2xl overflow-hidden">
+            <Text className="font-bold text-center text-2xl text-[#1E40AF]">Enter Bus Number</Text>
 
             {/* From Input */}
-            <View className="flex-row items-center border-b-2 border-gray-600 px-4 py-3 space-x-3">
-              <Bus size={20} color="#6644b5" />
+            <View className="flex-row items-center border-b-2 border-gray-500 px-4 py-3 space-x-3">
+              <Bus size={20} color="#1E40AF" />
               <TextInput
-                className="flex-1 text-gray-300"
+                className="flex-1 text-[#1E40AF]"
                 placeholder=" eg : TG10932"
-                placeholderTextColor="#94a3b8"
+                placeholderTextColor="#1E40AF"
                 value={Number}
                 onChangeText={setNumber}
               />
@@ -171,10 +169,10 @@ const index = () => {
             {/* Search Button */}
             <TouchableOpacity
               onPress={handleSubmit}
-              className="bg-[#6644b5] py-3 rounded-xl flex-row justify-center items-center space-x-2"
+              className="bg-[#1E40AF] py-3 rounded-xl flex-row justify-center items-center space-x-2"
             >
               <Search size={18} color="#fff" />
-              <Text className="px-2 font-bold text-base">Find my Bus</Text>
+              <Text className="px-2 font-bold text-base text-white">Find my Bus</Text>
             </TouchableOpacity>
 
             {/* result component */}
@@ -223,9 +221,8 @@ const index = () => {
                   )))}
               </ScrollView>
             </View>
-
-          </View>
-        </KeyboardAvoidingView>
+          </BlurView>
+        </LinearGradient>
       </>
     // </SafeAreaView>
   )

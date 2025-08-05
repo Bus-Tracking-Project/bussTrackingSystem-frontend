@@ -1,8 +1,9 @@
 import { Feather } from '@expo/vector-icons';
+import { BlurView } from 'expo-blur';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Link, useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Alert, Pressable, Text, TextInput, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -75,24 +76,29 @@ export default function LoginScreen() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#1d1a23', }}>
-      <View className='bg-[#1d1a23] px-6 flex-1 flex-col justify-between'>
+    // <SafeAreaView style={{ flex: 1, backgroundColor: 'white', }}>
+    <LinearGradient
+      colors={['#FFF9C4', '#B3E5FC']} // light yellow to light blue
+      start={{ x: 0.5, y: 0 }} // top center
+      end={{ x: 0.5, y: 1 }}   // bottom center
+      className="flex-1 justify-center items-center py-10 px-8"
+    >
+      <BlurView intensity={50} tint="light" className='px-6 flex-1 flex-col justify-between border border-gray-300 rounded-2xl overflow-hidden'>
         <View >
-          <Text className="text-4xl font-bold text-[#6644b5] my-10">Bus Yatra Q</Text>
-          <Text className='text-2xl font-bold text-gray-300 my-2'>Sign Up Or Log in</Text>
+          <Text className="text-4xl font-bold text-[#1E40AF] my-10">Bus Yatra Q</Text>
+          <Text className='text-2xl font-bold text-[#1E293B] my-2'>Sign Up Or Log in</Text>
           <Text className='text-md font-bold text-gray-500 my-2'>New account or Already have a Bus yatra account? start with your mobile number</Text>
 
           {/* Phone Input */}
-          <Text className="text-gray-300 font-bold my-2">Enter mobile number</Text>
-          <View className="flex-row items-center px-3 py-2 border-b-2 border-gray-600 my-2">
-            <Feather name="phone" size={20} color="#6644b5" />
+          <Text className="text-[#1E40AF] font-bold my-2">Enter mobile number</Text>
+          <View className="flex-row items-center px-3 py-2 border-b-2 border-gray-400 my-2">
+            <Feather name="phone" size={20} color="#1E40AF" />
             <TextInput
-              className="ml-3 flex-1 text-base text-gray-300"
+              className="ml-3 flex-1 text-base text-[#1E40AF]"
               placeholder="Phone Number"
               value={Phone}
               onChangeText={(text) => {
                 const cleaned = text.replace(/\D/g, "");
-
                 // Regex: starts with 6–9, max 10 digits, and no digit repeated more than 5 times consecutively
                 const isValid =
                   cleaned === "" ||
@@ -107,7 +113,7 @@ export default function LoginScreen() {
               keyboardType="phone-pad"
               maxLength={10}
               autoCapitalize="none"
-              placeholderTextColor="#9CA3AF"
+              placeholderTextColor="#1E40AF"
             />
           </View>
           {/* <Text className='text-gray-300 font-bold my-2'>Select Role</Text>
@@ -143,7 +149,7 @@ export default function LoginScreen() {
         </View>
         <View>
           {/* Login Button */}
-          <Pressable onPress={handleLogin} className="bg-[#6644b5] py-3 rounded-3xl">
+          <Pressable onPress={handleLogin} className="bg-[#1E40AF] py-3 rounded-3xl">
             <Text className="text-gray-300 text-center font-semibold text-lg">Verify</Text>
           </Pressable>
 
@@ -151,7 +157,8 @@ export default function LoginScreen() {
             <Link href='/HomeScreen' className="text-[#6644b5] text-center text-base underline">continue without account?</Link>
           </Pressable>
         </View>
-      </View>
-    </SafeAreaView>
+      </BlurView>
+    </LinearGradient>
+    // </SafeAreaView>
   );
 }
