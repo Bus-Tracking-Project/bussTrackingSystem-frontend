@@ -62,8 +62,6 @@ const Feedback = () => {
     });
 
     return (
-        // <SafeAreaView style={{ flex: 1, backgroundColor: 'black' }}>
-            // <BottomNavBar />
             <View className="flex-1 bg-white p-4">
                 <Text className="text-2xl font-bold text-black mt-4 mb-6">Submit Feedback 📝</Text>
 
@@ -103,7 +101,6 @@ const Feedback = () => {
                     </View>
                 )}
             </View>
-        // </SafeAreaView>
     );
 };
 

@@ -1,5 +1,3 @@
-import { BlurView } from 'expo-blur'
-import { LinearGradient } from 'expo-linear-gradient'
 import { useRouter } from 'expo-router'
 import { X } from 'lucide-react-native'
 import React, { useRef, useState } from 'react'
@@ -27,16 +25,16 @@ const Home = () => {
 
   return (
     <>
-      <LinearGradient
+      {/* <LinearGradient
         colors={['#FFF9C4', '#B3E5FC']} // light yellow to light blue
         start={{ x: 0.5, y: 0 }} // top center
         end={{ x: 0.5, y: 1 }}   // bottom center
         className="flex-1 justify-center items-center py-5 px-3"
       >
-        {/* Body */}
-        <ScrollView className='w-full p-4 h-screen'>
-          <BlurView intensity={50} tint="light" className='p-5 border border-gray-300 rounded-2xl overflow-hidden'>
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }} className='gap-2'>
+        Body */}
+        <ScrollView className='w-full px-10 py-5 h-screen'>
+          {/* <BlurView intensity={50} tint="light" className='p-5 border border-gray-300 rounded-2xl overflow-hidden'> */}
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }} className='gap-5'>
               <TouchableOpacity className='border border-gray-200 rounded-3xl h-40 w-44 overflow-hidden' onPress={() => router.push('../SearchByNumber')} >
                 <View className='px-5 py-5 bg-white'>
                   <Image source={require('../../assets/images/search1.jpg')} className='w-full h-full' />
@@ -74,9 +72,9 @@ const Home = () => {
                 </View>
               </TouchableOpacity>
             </View>
-          </BlurView>
+          {/* </BlurView> */}
         </ScrollView >
-      </LinearGradient>
+      {/* // </LinearGradient> */}
 
       {/* Sidebar */}
       <Animated.View
@@ -111,4 +109,5 @@ const Home = () => {
     </>
   );
 };
+
 export default Home;

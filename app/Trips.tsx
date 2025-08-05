@@ -1,8 +1,6 @@
-import BottomNavBar from '@/components/Navbar';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 const Trips = () => {
     const router = useRouter();
@@ -39,11 +37,9 @@ const Trips = () => {
     };
 
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: 'black' }}>
-            <BottomNavBar/>
-            <ScrollView className="flex-1 bg-white p-4">
-                <Text className="text-black text-2xl font-bold mb-4">My Trips</Text>
-
+        <View className='py-3 px-5'>
+            <Text className="text-black text-2xl font-bold mb-4">My Trips</Text>
+            <ScrollView>
                 {/* Basic Info */}
                 <View className="bg-gray-100 p-4 rounded-xl mb-4">
                     <Text className="text-lg font-semibold text-blue-700">Bus Number: {busData.busNumber}</Text>
@@ -100,7 +96,7 @@ const Trips = () => {
                     <Text className="text-white text-center font-semibold">Go Back</Text>
                 </TouchableOpacity>
             </ScrollView>
-        </SafeAreaView>
+        </View>
     );
 };
 

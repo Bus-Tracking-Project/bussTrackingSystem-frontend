@@ -1,18 +1,10 @@
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useNavigation } from "@react-navigation/native";
+import { BlurView } from 'expo-blur';
 import * as ImagePicker from "expo-image-picker";
+import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from "react";
-import {
-  Alert,
-  Image,
-  Modal,
-  Platform,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View
-} from "react-native";
-
+import { Alert, Image, Modal, Platform, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 const ProfileScreen = () => {
   const navigation = useNavigation();
@@ -84,36 +76,46 @@ const ProfileScreen = () => {
   };
 
   return (
-    // <SafeAreaView style={{ flex: 1backgroundColor: '#060b22', }}>
-      <>
-        <View className="flex-1 bg-blue-100 p-6 items-center pt-[20%]">
-          <TouchableOpacity onPress={pickImage}>
-            <Image
-              source={{ uri: form.avatar }}
-              className="w-32 h-32 rounded-full border-4 border-blue-500"
-            />
-            <Text className="text-blue-500 text-sm text-center mt-1">Change Avatar</Text>
-          </TouchableOpacity>
-
-          <Text className="text-2xl font-bold text-blue-900 mt-4">{form.name}</Text>
-          <Text className="text-base text-blue-800 mt-1">{form.email}</Text>
-
-          <View className="bg-blue-200 w-full mt-6 rounded-xl p-4">
-            <Text className="text-blue-900 font-semibold">
-              📅 DOB: <Text className="font-normal">{form.dob}</Text>
-            </Text>
-            <Text className="text-blue-900 font-semibold mt-2">
-              ⚧ Gender: <Text className="font-normal">{form.gender}</Text>
-            </Text>
+    <>
+      <LinearGradient
+        colors={['#FFF9C4', '#B3E5FC']} // light yellow to light blue
+        start={{ x: 0.5, y: 0 }} // top center
+        end={{ x: 0.5, y: 1 }}   // bottom center
+        className="flex-1 justify-center items-center py-10 px-5"
+      >
+        <BlurView intensity={50} tint="light" className='px-6 pt-3 flex-1 flex-col justify-start border border-gray-300 rounded-2xl overflow-hidden w-[90%]'>
+          <View className="flex flex-row justify-evenly">
+            <View>
+              <TouchableOpacity onPress={pickImage}>
+                <Image
+                  source={{ uri: form.avatar }}
+                  className="w-32 h-32 rounded-full border-4 border-blue-500"
+                />
+                <Text className="text-blue-500 text-sm text-center mt-1">Change Avatar</Text>
+              </TouchableOpacity>
+            </View>
+            <View>
+              <Text className="text-2xl font-bold text-blue-900 mt-4">{form.name}</Text>
+              <Text className="text-base text-blue-800 mt-1">{form.email}</Text>
+            </View>
           </View>
+          <View className="mt-3">
+            <View className="bg-blue-200 w-full rounded-xl p-4">
+              <Text className="text-blue-900 font-semibold">
+                📅 DOB: <Text className="font-normal">{form.dob}</Text>
+              </Text>
+              <Text className="text-blue-900 font-semibold mt-2">
+                ⚧ Gender: <Text className="font-normal">{form.gender}</Text>
+              </Text>
+            </View>
 
-          <TouchableOpacity
-            className="mt-8 bg-blue-600 px-6 py-3 rounded-xl shadow-md"
-            onPress={() => setModalVisible(true)}
-          >
-            <Text className="text-white font-bold text-lg">Update</Text>
-          </TouchableOpacity>
-
+            <TouchableOpacity
+              className="my-8 bg-blue-600 px-6 py-3 rounded-xl shadow-md"
+              onPress={() => setModalVisible(true)}
+            >
+              <Text className="text-white text-center font-bold text-lg">Update</Text>
+            </TouchableOpacity>
+          </View>
           {/* Modal */}
           <Modal
             visible={modalVisible}
@@ -180,9 +182,9 @@ const ProfileScreen = () => {
               </View>
             </View>
           </Modal>
-        </View>
-      </>
-    // </SafeAreaView>
+        </BlurView>
+      </LinearGradient>
+    </>
   );
 };
 

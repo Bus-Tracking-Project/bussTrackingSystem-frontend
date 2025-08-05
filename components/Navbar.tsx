@@ -122,7 +122,8 @@ const BottomNavBar = () => {
                             <Text
                                 className="text-black text-md font-semibold mt-10"
                                 onPress={() => {
-                                    showPopup("Hey! This is Notification Center");
+                                    // showPopup("Hey! This is Notification Center");
+                                    router.push('../Notification')
                                     toggleSidebar();
                                 }}
                             >

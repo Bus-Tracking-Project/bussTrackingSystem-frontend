@@ -1,7 +1,6 @@
-import BottomNavBar from '@/components/Navbar';
+import { router } from 'expo-router';
 import React, { useState } from 'react';
-import { ScrollView, Text, TextInput, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 const MyFvt = () => {
     const [searchTerm, setSearchTerm] = useState('');
@@ -63,36 +62,39 @@ const MyFvt = () => {
         });
 
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: 'black' }}>
-            <BottomNavBar/>
-            <View className="flex-1 bg-white p-4">
-                <Text className="text-2xl font-bold mb-4 text-black">My Favorite Buses ❤️</Text>
+        <View className="flex-1 bg-white p-4">
+            <Text className="text-2xl font-bold mb-4 text-black">My Favorite Buses ❤️</Text>
 
-                <TextInput
-                    placeholder="Search favorites..."
-                    value={searchTerm}
-                    onChangeText={setSearchTerm}
-                    className="bg-gray-200 p-3 rounded-lg mb-4"
-                />
+            <TextInput
+                placeholder="Search favorites..."
+                value={searchTerm}
+                onChangeText={setSearchTerm}
+                className="bg-gray-200 p-3 rounded-lg mb-4"
+            />
 
-                <ScrollView>
-                    {filteredFavorites.length === 0 ? (
-                        <Text className="text-center text-gray-500 mt-10">No favorites found 😢</Text>
-                    ) : (
-                        filteredFavorites.map((bus, index) => (
-                            <View key={index} className="bg-yellow-100 p-4 rounded-xl mb-4 border border-yellow-400">
-                                <Text className="text-xl font-bold text-yellow-700">🚌 {bus.busNumber}</Text>
-                                <Text className="text-black">Driver: {bus.basicInfo.driverName}</Text>
-                                <Text className="text-black">Route: {bus.basicInfo.routeName}</Text>
-                                <Text className="text-black">Current Stop: {bus.moreInfo.currentStop}</Text>
-                                <Text className="text-black">Next Stop: {bus.moreInfo.nextStop}</Text>
-                                <Text className="text-black">Status: {bus.basicInfo.busStatus}</Text>
-                            </View>
-                        ))
-                    )}
-                </ScrollView>
-            </View>
-        </SafeAreaView>
+            <ScrollView>
+                {filteredFavorites.length === 0 ? (
+                    <Text className="text-center text-gray-500 mt-10">No favorites found 😢</Text>
+                ) : (
+                    filteredFavorites.map((bus, index) => (
+                        <View key={index} className="bg-yellow-100 p-4 rounded-xl mb-4 border border-yellow-400">
+                            <Text className="text-xl font-bold text-yellow-700">🚌 {bus.busNumber}</Text>
+                            <Text className="text-black">Driver: {bus.basicInfo.driverName}</Text>
+                            <Text className="text-black">Route: {bus.basicInfo.routeName}</Text>
+                            <Text className="text-black">Current Stop: {bus.moreInfo.currentStop}</Text>
+                            <Text className="text-black">Next Stop: {bus.moreInfo.nextStop}</Text>
+                            <Text className="text-black">Status: {bus.basicInfo.busStatus}</Text>
+                        </View>
+                    ))
+                )}
+            </ScrollView>
+            <TouchableOpacity
+                onPress={() => router.back()}
+                className="my-6 bg-blue-600 py-4 rounded-xl"
+            >
+                <Text className="text-white text-center font-semibold">Go Back</Text>
+            </TouchableOpacity>
+        </View>
     );
 };
 
