@@ -1,14 +1,12 @@
+import WelcomeSection from '@/components/WelcomeSection'
 import { useRouter } from 'expo-router'
 import { X } from 'lucide-react-native'
 import React, { useRef, useState } from 'react'
 import { Animated, Dimensions, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
-
 
 const { width } = Dimensions.get('window');
 
 const Home = () => {
-  const insets = useSafeAreaInsets();
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const translateX = useRef(new Animated.Value(-width)).current;
@@ -25,57 +23,50 @@ const Home = () => {
 
   return (
     <>
-      {/* <LinearGradient
-        colors={['#FFF9C4', '#B3E5FC']} // light yellow to light blue
-        start={{ x: 0.5, y: 0 }} // top center
-        end={{ x: 0.5, y: 1 }}   // bottom center
-        className="flex-1 justify-center items-center py-5 px-3"
-      >
-        Body */}
-        <ScrollView className='w-full px-10 py-5 h-screen'>
-          {/* <BlurView intensity={50} tint="light" className='p-5 border border-gray-300 rounded-2xl overflow-hidden'> */}
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }} className='gap-5'>
-              <TouchableOpacity className='border border-gray-200 rounded-3xl h-40 w-44 overflow-hidden' onPress={() => router.push('../SearchByNumber')} >
-                <View className='px-5 py-5 bg-white'>
-                  <Image source={require('../../assets/images/search1.jpg')} className='w-full h-full' />
-                  <Text className='text-1xl font-semibold text-center bg-white'>Search By Number</Text>
-                </View>
-              </TouchableOpacity>
-              <TouchableOpacity className='border border-gray-200 rounded-3xl h-40 w-44 overflow-hidden' onPress={() => router.push('../SearchByRout')} >
-                <View className='px-5 py-5 bg-white'>
-                  <Image source={require('../../assets/images/rout1.jpg')} className='w-full h-full' />
-                  <Text className='text-1xl font-semibold text-center bg-white'>Search By rout</Text>
-                </View>
-              </TouchableOpacity>
-              <TouchableOpacity className='border border-gray-200 rounded-3xl h-40 w-44 overflow-hidden' onPress={() => router.push('../GoogleMap')} >
-                <View className='px-5 py-5 bg-white'>
-                  <Image source={require('../../assets/images/stop11.jpg')} className='w-full h-full' />
-                  <Text className='text-1xl font-semibold text-center bg-white'>Nearby by Bus Stops</Text>
-                </View>
-              </TouchableOpacity>
-              <TouchableOpacity className='border border-gray-200 rounded-3xl h-40 w-44 overflow-hidden' onPress={() => router.push('../Sos')}>
-                <View className='px-5 py-5 bg-white'>
-                  <Image source={require('../../assets/images/support1.jpg')} className='w-full h-full' />
-                  <Text className='text-1xl font-semibold text-center bg-white'>SOS</Text>
-                </View>
-              </TouchableOpacity>
-              <TouchableOpacity className='border border-gray-200 rounded-3xl h-40 w-44 overflow-hidden' onPress={() => router.push('../emergency')}>
-                <View className='px-5 py-5 bg-white'>
-                  <Image source={require('../../assets/images/emergence1.png')} className='w-full h-full' />
-                  <Text className='text-1xl font-semibold text-center bg-white'>emergency</Text>
-                </View>
-              </TouchableOpacity>
-              <TouchableOpacity className='border border-gray-200 rounded-3xl h-40 w-44 overflow-hidden'>
-                <View className='px-5 py-5 bg-white'>
-                  <Image source={require('../../assets/images/support.png')} className='w-full h-full' />
-                  <Text className='text-1xl font-semibold text-center bg-white'>contact us</Text>
-                </View>
-              </TouchableOpacity>
+      <ScrollView className='w-full px-10 h-screen bg-white'>
+        <WelcomeSection />
+        <Text className="text-2xl font-semibold my-3">Features</Text>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }} className=''>
+          <TouchableOpacity className='border border-gray-200 rounded-3xl h-40 w-44 overflow-hidden mb-4' onPress={() => router.push('../SearchByNumber')} >
+            <View className='flex-1 items-center justify-center bg-white'>
+              <Image source={require('../../assets/images/license-plate.png')} className='w-20 h-20' />
+              <Text className='text-1xl font-semibold text-center bg-white'>Search By Number</Text>
             </View>
-          {/* </BlurView> */}
-        </ScrollView >
+          </TouchableOpacity>
+          <TouchableOpacity className='border border-gray-200 rounded-3xl h-40 w-44 overflow-hidden mb-4' onPress={() => router.push('../SearchByRout')} >
+            <View className='flex-1 items-center justify-center bg-white'>
+              <Image source={require('../../assets/images/route.png')} className='w-20 h-20' />
+              <Text className='text-1xl font-semibold text-center bg-white'>Search By route</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity className='border border-gray-200 rounded-3xl h-40 w-44 overflow-hidden mb-4' onPress={() => router.push('../GoogleMap')} >
+            <View className='flex-1 items-center justify-center bg-white'>
+              <Image source={require('../../assets/images/nearby.png')} className='w-20 h-20' />
+              <Text className='text-1xl font-semibold text-center bg-white'>Nearby by Bus Stops</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity className='border border-gray-200 rounded-3xl h-40 w-44 overflow-hidden mb-4' onPress={() => router.push('../Sos')}>
+            <View className='flex-1 items-center justify-center bg-white'>
+              <Image source={require('../../assets/images/sos.png')} className='w-20 h-20' />
+              <Text className='text-1xl font-semibold text-center bg-white'>SOS</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity className='border border-gray-200 rounded-3xl h-40 w-44 overflow-hidden mb-4' onPress={() => router.push('../emergency')}>
+            <View className='flex-1 items-center justify-center bg-white'>
+              <Image source={require('../../assets/images/ambulance.png')} className='w-20 h-20' />
+              <Text className='text-1xl font-semibold text-center bg-white'>emergency</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity className='border border-gray-200 rounded-3xl h-40 w-44 overflow-hidden mb-4'>
+            <View className='flex-1 items-center justify-center bg-white'>
+              <Image source={require('../../assets/images/help-desk.png')} className='w-20 h-20' />
+              <Text className='text-1xl font-semibold text-center bg-white'>contact us</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+        {/* </BlurView> */}
+      </ScrollView >
       {/* // </LinearGradient> */}
-
       {/* Sidebar */}
       <Animated.View
         style={{

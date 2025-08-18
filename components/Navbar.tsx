@@ -1,19 +1,20 @@
+import { useAuth } from '@/app/context/AuthContext';
 import { useRouter } from 'expo-router';
 import { Menu, X } from 'lucide-react-native';
 import React, { useRef, useState } from 'react';
 import { Animated, Dimensions, Image, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-
 const { width } = Dimensions.get('window');
 
 const BottomNavBar = () => {
+    const { role, setRole } = useAuth()
     const insets = useSafeAreaInsets();
     const router = useRouter();
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
     const [modalMessage, setModalMessage] = useState('');
-
+    console.log(role, 'from navbar')
     const translateX = useRef(new Animated.Value(-width)).current;
 
     const toggleSidebar = () => {
@@ -30,9 +31,7 @@ const BottomNavBar = () => {
         setModalVisible(true);
     };
 
-
     return (
-        // <SafeAreaView style={{ flex: 1, backgroundColor: '#1d1a23', }}>
         <View className='z-10 py-2 bg-gray-50'>
             {/* Navbar */}
             <View className="flex-row items-center justify-between px-4 py-2">
@@ -41,7 +40,13 @@ const BottomNavBar = () => {
                     <Menu color="black" size={24} />
                 </TouchableOpacity>
                 {/* logo or heading */}
-                <Text className="text-black text-3xl font-semibold">YatraQ Tracker</Text>
+                <View className='flex-1 flex-row justify-center items-center'>
+                    <Text className="text-blue-500 text-3xl font-semibold">Yatra</Text>
+                    <Image
+                        source={require('../assets/images/btslogo.png')}
+                        className="w-10 h-10"
+                    />
+                </View>
                 {/* profile pic */}
                 <TouchableOpacity className="p-1" onPress={() => router.push('../Profile')}>
                     <Image
@@ -81,16 +86,20 @@ const BottomNavBar = () => {
                             <X color="black" size={28} />
                         </TouchableOpacity>
 
+                        {role ? 'passenger' : ''}
                         <View>
-                            <Text className="text-black text-2xl font-bold">Menu</Text>
+                            <Text className="text-black text-4xl font-bold">Menu</Text>
                             <Text
                                 className="text-black text-md font-semibold mt-10"
                                 onPress={() => {
-                                    router.push('../HomeScreen');
+                                    router.push(`../${role === 'passenger' ? 'HomeScreen' : 'DriverHomeScreen'}`);
                                     toggleSidebar();
                                 }}
                             >
-                                Home
+                                <View className='flex-1 flex-row gap-2'>
+                                    <Image source={require('../assets/images/house.png')} className='w-5 h-5' />
+                                    <Text>Home</Text>
+                                </View>
                             </Text>
                             <Text
                                 className="text-black text-md font-semibold mt-10"
@@ -99,35 +108,50 @@ const BottomNavBar = () => {
                                     toggleSidebar();
                                 }}
                             >
-                                My Profile
+                                <View className='flex-1 flex-row gap-2'>
+                                    <Image source={require('../assets/images/profile.png')} className='w-5 h-5' />
+                                    <Text>My Profile</Text>
+                                </View>
                             </Text>
+                            {role === 'passenger' && (
+                                <View>
+                                    <Text
+                                        className="text-black text-md font-semibold mt-10"
+                                        onPress={() => {
+                                            router.push('../Trips');
+                                            toggleSidebar();
+                                        }}
+                                    >
+                                        <View className='flex-1 flex-row gap-2'>
+                                            <Image source={require('../assets/images/map.png')} className='w-5 h-5' />
+                                            <Text>My Trips</Text>
+                                        </View>
+                                    </Text>
+                                    <Text
+                                        className="text-black text-md font-semibold mt-10"
+                                        onPress={() => {
+                                            router.push('../MyFvt');
+                                            toggleSidebar();
+                                        }}
+                                    >
+                                        <View className='flex-1 flex-row gap-2'>
+                                            <Image source={require('../assets/images/favourite.png')} className='w-5 h-5' />
+                                            <Text>My fvt</Text>
+                                        </View>
+                                    </Text>
+                                </View>
+                            )}
                             <Text
                                 className="text-black text-md font-semibold mt-10"
                                 onPress={() => {
-                                    router.push('../Trips');
-                                    toggleSidebar();
-                                }}
-                            >
-                                My Trips
-                            </Text>
-                            <Text
-                                className="text-black text-md font-semibold mt-10"
-                                onPress={() => {
-                                    router.push('../MyFvt');
-                                    toggleSidebar();
-                                }}
-                            >
-                                My fvt
-                            </Text>
-                            <Text
-                                className="text-black text-md font-semibold mt-10"
-                                onPress={() => {
-                                    // showPopup("Hey! This is Notification Center");
                                     router.push('../Notification')
                                     toggleSidebar();
                                 }}
                             >
-                                Notification
+                                <View className='flex-1 flex-row gap-2'>
+                                    <Image source={require('../assets/images/bell.png')} className='w-5 h-5' />
+                                    <Text>Notification</Text>
+                                </View>
                             </Text>
                             <Text
                                 className="text-black text-md font-semibold mt-10"
@@ -136,16 +160,34 @@ const BottomNavBar = () => {
                                     toggleSidebar();
                                 }}
                             >
-                                Feedback
+                                <View className='flex-1 flex-row gap-2'>
+                                    <Image source={require('../assets/images/chat.png')} className='w-5 h-5' />
+                                    <Text>Feedback</Text>
+                                </View>
                             </Text>
                             <Text
                                 className="text-black text-md font-semibold mt-10"
                                 onPress={() => {
-                                    showPopup("You’ve been logged out (not really 😛)");
+                                    router.push('../TermsConditions');
                                     toggleSidebar();
                                 }}
                             >
-                                Log Out
+                                <View className='flex-1 flex-row gap-2'>
+                                    <Image source={require('../assets/images/conditions.png')} className='w-5 h-5' />
+                                    <Text>Terms & Conditions</Text>
+                                </View>
+                            </Text>
+                            <Text
+                                className="text-black text-md font-semibold mt-10"
+                                onPress={() => {
+                                    // showPopup("You've been logged out (but it's not really 😛)");
+                                    // toggleSidebar();
+                                }}
+                            >
+                                <View className='flex-1 flex-row gap-2'>
+                                    <Image source={require('../assets/images/logout.png')} className='w-5 h-5' />
+                                    <Text>Log Out</Text>
+                                </View>
                             </Text>
                         </View>
                     </View>

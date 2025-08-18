@@ -1,13 +1,11 @@
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { useNavigation } from "@react-navigation/native";
-import { BlurView } from 'expo-blur';
 import * as ImagePicker from "expo-image-picker";
-import { LinearGradient } from 'expo-linear-gradient';
-import React, { useState } from "react";
-import { Alert, Image, Modal, Platform, Text, TextInput, TouchableOpacity, View } from "react-native";
+import * as Location from "expo-location";
+import React, { useEffect, useState } from "react";
+import { Alert, Image, Modal, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 const ProfileScreen = () => {
-  const navigation = useNavigation();
+  const [location, setLocation] = useState<string>("Fetching location...");
   const [modalVisible, setModalVisible] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [form, setForm] = useState({
@@ -15,20 +13,40 @@ const ProfileScreen = () => {
     email: "chitti@camelq.in",
     dob: "1999-09-18",
     gender: "Male",
+    phone: "+91 9553026345",
+    address: "H.No: 1-95/A, Kunchavelli, Telangana, India",
+    lastLogin: "13/08/25 09:02",
     avatar: "https://i.pravatar.cc/150?img=12",
   });
 
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        setLocation("Permission Denied");
+        return;
+      }
+
+      let loc = await Location.getCurrentPositionAsync({});
+      let reverseGeocode = await Location.reverseGeocodeAsync({
+        latitude: loc.coords.latitude,
+        longitude: loc.coords.longitude,
+      });
+
+      if (reverseGeocode.length > 0) {
+        const { name, street, city, region, postalCode, country } = reverseGeocode[0];
+        setLocation(`${name || ""} ${street || ""}, ${city || ""}, ${region || ""}, ${postalCode || ""}, ${country || ""}`);
+      }
+    })();
+  }, []);
+
   const handleSubmit = async () => {
     const formData = new FormData();
-
-    // 👇 Add file
     formData.append("profile_url", {
       uri: form.avatar,
       name: "profile.jpg",
-      type: "image/jpeg", // or image/png
+      type: "image/jpeg",
     } as any);
-
-    // 👇 Add form fields
     formData.append("fullname", form.name);
     formData.append("email", form.email);
     formData.append("DateofBirth", form.dob);
@@ -41,13 +59,10 @@ const ProfileScreen = () => {
         },
         body: formData,
       });
-      console.log(res.formData.name)
       if (!res.ok) throw new Error("");
       Alert.alert("✅ Updated Successfully!");
       setModalVisible(false);
-      //  navigation.navigate("OTP"); // ✅ Use your navigator's registered screen name
     } catch (err: any) {
-      console.log(err)
       Alert.alert("❌ Failed", err.message);
     }
   };
@@ -55,13 +70,11 @@ const ProfileScreen = () => {
   const pickImage = async () => {
     const { granted } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!granted) return Alert.alert("Permission Denied!");
-
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       quality: 1,
     });
-
     if (!result.canceled) {
       setForm({ ...form, avatar: result.assets[0].uri });
     }
@@ -76,115 +89,119 @@ const ProfileScreen = () => {
   };
 
   return (
-    <>
-      <LinearGradient
-        colors={['#FFF9C4', '#B3E5FC']} // light yellow to light blue
-        start={{ x: 0.5, y: 0 }} // top center
-        end={{ x: 0.5, y: 1 }}   // bottom center
-        className="flex-1 justify-center items-center py-10 px-5"
+    <ScrollView className="flex-1 bg-gray-100">
+      {/* Header Card */}
+      <View className="bg-white rounded-xl mx-4 mt-5 p-4 shadow-sm">
+        <View className="flex-row items-center">
+          <TouchableOpacity onPress={pickImage}>
+            <Image
+              source={{ uri: form.avatar }}
+              className="w-16 h-16 rounded-full border-2 border-gray-300"
+            />
+          </TouchableOpacity>
+          <View className="ml-4">
+            <Text className="text-lg font-semibold">{form.name}</Text>
+            <Text className="text-sm text-gray-500">Last Login: {form.lastLogin}</Text>
+          </View>
+        </View>
+      </View>
+
+      {/* Details Card */}
+      <View className="bg-white rounded-xl mx-4 mt-5 p-4 shadow-sm">
+        <Text className="text-gray-700 mb-2">📱 Phone Number</Text>
+        <Text className="font-medium">{form.phone}</Text>
+
+        <View className="border-b border-gray-200 my-3" />
+
+        <Text className="text-gray-700 mb-2">📧 Email</Text>
+        <Text className="font-medium">{form.email}</Text>
+
+        <View className="border-b border-gray-200 my-3" />
+
+        <Text className="text-gray-700 mb-2">🏠 Address</Text>
+        <Text className="font-medium">{location}</Text>
+
+        <View className="border-b border-gray-200 my-3" />
+
+        <Text className="text-gray-700 mb-2">📅 DOB</Text>
+        <Text className="font-medium">{form.dob}</Text>
+
+        <View className="border-b border-gray-200 my-3" />
+
+        <Text className="text-gray-700 mb-2">⚧ Gender</Text>
+        <Text className="font-medium">{form.gender}</Text>
+      </View>
+
+      {/* Update Button */}
+      <TouchableOpacity
+        className="my-6 mx-4 bg-blue-600 py-3 rounded-xl shadow-md"
+        onPress={() => setModalVisible(true)}
       >
-        <BlurView intensity={50} tint="light" className='px-6 pt-3 flex-1 flex-col justify-start border border-gray-300 rounded-2xl overflow-hidden w-[90%]'>
-          <View className="flex flex-row justify-evenly">
-            <View>
-              <TouchableOpacity onPress={pickImage}>
-                <Image
-                  source={{ uri: form.avatar }}
-                  className="w-32 h-32 rounded-full border-4 border-blue-500"
-                />
-                <Text className="text-blue-500 text-sm text-center mt-1">Change Avatar</Text>
+        <Text className="text-white text-center font-bold text-lg">Update Profile</Text>
+      </TouchableOpacity>
+
+      {/* Modal */}
+      <Modal visible={modalVisible} animationType="slide" transparent onRequestClose={() => setModalVisible(false)}>
+        <View className="flex-1 justify-center items-center bg-black/50">
+          <View className="bg-white p-6 rounded-xl w-11/12">
+            <Text className="text-xl font-bold text-blue-700 mb-4">Update Profile</Text>
+
+            <TextInput
+              className="border border-blue-400 rounded-lg p-2 mb-3"
+              placeholder="Name"
+              value={form.name}
+              onChangeText={(val) => setForm({ ...form, name: val })}
+            />
+            <TextInput
+              className="border border-blue-400 rounded-lg p-2 mb-3"
+              placeholder="Email"
+              value={form.email}
+              onChangeText={(val) => setForm({ ...form, email: val })}
+              keyboardType="email-address"
+            />
+
+            {/* DOB Date Picker */}
+            <TouchableOpacity
+              className="border border-blue-400 rounded-lg p-3 mb-3"
+              onPress={() => setShowDatePicker(true)}
+            >
+              <Text className="text-blue-600">{form.dob || "Select DOB"}</Text>
+            </TouchableOpacity>
+
+            {showDatePicker && (
+              <DateTimePicker
+                mode="date"
+                value={new Date(form.dob)}
+                display={Platform.OS === "ios" ? "spinner" : "default"}
+                onChange={onDateChange}
+              />
+            )}
+
+            <TextInput
+              className="border border-blue-400 rounded-lg p-2 mb-5"
+              placeholder="Gender"
+              value={form.gender}
+              onChangeText={(val) => setForm({ ...form, gender: val })}
+            />
+
+            <View className="flex-row justify-between">
+              <TouchableOpacity
+                className="bg-blue-500 px-4 py-2 rounded-lg"
+                onPress={handleSubmit}
+              >
+                <Text className="text-white font-semibold">Save</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                className="bg-gray-300 px-4 py-2 rounded-lg"
+                onPress={() => setModalVisible(false)}
+              >
+                <Text className="text-gray-700 font-semibold">Cancel</Text>
               </TouchableOpacity>
             </View>
-            <View>
-              <Text className="text-2xl font-bold text-blue-900 mt-4">{form.name}</Text>
-              <Text className="text-base text-blue-800 mt-1">{form.email}</Text>
-            </View>
           </View>
-          <View className="mt-3">
-            <View className="bg-blue-200 w-full rounded-xl p-4">
-              <Text className="text-blue-900 font-semibold">
-                📅 DOB: <Text className="font-normal">{form.dob}</Text>
-              </Text>
-              <Text className="text-blue-900 font-semibold mt-2">
-                ⚧ Gender: <Text className="font-normal">{form.gender}</Text>
-              </Text>
-            </View>
-
-            <TouchableOpacity
-              className="my-8 bg-blue-600 px-6 py-3 rounded-xl shadow-md"
-              onPress={() => setModalVisible(true)}
-            >
-              <Text className="text-white text-center font-bold text-lg">Update</Text>
-            </TouchableOpacity>
-          </View>
-          {/* Modal */}
-          <Modal
-            visible={modalVisible}
-            animationType="slide"
-            transparent
-            onRequestClose={() => setModalVisible(false)}
-          >
-            <View className="flex-1 justify-center items-center bg-black/50">
-              <View className="bg-white p-6 rounded-xl w-11/12">
-                <Text className="text-xl font-bold text-blue-700 mb-4">Update Profile</Text>
-
-                <TextInput
-                  className="border border-blue-400 rounded-lg p-2 mb-3"
-                  placeholder="Name"
-                  value={form.name}
-                  onChangeText={(val) => setForm({ ...form, name: val })}
-                />
-                <TextInput
-                  className="border border-blue-400 rounded-lg p-2 mb-3"
-                  placeholder="Email"
-                  value={form.email}
-                  onChangeText={(val) => setForm({ ...form, email: val })}
-                  keyboardType="email-address"
-                />
-
-                {/* DOB Date Picker */}
-                <TouchableOpacity
-                  className="border border-blue-400 rounded-lg p-3 mb-3"
-                  onPress={() => setShowDatePicker(true)}
-                >
-                  <Text className="text-blue-600">{form.dob || "Select DOB"}</Text>
-                </TouchableOpacity>
-
-                {showDatePicker && (
-                  <DateTimePicker
-                    mode="date"
-                    value={new Date(form.dob)}
-                    display={Platform.OS === "ios" ? "spinner" : "default"}
-                    onChange={onDateChange}
-                  />
-                )}
-
-                <TextInput
-                  className="border border-blue-400 rounded-lg p-2 mb-5"
-                  placeholder="Gender"
-                  value={form.gender}
-                  onChangeText={(val) => setForm({ ...form, gender: val })}
-                />
-
-                <View className="flex-row justify-between">
-                  <TouchableOpacity
-                    className="bg-blue-500 px-4 py-2 rounded-lg"
-                    onPress={handleSubmit}
-                  >
-                    <Text className="text-white font-semibold">Save</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    className="bg-gray-300 px-4 py-2 rounded-lg"
-                    onPress={() => setModalVisible(false)}
-                  >
-                    <Text className="text-gray-700 font-semibold">Cancel</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </View>
-          </Modal>
-        </BlurView>
-      </LinearGradient>
-    </>
+        </View>
+      </Modal>
+    </ScrollView>
   );
 };
 

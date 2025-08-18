@@ -1,6 +1,4 @@
-import { BlurView } from 'expo-blur';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Bus, Search } from 'lucide-react-native';
+import { AlertTriangle, ArrowRight, BarChart2, Bus, Calendar, Clock, MapPin, Phone, Search, StopCircle, Users } from 'lucide-react-native';
 import { useState } from 'react';
 import { ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
@@ -39,7 +37,7 @@ const index = () => {
         conductor: 'Laxman',
         busType: 'Palle Velugu',
         routeName: 'Hanamkonda to Warangal',
-        busStatus: 'Not Yet Started',
+        busStatus: 'on-time',
       },
       moreInfo: {
         currentLocation: 'Hanamkonda Bus Stand',
@@ -58,7 +56,7 @@ const index = () => {
         driverContact: 'xxxxxx1234',
         busFrequency: 'Every 20 mins',
         passengerCountStatus: 'Moderate',
-        alerts: ['Traffic at Kazipet', 'Route diversion near Fathe Sagar'],
+        alerts: ['Traffic at Kazipet', 'Route Viewersion near Fathe Sagar'],
         isFavorite: false,
       },
     },
@@ -69,7 +67,7 @@ const index = () => {
         conductor: 'Kiran',
         busType: 'Express',
         routeName: 'Warangal to Hyderabad',
-        busStatus: 'Running',
+        busStatus: 'arriving',
       },
       moreInfo: {
         currentLocation: 'Jangaon',
@@ -101,7 +99,7 @@ const index = () => {
         conductor: 'Praveen',
         busType: 'Metro Deluxe',
         routeName: 'Khammam to Bhadrachalam',
-        busStatus: 'Delayed',
+        busStatus: 'delayed',
       },
       moreInfo: {
         currentLocation: 'Wyra',
@@ -129,102 +127,164 @@ const index = () => {
 
   const [Number, setNumber] = useState('');
   const [busData, setBusData] = useState<Bus[]>([]);
-  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+  const [expanded, setExpanded] = useState(false);
 
   const handleSubmit = () => {
-    console.log("number :", Number);
+    // console.log("number :", Number);
     // Plug this into your API or nav flow
     const filteredData = res.filter((bus) =>
       bus.busNumber.toLowerCase().includes(Number.toLowerCase())
     );
     setBusData(filteredData);
   };
-  const toggleExpand = (index: number) => {
-    setExpanded((prev) => ({ ...prev, [index]: !prev[index] }));
-  };
+  // const toggleExpand = (index: number) => {
+  //   setExpanded((prev) => ({ ...prev, [index]: !prev[index] }));
+  // };
   return (
-      <>
-        <LinearGradient
-                colors={['#FFF9C4', '#B3E5FC']} // light yellow to light blue
-                start={{ x: 0.5, y: 0 }} // top center
-                end={{ x: 0.5, y: 1 }}   // bottom center
-                // className="flex-1 justify-center items-center py-5 px-3"
-                className="flex-1 items-center p-5 bg-[#1d1a23]"
-                >
-         <BlurView intensity={50} tint="light" className="w-full px-5 py-4 gap-5 h-full border border-gray-300 rounded-2xl overflow-hidden">
-            <Text className="font-bold text-center text-2xl text-[#1E40AF]">Enter Bus Number</Text>
-
-            {/* From Input */}
-            <View className="flex-row items-center border-b-2 border-gray-500 px-4 py-3 space-x-3">
-              <Bus size={20} color="#1E40AF" />
-              <TextInput
-                className="flex-1 text-[#1E40AF]"
-                placeholder=" eg : TG10932"
-                placeholderTextColor="#1E40AF"
-                value={Number}
-                onChangeText={setNumber}
-              />
-            </View>
-
-            {/* Search Button */}
-            <TouchableOpacity
-              onPress={handleSubmit}
-              className="bg-[#1E40AF] py-3 rounded-xl flex-row justify-center items-center space-x-2"
-            >
-              <Search size={18} color="#fff" />
-              <Text className="px-2 font-bold text-base text-white">Find my Bus</Text>
-            </TouchableOpacity>
-
-            {/* result component */}
-            <View className='bg-[#040c2f] border-none rounded-lg w-full my-2'>
-              <ScrollView className="p-4">
-                {busData.length === 0 ? (
-                  <Text className="text-center text-gray-500">No buses found.</Text>
-                ) : (
-                  busData.map((bus, index) => (
-                    <View key={index} className="bg-white rounded-2xl shadow-md p-4 mb-4">
-                      <Text className="text-xl font-bold text-blue-700">🚌 {bus.busNumber}</Text>
-                      <Text className="text-base">Route: {bus.basicInfo.routeName}</Text>
-                      <Text className="text-sm text-gray-600">Status: {bus.basicInfo.busStatus}</Text>
-                      <Text className="text-sm text-gray-600">Type: {bus.basicInfo.busType}</Text>
-                      <Text className="text-sm text-gray-600">Driver: {bus.basicInfo.driverName}</Text>
-
-                      <TouchableOpacity
-                        className="mt-2 bg-blue-500 rounded-xl px-4 py-1"
-                        onPress={() => toggleExpand(index)}
-                      >
-                        <Text className="text-white text-center">
-                          {expanded[index] ? 'Hide Details' : 'See More'}
-                        </Text>
-                      </TouchableOpacity>
-
-                      {expanded[index] && (
-                        <View className="mt-3 space-y-1">
-                          <Text>📍 Current: {bus.moreInfo.currentLocation}</Text>
-                          <Text>➡️ Next Stop: {bus.moreInfo.nextStop}</Text>
-                          <Text>🕒 ETA: {bus.moreInfo.etaToNextStop}</Text>
-                          <Text>⏰ Time: {bus.moreInfo.startTime} - {bus.moreInfo.endTime}</Text>
-                          <Text>🛑 Stops:</Text>
-                          {bus.moreInfo.totalStops.map((stop, i) => (
-                            <Text key={i} className="ml-2">• {stop}</Text>
-                          ))}
-                          <Text>📞 Driver Contact: {bus.moreInfo.driverContact}</Text>
-                          <Text>📈 Frequency: {bus.moreInfo.busFrequency}</Text>
-                          <Text>👥 Crowd: {bus.moreInfo.passengerCountStatus}</Text>
-                          <Text>🚨 Alerts:</Text>
-                          {bus.moreInfo.alerts.map((alert, i) => (
-                            <Text key={i} className="ml-2 text-red-500">• {alert}</Text>
-                          ))}
+    <View className="flex-1 justify-center items-center py-5 px-3 bg-white">
+      <View className="w-full px-5 py-4 gap-5 h-full overflow-hidden">
+        <Text className="font-bold text-2xl text-black">Enter Bus Number</Text>
+        {/* From Input */}
+        <View className="flex-row items-center border-b-2 border-gray-300 px-4 py-3 space-x-3">
+          <Bus size={20} color="black" />
+          <TextInput
+            className="flex-1 text-black]"
+            placeholder=" eg : TG10932"
+            placeholderTextColor="gray"
+            value={Number}
+            onChangeText={setNumber}
+          />
+          <Search size={20} color="black" onPress={handleSubmit} />
+        </View>
+        {/* result component */}
+        <View className='border-none rounded-lg w-full h-[70%] my-10'>
+          <ScrollView className="p-1">
+            {busData.length === 0 ? (
+              <Text className="text-center text-3xl font-extrabold text-gray-400">No buses found.</Text>
+            ) : (
+              busData.map((bus, index) => (
+                <View className="bg-white rounded-xl shadow-md mb-3">
+                  {/* Main Card */}
+                  <TouchableOpacity
+                    className="flex-row items-center justify-between w-full p-4 active:opacity-80"
+                    onPress={() => setExpanded(!expanded)}
+                    key={index}
+                  >
+                    {/* Left Section */}
+                    <View className="flex-row items-center space-x-3">
+                      <View className="w-12 h-12 bg-gray-100 rounded-xl items-center justify-center mx-2">
+                        <Bus size={24} color="#22c55e" strokeWidth={1.5} />
+                      </View>
+                      <View>
+                        <Text className="font-semibold text-gray-900">{bus.busNumber}</Text>
+                        <View className="flex-row items-center space-x-1 mt-1">
+                          <MapPin size={14} color="#6b7280" strokeWidth={1.5} />
+                          <Text className="text-gray-500 text-sm">
+                            {bus.basicInfo.routeName}
+                          </Text>
                         </View>
-                      )}
+                      </View>
                     </View>
-                  )))}
-              </ScrollView>
-            </View>
-          </BlurView>
-        </LinearGradient>
-      </>
-    // </SafeAreaView>
+
+                    {/* Right Section */}
+                    <View className="items-end">
+                      <View className="flex-row items-center space-x-1">
+                        <Clock size={14} color="#6b7280" strokeWidth={1.5} />
+                        <Text className="font-semibold text-gray-900 text-sm">
+                          {bus.moreInfo.etaToNextStop}
+                        </Text>
+                      </View>
+                      <Text className="text-green-500 text-xs font-medium">
+                        {bus.basicInfo.busStatus}
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                  {/* Expanded Section */}
+                  {expanded && (
+                    <View className="px-4 pb-4 py-2 gap-2">
+                      {/* Current Location */}
+                      <View className="flex-row items-center gap-2">
+                        <MapPin size={18} color="#22c55e" />
+                        <Text className="text-gray-700">Current: <Text className="font-semibold">{bus.moreInfo.currentLocation}</Text></Text>
+                      </View>
+
+                      {/* Next Stop */}
+                      <View className="flex-row items-center gap-2">
+                        <ArrowRight size={18} color="#22c55e" />
+                        <Text className="text-gray-700">Next Stop: <Text className="font-semibold">{bus.moreInfo.nextStop}</Text></Text>
+                      </View>
+
+                      {/* ETA */}
+                      <View className="flex-row items-center gap-2">
+                        <Clock size={18} color="#22c55e" />
+                        <Text className="text-gray-700">ETA: <Text className="font-semibold">{bus.moreInfo.etaToNextStop}</Text></Text>
+                      </View>
+
+                      {/* Time */}
+                      <View className="flex-row items-center gap-2">
+                        <Calendar size={18} color="#22c55e" />
+                        <Text className="text-gray-700">
+                          Time: <Text className="font-semibold">{bus.moreInfo.startTime} - {bus.moreInfo.endTime}</Text>
+                        </Text>
+                      </View>
+
+                      {/* Stops */}
+                      <View>
+                        <View className="flex-row items-center gap-2">
+                          <StopCircle size={18} color="#22c55e" />
+                          <Text className="text-gray-700 font-medium">Stops:</Text>
+                        </View>
+                        {bus.moreInfo.totalStops.map((stop, i) => (
+                          <Text key={i} className="ml-6 text-gray-600">• {stop}</Text>
+                        ))}
+                      </View>
+
+                      {/* Driver Contact */}
+                      <View className="flex-row items-center gap-2">
+                        <Phone size={18} color="#22c55e" />
+                        <Text className="text-gray-700">Driver Contact: <Text className="font-semibold">{bus.moreInfo.driverContact}</Text></Text>
+                      </View>
+
+                      {/* Frequency */}
+                      <View className="flex-row items-center gap-2">
+                        <BarChart2 size={18} color="#22c55e" />
+                        <Text className="text-gray-700">Frequency: <Text className="font-semibold">{bus.moreInfo.busFrequency}</Text></Text>
+                      </View>
+
+                      {/* Crowd */}
+                      <View className="flex-row items-center gap-2">
+                        <Users size={18} color="#22c55e" />
+                        <Text className="text-gray-700">Crowd: <Text className="font-semibold">{bus.moreInfo.passengerCountStatus}</Text></Text>
+                      </View>
+
+                      {/* Alerts */}
+                      <View>
+                        <View className="flex-row items-center gap-2">
+                          <AlertTriangle size={18} color="red" />
+                          <Text className="text-red-600 font-medium">Alerts:</Text>
+                        </View>
+                        {bus.moreInfo.alerts.map((alert, i) => (
+                          <Text key={i} className="ml-6 text-red-500">• {alert}</Text>
+                        ))}
+                      </View>
+                    </View>
+                  )}
+
+                  {/* See More Button */}
+                  <TouchableOpacity
+                    onPress={() => setExpanded(!expanded)}
+                    className="border-t border-gray-200 py-2 mx-3"
+                  >
+                    <Text className="text-center text-blue-600 font-medium">
+                      {expanded ? "Hide Details" : "See More"}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              )))}
+          </ScrollView>
+        </View>
+      </View>
+    </View >
   )
 }
 

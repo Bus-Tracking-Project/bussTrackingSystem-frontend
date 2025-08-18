@@ -27,7 +27,7 @@ const Trips = () => {
                 'Fathe Sagar',
                 'Warangal Bus Stand',
             ],
-            currentStop: 'Hanamkonda Bus Stand',
+            currentStop: 'Hanamkonda Bus Stand (current stop)',
             driverContact: 'xxxxxx1234',
             busFrequency: 'Every 20 mins',
             passengerCountStatus: 'Moderate',

@@ -1,5 +1,3 @@
-import { BlurView } from 'expo-blur';
-import { LinearGradient } from 'expo-linear-gradient';
 import * as Location from 'expo-location';
 import React, { useEffect, useState } from 'react';
 import { Alert, Text, TextInput, TouchableOpacity, View } from 'react-native';
@@ -41,48 +39,52 @@ const MedicalAssistanceForm = () => {
   };
 
   return (
-    
-    <LinearGradient
-      colors={['#FFF9C4', '#B3E5FC']} // light yellow to light blue
-      start={{ x: 0.5, y: 0 }} // top center
-      end={{ x: 0.5, y: 1 }}   // bottom center
-      className="flex-1 justify-center items-center py-10"
-    >
-      <BlurView intensity={50} tint="light" className='px-6 w-[85%] flex-1 border border-gray-300 rounded-2xl overflow-hidden'>
-    <View className="flex-1 px-6 py-8">
-      <Text className="text-2xl font-bold text-gray-800 mt-10 mb-6">Medical Assistance</Text>
 
-      <TextInput
-        placeholder="Your Name"
-        value={name}
-        onChangeText={setName}
-        className="border border-gray-300 rounded-md p-3 mb-4"
-      />
+    // <LinearGradient
+    //   colors={['#FFF9C4', '#B3E5FC']} // light yellow to light blue
+    //   start={{ x: 0.5, y: 0 }} // top center
+    //   end={{ x: 0.5, y: 1 }}   // bottom center
+    //   className="flex-1 justify-center items-center py-10"
+    // >
+    //   <BlurView intensity={50} tint="light" className='px-6 w-[85%] flex-1 border border-gray-300 rounded-2xl overflow-hidden'>
+    <View className="flex-1 justify-center items-center py-10 px-5">
+      <View className='px-6 flex-1 flex-col border border-gray-300 rounded-2xl overflow-hidden'>
+        <View className="flex-1 px-6 py-8">
+          <Text className="text-2xl font-bold text-gray-800 mt-10 mb-6">Medical Assistance</Text>
 
-      <TextInput
-        placeholder="Medical Condition / Issue"
-        value={condition}
-        onChangeText={setCondition}
-        multiline
-        numberOfLines={3}
-        className="border border-gray-300 rounded-md p-3 mb-4 h-20"
-      />
+          <TextInput
+            placeholder="Your Name"
+            value={name}
+            onChangeText={setName}
+            className="border border-gray-300 rounded-md p-3 mb-4"
+          />
 
-      <TouchableOpacity
-        className="bg-green-600 rounded-md py-4"
-        onPress={handleSubmit}
-      >
-        <Text className="text-white text-center font-semibold">Request Help</Text>
-      </TouchableOpacity>
+          <TextInput
+            placeholder="Medical Condition / Issue"
+            value={condition}
+            onChangeText={setCondition}
+            multiline
+            numberOfLines={3}
+            className="border border-gray-300 rounded-md p-3 mb-4 h-20"
+          />
 
-      {location && (
-        <Text className="text-xs text-gray-500 mt-4">
-          📍 Location: {location}
-        </Text>
-      )}
+          <TouchableOpacity
+            className="bg-green-600 rounded-md py-4"
+            onPress={handleSubmit}
+          >
+            <Text className="text-white text-center font-semibold">Request Help</Text>
+          </TouchableOpacity>
+
+          {location && (
+            <Text className="text-xs text-gray-500 mt-4">
+              📍 Location: {location}
+            </Text>
+          )}
+        </View>
+      </View>
     </View>
-    </BlurView>
-    </LinearGradient>
+    // </BlurView>
+    // </LinearGradient>
   );
 };
 
