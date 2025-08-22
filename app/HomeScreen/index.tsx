@@ -1,15 +1,24 @@
 import WelcomeSection from '@/components/WelcomeSection'
 import { useRouter } from 'expo-router'
 import { X } from 'lucide-react-native'
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Animated, Dimensions, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native'
+import { useToast } from 'react-native-toast-notifications'
 
 const { width } = Dimensions.get('window');
 
 const Home = () => {
+  const toast = useToast();
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const translateX = useRef(new Animated.Value(-width)).current;
+
+  useEffect(() => {
+    toast.show(`Welcome passenger Happy journey !`, {
+      type: 'success',
+      duration: 3000,
+    });
+  }, []);
 
   const toggleSidebar = () => {
     const nextState = !sidebarOpen;
@@ -57,7 +66,7 @@ const Home = () => {
               <Text className='text-1xl font-semibold text-center bg-white'>emergency</Text>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity className='border border-gray-200 rounded-3xl h-40 w-44 overflow-hidden mb-4'>
+          <TouchableOpacity className='border border-gray-200 rounded-3xl h-40 w-44 overflow-hidden mb-4' onPress={()=> router.push('../ContactUs')}>
             <View className='flex-1 items-center justify-center bg-white'>
               <Image source={require('../../assets/images/help-desk.png')} className='w-20 h-20' />
               <Text className='text-1xl font-semibold text-center bg-white'>contact us</Text>

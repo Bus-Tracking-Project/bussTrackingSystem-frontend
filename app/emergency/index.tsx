@@ -1,8 +1,7 @@
-import { FontAwesome5, Ionicons, MaterialIcons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { Linking, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { Image, Linking, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 
 const EmergencyScreen = () => {
   const router = useRouter();
@@ -42,22 +41,22 @@ const EmergencyScreen = () => {
   const emergencyOptions = [
     {
       label: 'Women Safety',
-      icon: <Ionicons name="female" size={30} color="#2563eb" />,
+      icon: <Image source={require('../../assets/images/womensefty.jpg')} className="w-20 h-20" />,
       route: '/emergency/women-safety',
     },
     {
       label: 'Report Breakdown',
-      icon: <MaterialIcons name="car-repair" size={30} color="#2563eb" />,
+      icon: <Image source={require('../../assets/images/breakdown.jpg')} className="w-20 h-20"/>,
       route: '/emergency/report-breakdown',
     },
     {
       label: 'Medical Assistance',
-      icon: <FontAwesome5 name="medkit" size={28} color="#2563eb" />,
+      icon: <Image source={require('../../assets/images/medical.jpg')} className="w-20 h-20"/>,
       route: '/emergency/medical-assistance',
     },
     {
       label: 'Report Accident',
-      icon: <MaterialIcons name="report-problem" size={30} color="#2563eb" />,
+      icon: <Image source={require('../../assets/images/accident.jpg')} className="w-20 h-20"/>,
       route: '/emergency/report-accident',
     },
   ];

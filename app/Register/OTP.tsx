@@ -1,10 +1,13 @@
 import LoadingAnime from '@/components/LoadingAnime';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
-import { Alert, ImageBackground, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { Alert, ImageBackground, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { useToast } from 'react-native-toast-notifications';
 import { useAuth } from '../context/AuthContext';
 
 export default function VerifyOtpScreen() {
+  const toast = useToast();
   const router = useRouter();
   const { setRole } = useAuth();
   const { phone } = useLocalSearchParams<{ phone: string }>(); // ✅ Phone from Login
@@ -15,6 +18,14 @@ export default function VerifyOtpScreen() {
   const [Loading, setLoading] = useState(false)
 
   const inputs = useRef<Array<TextInput | null>>([]);
+  //tost notifications  
+  useEffect(() => {
+    toast.show('Your phone number verifyd and sent you a OTP!', {
+      type: 'success',
+      duration: 2000,
+    });
+  }, []);
+
   // Countdown logic
   useEffect(() => {
     if (resendDisabled && timer > 0) {
@@ -24,7 +35,7 @@ export default function VerifyOtpScreen() {
       setResendDisabled(false);
     }
   }, [timer, resendDisabled]);
- 
+
   const handleOtpChange = (text: string, index: number) => {
     if (!/^\d?$/.test(text)) return;
 
@@ -114,10 +125,10 @@ export default function VerifyOtpScreen() {
   };
 
   return (
-    <KeyboardAvoidingView
-      className="flex-1"
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 0} // adjust as needed
+
+    <KeyboardAwareScrollView
+      contentContainerStyle={{ flexGrow: 1, justifyContent: "space-between" }}
+      enableOnAndroid={true}
     >
       <ScrollView
         className="flex-1 bg-white"
@@ -126,19 +137,17 @@ export default function VerifyOtpScreen() {
       >
         <View className='flex-1 flex-col justify-center'>
           <ImageBackground
-            source={require("../../assets/images/Banner.png")} // ✅ local image
+            source={require("../../assets/images/Banner.png")}
             resizeMode="cover"
             className="flex-1 w-screen"
           >
           </ImageBackground>
           <View className="px-6 flex-1 flex-col justify-between overflow-hidden">
             <View>
-              <Text className="text-3xl font-bold text-[#1E40AF] my-5">Verify OTP</Text>
+              <Text className="text-4xl font-bold text-gray-500 my-5">Verify OTP</Text>
               <Text className=" text-gray-600 mb-6">
-                OTP sent to <Text className="font-semibold text-[#1E40AF]">{getMaskedPhone()}</Text>
+                Enter the OTP ( One time password ) from the sms we sent to : <Text className="font-bold">+91 {getMaskedPhone()}</Text>
               </Text>
-
-              {/* OTP Inputs */}
               <View className="flex-row justify-between mx-3 mb-6">
                 {otp.map((digit, index) => (
                   <TextInput
@@ -154,11 +163,9 @@ export default function VerifyOtpScreen() {
               </View>
             </View>
             <View>
-              {/* Verify Button */}
               <Pressable onPress={verifyOtp} className="bg-[#1E40AF] py-3 rounded-3xl">
                 <Text className="text-white text-center text-lg font-semibold">Verify</Text>
               </Pressable>
-              {/* Resend OTP */}
               <View className="my-2.5 flex-row justify-center">
                 {resendDisabled ? (
                   <Text className="text-gray-500">Resend OTP in {timer}s</Text>
@@ -188,6 +195,6 @@ export default function VerifyOtpScreen() {
           </View>
         )}
       </ScrollView>
-    </KeyboardAvoidingView>
+    </KeyboardAwareScrollView>
   );
 }

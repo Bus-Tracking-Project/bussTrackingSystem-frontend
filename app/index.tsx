@@ -5,13 +5,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function HomeScreen() {
   const router = useRouter();
-  // const [Loading, setLoading] = useState(true)
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      // setLoading(false);
       router.replace('/Login');
-    }, 3000);
+    }, 500);
 
     return () => clearTimeout(timer);
   }, [router]);
@@ -27,23 +25,6 @@ export default function HomeScreen() {
           <Text className="text-base text-gray-400 text-center mb-5">Quick Track. Smart Travel.</Text>
         </View>
       </View>
-      {/* ✅ Overlay Loader 
-      {Loading && (
-        <View
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: "rgba(0,0,0,0.6)",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <LoadingAnime />
-        </View>
-      )}*/}
     </SafeAreaView>
   );
 }

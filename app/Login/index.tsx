@@ -2,59 +2,60 @@ import LoadingAnime from '@/components/LoadingAnime';
 import { Feather } from '@expo/vector-icons';
 import { Link, useRouter } from 'expo-router';
 import { useState } from 'react';
-import {
-  Alert,
-  Image,
-  ImageBackground,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  ScrollView,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import { Image, ImageBackground, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+// import GoingBuss from '@/assets/animations/BusGoing.json'
+import GoingBuss from '@/assets/animations/BusGoing.json';
+import LottieView from 'lottie-react-native';
+import Toast from "react-native-toast-message";
 
 export default function LoginScreen() {
+
   const router = useRouter();
   const [Phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('passenger');
-  const [Loading, setLoading] = useState(false)
+  const [Loading, setLoading] = useState(false);
 
-  const validateForm = async () => {
+  const validateForm = () => {
     const isPhone = /^[0-9]{10}$/.test(Phone);
     if (!Phone) {
-      Alert.alert('Missing Fields', 'Please fill in all fields.');
+      Toast.show({
+        type: "error",  
+        text1: "Invalid Number 🚫",
+        visibilityTime: 2500,
+        autoHide: true,
+      });
       return false;
     }
     if (!isPhone) {
-      Alert.alert('Invalid Number', 'Please enter a valid 10-digit phone number.');
+      Toast.show({
+        type: "error",  
+        text1: "Enter a valid 10-digit phone number 🚫",
+        visibilityTime: 3000,
+        autoHide: true,
+      });
       return false;
     }
     return true;
   };
 
   const handleLogin = () => {
-    if (!validateForm()) return;
     setLoading(true);
-    // Navigate to OTP screen and send phone as param
+    if (!validateForm()) return setLoading(false);
     setTimeout(() => {
-      setLoading(false);
-
-      // Navigate to OTP screen with phone param
       router.push({
         pathname: '/Register/OTP',
         params: { phone: Phone },
       });
-    }, 2000);
+      setLoading(false);
+    }, 1000);
   };
 
   return (
-    <KeyboardAvoidingView
-      className="flex-1"
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 0} // adjust as needed
+    <KeyboardAwareScrollView
+      contentContainerStyle={{ flexGrow: 1, justifyContent: "space-between" }}
+      enableOnAndroid={true}
     >
       <ScrollView
         className="flex-1 bg-white"
@@ -71,17 +72,23 @@ export default function LoginScreen() {
           <View className="px-6 flex-1 flex-col justify-between overflow-hidden">
             <View>
               <View className="flex flex-row items-center my-2">
-                <Text className="text-5xl font-bold">Yatra</Text>
+                <Text className="text-5xl font-bold text-gray-500">Yatra</Text>
                 <Image source={require('@/assets/images/btslogo.png')} className="w-10 h-10" />
+                <LottieView
+                  source={GoingBuss}
+                  autoPlay
+                  loop
+                  style={{ width: 100, height: 60 }}
+                />
               </View>
-              <Text className="text-2xl font-bold text-[#1E293B]">Sign Up Or Log in</Text>
+              <Text className="text-3xl my-5 font-bold text-gray-600">Verify your phone number</Text>
               <Text className="text-md font-bold text-gray-500 my-2">
                 New account or Already have a yatraQ account? start with your mobile number
               </Text>
 
               {/* Phone Input */}
-              <Text className="text-[#1E40AF] font-bold my-2">Enter mobile number</Text>
-              <View className="flex-row items-center px-3 py-2 border-b-2 border-gray-400 my-2">
+              <Text className="text-[#1E40AF] font-bold mt-1">Enter mobile number</Text>
+              <View className="flex-row items-center px-3 py-2 border-b-2 border-gray-300 rounded-3xl mt-2">
                 <Feather name="phone" size={20} color="#1E40AF" />
                 <TextInput
                   className="ml-3 flex-1 text-base text-[#1E40AF]"
@@ -137,6 +144,6 @@ export default function LoginScreen() {
           </View>
         )}
       </ScrollView>
-    </KeyboardAvoidingView>
+    </KeyboardAwareScrollView>
   );
 }

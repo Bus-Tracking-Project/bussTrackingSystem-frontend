@@ -1,14 +1,18 @@
 // app/DriverDashboard.tsx
+import LoadingAnime from "@/components/LoadingAnime";
 import WelcomeSection from "@/components/WelcomeSection";
 import * as Location from "expo-location";
 import * as TaskManager from "expo-task-manager";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Alert, Button, ScrollView, Text, View } from "react-native";
+import { useToast } from "react-native-toast-notifications";
 
 const LOCATION_TASK_NAME = "driver-location-task";
 
 export default function DriverDashboard() {
+  const toast = useToast();
   const [tripActive, setTripActive] = useState(false);
+  const [Loading, setLoading] = useState(false)
 
   // Sample assignment data
   const driverAssignment = {
@@ -28,8 +32,20 @@ export default function DriverDashboard() {
     shiftTime: "6:00 AM - 2:00 PM",
   };
 
+  //tost notifications  
+  useEffect(() => {
+    toast.show(`OTP verifyd, Welcome to dashboard dear driver`, {
+      type: 'success',
+      duration: 2000,
+    });
+  }, []);
+
+
   // Start Trip Handler
   const startTrip = async () => {
+    setLoading(true)
+    // setTimeout(async () => {
+
     const { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== "granted") {
       Alert.alert("Permission Denied", "Location permission is required.");
@@ -55,6 +71,8 @@ export default function DriverDashboard() {
 
     setTripActive(true);
     Alert.alert("Trip Started", "Location tracking started.");
+    setLoading(false)
+    // }, 1000);
   };
 
   // Stop Trip Handler
@@ -65,60 +83,78 @@ export default function DriverDashboard() {
   };
 
   return (
-    <ScrollView className="flex-1 bg-white p-5">
-      <WelcomeSection />
-      {/* Header */}
-      <Text className="text-xl font-bold mb-4">Welcome <Text className="text-blue-500">{driverAssignment.driverName}👋</Text> to driver dashboard</Text>
+    <ScrollView className="flex-1 bg-white">
+      <View className="p-5">
+        <WelcomeSection />
+        {/* Header */}
+        <Text className="text-xl font-bold mb-4">Welcome <Text className="text-blue-500">{driverAssignment.driverName}👋</Text> to driver dashboard</Text>
 
-      {/* Assignment Info */}
-      <View className="bg-blue-100 rounded-2xl p-4 mb-5">
-        <Text className="text-lg font-semibold">Assigned to:</Text>
-        <Text className="text-base">{driverAssignment.driverName}</Text>
-        <Text className="text-base mt-2">
-          Shift: {driverAssignment.shiftTime}
-        </Text>
-      </View>
-
-      {/* Bus Info */}
-      <View className="bg-yellow-100 rounded-2xl p-4 mb-5">
-        <Text className="text-lg font-semibold">Bus Info</Text>
-        <Text className="text-base mt-1">
-          Bus Number: {driverAssignment.busNumber}
-        </Text>
-        <Text className="text-base">
-          Type: {driverAssignment.busDetails.type}
-        </Text>
-        <Text className="text-base">
-          Capacity: {driverAssignment.busDetails.capacity} seats
-        </Text>
-        <Text className="text-base">
-          Registration Year: {driverAssignment.busDetails.regYear}
-        </Text>
-      </View>
-
-      {/* Route Info */}
-      <View className="bg-green-100 rounded-2xl p-4 mb-5">
-        <Text className="text-lg font-semibold">Route Details</Text>
-        <Text className="text-base mt-1">Name: {driverAssignment.route.name}</Text>
-        <Text className="text-base">
-          From: {driverAssignment.route.start} → To: {driverAssignment.route.end}
-        </Text>
-        <Text className="text-base mt-2 font-medium">Stops:</Text>
-        {driverAssignment.route.stops.map((stop, idx) => (
-          <Text key={idx} className="text-base">
-            • {stop}
+        {/* Assignment Info */}
+        <View className="bg-blue-100 rounded-2xl p-4 mb-5">
+          <Text className="text-lg font-semibold">Assigned to:</Text>
+          <Text className="text-base">{driverAssignment.driverName}</Text>
+          <Text className="text-base mt-2">
+            Shift: {driverAssignment.shiftTime}
           </Text>
-        ))}
-      </View>
+        </View>
 
-      {/* Trip Controls */}
-      <View className="mb-10">
-        {!tripActive ? (
-          <Button title="Start Trip" onPress={startTrip} />
-        ) : (
-          <Button title="Stop Trip" color="red" onPress={stopTrip} />
-        )}
+        {/* Bus Info */}
+        <View className="bg-yellow-100 rounded-2xl p-4 mb-5">
+          <Text className="text-lg font-semibold">Bus Info</Text>
+          <Text className="text-base mt-1">
+            Bus Number: {driverAssignment.busNumber}
+          </Text>
+          <Text className="text-base">
+            Type: {driverAssignment.busDetails.type}
+          </Text>
+          <Text className="text-base">
+            Capacity: {driverAssignment.busDetails.capacity} seats
+          </Text>
+          <Text className="text-base">
+            Registration Year: {driverAssignment.busDetails.regYear}
+          </Text>
+        </View>
+
+        {/* Route Info */}
+        <View className="bg-green-100 rounded-2xl p-4 mb-5">
+          <Text className="text-lg font-semibold">Route Details</Text>
+          <Text className="text-base mt-1">Name: {driverAssignment.route.name}</Text>
+          <Text className="text-base">
+            From: {driverAssignment.route.start} → To: {driverAssignment.route.end}
+          </Text>
+          <Text className="text-base mt-2 font-medium">Stops:</Text>
+          {driverAssignment.route.stops.map((stop, idx) => (
+            <Text key={idx} className="text-base">
+              • {stop}
+            </Text>
+          ))}
+        </View>
+
+        {/* Trip Controls */}
+        <View className="mb-10">
+          {!tripActive ? (
+            <Button title="Start Trip" onPress={startTrip} />
+          ) : (
+            <Button title="Stop Trip" color="red" onPress={stopTrip} />
+          )}
+        </View>
       </View>
+      {Loading && (
+        <View
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0,0,0,0.6)",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <LoadingAnime />
+        </View>
+      )}
     </ScrollView>
   );
 }
@@ -130,9 +166,9 @@ TaskManager.defineTask(LOCATION_TASK_NAME, async ({ data, error }) => {
     return;
   }
   if (data) {
-    const { locations } :any = data;
+    const { locations }: any = data;
     const { latitude, longitude } = locations[0].coords;
-console.log('lat:',latitude,'lon:',longitude)
+    console.log('lat:', latitude, 'lon:', longitude)
     // Send to backend
     // try {
     //   await fetch("https://your-backend.com/api/location", {

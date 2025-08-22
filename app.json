@@ -1,11 +1,11 @@
-{
+{ 
   "expo": {
     "name": "practice",
     "slug": "practice",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/logo.jpg",
-    "resizeMode": "contain",
+    "resizeMode": "cover",
     "scheme": "Buss_tracking_app",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,

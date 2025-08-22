@@ -1,90 +1,134 @@
+import EmergencyCard from '@/components/EmergenceCart';
+import LoadingAnime from '@/components/LoadingAnime';
 import * as Location from 'expo-location';
 import React, { useEffect, useState } from 'react';
 import { Alert, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 const ReportBreakdownForm = () => {
   const [busNumber, setBusNumber] = useState('');
-  const [issueDetails, setIssueDetails] = useState('');
+  const [userNumber, setUserNumber] = useState('')
+  const [description, setDescription] = useState('')
   const [location, setLocation] = useState('');
-
+  const [loading, setLoading] = useState(false);
+  const [latitude, setLatitude] = useState<string | null>(null);
+  const [longitude, setLongitude] = useState<string | null>(null);
+  
   useEffect(() => {
     (async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        Alert.alert('Location permission denied');
+      if (status !== "granted") {
+        Alert.alert("Permission denied", "Location access is required.");
         return;
       }
-
+      
       const loc = await Location.getCurrentPositionAsync({});
+      setLatitude(loc.coords.latitude.toString());
+      setLongitude(loc.coords.longitude.toString());
       setLocation(`https://maps.google.com/?q=${loc.coords.latitude},${loc.coords.longitude}`);
     })();
   }, []);
 
-  const handleSubmit = () => {
-    if (!busNumber || !issueDetails) {
+  const handleSubmit = async () => {
+    if (!busNumber || !userNumber ) {
       Alert.alert('Fill in all required fields');
       return;
     }
+    if (!latitude || !longitude) {
+      Alert.alert("Location not available", "Enable GPS and try again.");
+      return;
+    }
 
-    const payload = {
-      busNumber,
-      issueDetails,
-      location,
-    };
+    setLoading(true);
+    try {
+      const res = await fetch("http://10.73.213.97:3000/report-breakdown/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          latitude,
+          longitude,
+          bus_number: busNumber,
+          phone: userNumber,
+          description: description,
+        }),
+      });
 
-    console.log('🚨 Breakdown Report:', payload);
-    Alert.alert('Report Submitted', 'We’ve received your breakdown report.');
+      const data = await res.json();
+      console.log("🚍 Breakdown Response:", data);
 
-    // You can also POST this data to backend here
+      Alert.alert("Reported!", "Bus breakdown has been reported successfully.");
+    } catch (err) {
+      console.error("❌ Error reporting breakdown:", err);
+      Alert.alert("Error", "Could not send breakdown report. Try again.");
+    } finally {
+      setLoading(false);
+    }
+    setBusNumber('');
+    setUserNumber('')
+    setDescription('')
+    setLocation('');
+    setLatitude('');
+    setLongitude('');
   };
 
   return (
-    // <LinearGradient
-    //   colors={['#FFF9C4', '#B3E5FC']} // light yellow to light blue
-    //   start={{ x: 0.5, y: 0 }} // top center
-    //   end={{ x: 0.5, y: 1 }}   // bottom center
-    //   className="flex-1 justify-center items-center py-10"
-    // >
-    //   <BlurView intensity={50} tint="light" className='px-6 w-[85%] flex-1 border border-gray-300 rounded-2xl overflow-hidden'>
-    <View className="flex-1 justify-center items-center py-10 px-8">
-      <View className='px-6 flex-1 flex-col border border-gray-300 rounded-2xl overflow-hidden'>
-        <View className="flex-1 px-6 py-8">
-          <Text className="text-2xl font-bold text-gray-800 mt-10 mb-6">Report Breakdown</Text>
+    <View className="flex-1 justify-center py-5 px-8 bg-white">
+      <EmergencyCard />
+      <View className="flex-1 px-6 py-5">
+        <Text className="text-2xl font-bold text-gray-800 mt-10 mb-6">Report Breakdown</Text>
 
-          <TextInput
-            placeholder="Bus Number"
-            value={busNumber}
-            onChangeText={setBusNumber}
-            className="border border-gray-300 rounded-md p-3 mb-4"
-          />
+        <TextInput
+          placeholder="Bus Number"
+          value={busNumber}
+          onChangeText={setBusNumber}
+          className="border border-gray-300 rounded-md p-3 mb-4"
+        />
+        <TextInput
+          placeholder="Enter Your Number"
+          value={userNumber}
+          onChangeText={setUserNumber}
+          className="border border-gray-300 rounded-md p-3 mb-4"
+        />
 
-          <TextInput
-            placeholder="Describe the issue"
-            value={issueDetails}
-            onChangeText={setIssueDetails}
-            multiline
-            numberOfLines={4}
-            className="border border-gray-300 rounded-md p-3 mb-4 h-24"
-          />
+        <TextInput
+          placeholder="Describe the issue"
+          value={description}
+          onChangeText={setDescription}
+          multiline
+          numberOfLines={4}
+          className="border border-gray-300 rounded-md p-3 mb-4 h-24"
+        />
 
-          <TouchableOpacity
-            className="bg-yellow-500 rounded-md py-4"
-            onPress={handleSubmit}
-          >
-            <Text className="text-white text-center font-semibold">Submit Report</Text>
-          </TouchableOpacity>
+        <TouchableOpacity
+          className="bg-yellow-500 rounded-md py-4"
+          onPress={handleSubmit}
+        >
+          <Text className="text-white text-center font-semibold">Submit Report</Text>
+        </TouchableOpacity>
 
-          {location && (
-            <Text className="text-xs text-gray-500 mt-4">
-              📍 Location: {location}
-            </Text>
-          )}
-        </View>
+        {location && (
+          <Text className="text-xs text-gray-500 mt-4">
+            📍 Location: {location}
+          </Text>
+        )}
       </View>
+      {loading && (
+        <View
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0,0,0,0.6)",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <LoadingAnime />
+        </View>
+      )}
     </View>
-    //   </BlurView>
-    // </LinearGradient>
   );
-};
 
+}
 export default ReportBreakdownForm;
