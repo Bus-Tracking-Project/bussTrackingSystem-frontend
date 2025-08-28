@@ -1,8 +1,12 @@
+// import verifyphone from '@/assets/animations/VerifyPhone.json';
+import verifyphone1 from '@/assets/animations/VerifyPhone1.json';
 import LoadingAnime from '@/components/LoadingAnime';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import LottieView from 'lottie-react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import { Alert, ImageBackground, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import Toast from "react-native-toast-message";
 import { useToast } from 'react-native-toast-notifications';
 import { useAuth } from '../context/AuthContext';
 
@@ -71,7 +75,12 @@ export default function VerifyOtpScreen() {
           router.replace('/HomeScreen')
         }
       } else {
-        alert('Invalid OTP');
+        Toast.show({
+          type: "error",
+          text1: "Invalid OTP 🚫",
+          visibilityTime: 2500,
+          autoHide: true,
+        });
       }
       // try {
       //   const res = await fetch('http://localhost:3000/user/register/verify', {
@@ -93,7 +102,7 @@ export default function VerifyOtpScreen() {
 
       // Mock success:
       // router.navigate('../HomeScreen');
-    }, 2000)
+    }, 1500)
   }
 
   const handleResend = () => {
@@ -144,9 +153,17 @@ export default function VerifyOtpScreen() {
           </ImageBackground>
           <View className="px-6 flex-1 flex-col justify-between overflow-hidden">
             <View>
-              <Text className="text-4xl font-bold text-gray-500 my-5">Verify OTP</Text>
+              <View className='flex-1 flex-row items-center my-3'>
+                <Text className="text-4xl font-bold text-gray-500"> Verify OTP</Text>
+                <LottieView
+                  source={verifyphone1}
+                  autoPlay
+                  loop
+                  style={{ width: 100, height: 60 }}
+                />
+              </View>
               <Text className=" text-gray-600 mb-6">
-                Enter the OTP ( One time password ) from the sms we sent to : <Text className="font-bold">+91 {getMaskedPhone()}</Text>
+                Enter the OTP ( One time password ) from the sms we sent to : {'\n'}<Text className="font-bold">+91 {getMaskedPhone()}</Text>
               </Text>
               <View className="flex-row justify-between mx-3 mb-6">
                 {otp.map((digit, index) => (

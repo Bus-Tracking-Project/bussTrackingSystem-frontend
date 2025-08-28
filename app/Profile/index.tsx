@@ -1,13 +1,14 @@
+import { router } from "expo-router";
 import { Calendar, Mail, MapPin, Phone, UserCircle } from "lucide-react-native";
 import React, { useState } from "react";
-import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Alert, Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 
 const ProfileScreen = () => {
   const [location, setLocation] = useState<string>("Fetching location...");
   const [modalVisible, setModalVisible] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [emailVerified, setEmailVerified] = useState(false);
+  const [ , setEmailVerified] = useState(false);
   const [otpSent, setOtpSent] = useState(false);
   const [otp, setOtp] = useState("");
   const [form, setForm] = useState({
@@ -41,42 +42,6 @@ const ProfileScreen = () => {
   //     }
   //   })();
   // }, []);
-
-  // const handleSubmit = async () => {
-  //   if (!emailVerified) {
-  //     alert("Please verify your email first!");
-  //     return;
-  //   }
-  //   // Submit profile update
-  //   alert("Profile Updated 🚀");
-  //   setModalVisible(false);
-  //   const formData = new FormData();
-  //   formData.append("profile_url", {
-  //     uri: form.avatar,
-  //     name: "profile.jpg",
-  //     type: "image/jpeg",
-  //   } as any);
-  //   formData.append("fullname", form.name);
-  //   formData.append("email", form.email);
-  //   formData.append("DateofBirth", form.dob);
-  //   formData.append("Gender", form.gender);
-  //   try {
-  //     const res = await fetch(`http://10.38.120.97:3000/profile/send-otp?phone=9553026345`, {
-  //       method: "PATCH",
-  //       headers: {
-  //         "Content-Type": "multipart/form-data",
-  //       },
-  //       body: formData,
-  //     });
-  //     if (!res.ok) throw new Error("");
-  //     Alert.alert("✅ Updated Successfully!");
-  //     setModalVisible(false);
-  //   } catch (err: any) {
-  //     Alert.alert("❌ Failed", err.message);
-  //   }
-  //   console.log(form)
-  // };
-
   // const pickImage = async () => {
   //   const { granted } = await ImagePicker.requestMediaLibraryPermissionsAsync();
   //   if (!granted) return Alert.alert("Permission Denied!");
@@ -290,12 +255,12 @@ const ProfileScreen = () => {
   //   gender = "Male",
   // }) { }
   return (
-    <ScrollView className="flex-1 bg-gray-100">
-      <View className="bg-gray-300 rounded-xl mx-4 mt-5 p-4 shadow-sm">
-        <View className="flex-1 flex-row justify-center items-center bg-gray-400">
+    <ScrollView className="flex-1 bg-white">
+      <View className="bg-100  rounded-xl mx-4 mt-5 p-4 gap-3">
+        <View className="flex-1 flex-row items-center border-gray-500 rounded-3xl bg-white py-4 px-4 my-2 shadow-md">
           <Image
-            source={{ uri: "https://i.pravatar.cc/150?img=3" }} // random default avatar
-            className="w-24 h-24 rounded-full mb-4 border-2 border-blue-400"
+            source={ require('@/assets/images/user.png')}
+            className="w-24 h-24"
           />
           <View className="ml-4 flex-1 ">
             <Text className="text-lg font-semibold">{form.name ? form.name : 'Name '}</Text>
@@ -304,41 +269,48 @@ const ProfileScreen = () => {
         </View>
 
         {/* Phone */}
-        <View className="flex-row items-center mb-3 self-start">
-          <Phone color="#2563eb" size={20} />
-          <Text className="ml-2 text-gray-700">36437576567</Text>
+        <View className="flex-row items-center mb-3 self-start border-0 border-gray-500 rounded-xl  py-4 px-4 w-full bg-white shadow-md">
+          <Phone color="black" size={20} />
+          <Text className="ml-2 text-gray-500">36437576567</Text>
         </View>
 
         {/* Email */}
-        <View className="flex-row items-center mb-3 self-start">
-          <Mail color="#2563eb" size={20} />
-          <Text className="ml-2 text-gray-700">dsfgdfsg@gferg</Text>
+        <View className="flex-row items-center mb-3 self-start border-0 border-gray-500 rounded-xl  py-4 px-4 w-full bg-white shadow-md">
+          <Mail color="black" size={20} />
+          <Text className="ml-2 text-gray-500">mail@gmail.com</Text>
         </View>
 
         {/* Address */}
-        <View className="flex-row items-center mb-3 self-start">
-          <MapPin color="#2563eb" size={20} />
-          <Text className="ml-2 text-gray-700">sdfsdf</Text>
+        <View className="flex-row items-center mb-3 self-start border-0 border-gray-500 rounded-xl  py-4 px-4 w-full bg-white shadow-md">
+          <MapPin color="black" size={20} />
+          <Text className="ml-2 text-gray-500">location</Text>
         </View>
 
         {/* DOB */}
-        <View className="flex-row items-center mb-3 self-start">
-          <Calendar color="#2563eb" size={20} />
-          <Text className="ml-2 text-gray-700">2432</Text>
+        <View className="flex-row items-center mb-3 self-start border-0 border-gray-500 rounded-xl  py-4 px-4 w-full bg-white shadow-md">
+          <Calendar color="black" size={20} />
+          <Text className="ml-2 text-gray-500">24-03-2000</Text>
         </View>
 
         {/* Gender */}
-        <View className="flex-row items-center self-start">
-          <UserCircle color="#2563eb" size={20} />
-          <Text className="ml-2 text-gray-700">sfdg</Text>
+        <View className="flex-row items-center self-start border-0 border-gray-500 rounded-xl  py-4 px-4 w-full bg-white shadow-md">
+          <UserCircle color="black" size={20} />
+          <Text className="ml-2 text-gray-500">male</Text>
         </View>
 
         {/* Update Button */}
-        <TouchableOpacity className="bg-blue-600 rounded-xl py-3 px-6 mt-6 w-full">
+        <View className="flex-1 flex-row justify-around gap-4">
+        <TouchableOpacity className="bg-blue-500 rounded-xl py-3 px-6 mt-6 justify-center w-[60%]" onPress={()=>router.replace('/Profile/Update')}>
           <Text className="text-white text-center text-lg font-semibold">
             Update Profile
           </Text>
         </TouchableOpacity>
+         <TouchableOpacity className="bg-red-500 rounded-xl py-3 px-6 mt-6 justify-center w-[30%]" onPress={()=>Alert.alert('log out !')}>
+          <Text className="text-white text-center text-lg font-semibold">
+            log out
+          </Text>
+        </TouchableOpacity>
+        </View>
       </View>
     </ScrollView>
   );

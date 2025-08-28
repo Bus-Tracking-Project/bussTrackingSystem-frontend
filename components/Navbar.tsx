@@ -25,10 +25,6 @@ const BottomNavBar = () => {
             useNativeDriver: true,
         }).start();
     };
-    const showPopup = (message: string) => {
-        setModalMessage(message);
-        setModalVisible(true);
-    };
 
     return (
         <View className='z-10 py-2 bg-gray-50'>
@@ -43,9 +39,9 @@ const BottomNavBar = () => {
                         className="w-10 h-10"
                     />
                 </View>
-                <TouchableOpacity className="p-1" onPress={() => router.push('../Profile')}>
+                <TouchableOpacity onPress={() => router.push('../Profile')}>
                     <Image
-                        source={{ uri: 'https://i.pravatar.cc/40' }}
+                        source={require('@/assets/images/user.png')}
                         className="w-8 h-8 rounded-full border border-white"
                     />
                 </TouchableOpacity>
@@ -69,7 +65,7 @@ const BottomNavBar = () => {
                         position: 'absolute',
                         top: 0,
                         left: 0,
-                        width: width * 0.75,
+                        width: '100%',
                         height: '100%',
                         backgroundColor: 'white',
                         zIndex: 10,

@@ -11,7 +11,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 
 const Index = () => {
@@ -79,6 +79,10 @@ const Index = () => {
   return (
     <View className="flex-1 justify-center items-center py-5 px-3 bg-white">
       <View className="w-full px-5 py-4 gap-5 h-full overflow-hidden">
+        {/* <View className='h-2 w-3'> */}
+        {/* <Image source={require('@/assets/images/findYourBus.jpg')} height={1} width={1} /> */}
+        {/* <img
+        </View> */}
         <Text className="font-bold text-2xl text-black">Enter Bus Number</Text>
 
         {/* Input */}

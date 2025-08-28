@@ -1,6 +1,7 @@
 import BottomNavBar from "@/components/Navbar";
 import { Stack, usePathname } from "expo-router";
 import { Text, View } from "react-native";
+// import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from 'react-native-toast-message';
 import { ToastProvider } from 'react-native-toast-notifications';
@@ -11,7 +12,7 @@ import './globals.css';
 export default function RootLayout() {
   const pathname = usePathname();
 
-  // List of routes where navbar should be hidden
+  // this routes, navbar will be hidden
   const hideNavbarRoutes = ["/", "/Login", "/Register/OTP"];
 
   const shouldShowNavbar = !hideNavbarRoutes.includes(pathname);
@@ -37,11 +38,12 @@ export default function RootLayout() {
           ),
         }}
       >
-        <SafeAreaView style={{ flex: 1, backgroundColor: 'black' }}>
-          {shouldShowNavbar && <BottomNavBar />}
-          <Stack screenOptions={{ headerShown: false }} />
-          {/* <Toast />  */}
-        </SafeAreaView>
+        {/* <GestureHandlerRootView style={{ flex: 1 }}> */}
+          <SafeAreaView style={{ flex: 1, backgroundColor: 'black' }}>
+            {shouldShowNavbar && <BottomNavBar />}
+            <Stack screenOptions={{ headerShown: false }} />
+          </SafeAreaView>
+        {/* </GestureHandlerRootView> */}
       </ToastProvider>
       <Toast config={toastConfig} />
     </AuthProvider>
