@@ -1,6 +1,6 @@
 import WelcomeSection from '@/components/WelcomeSection'
+import Constants from 'expo-constants'
 import { useRouter } from 'expo-router'
-import { X } from 'lucide-react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { Animated, Dimensions, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import PagerView from 'react-native-pager-view'
@@ -9,41 +9,83 @@ import { useToast } from 'react-native-toast-notifications'
 const { width } = Dimensions.get('window');
 
 const Home = () => {
-  const toast = useToast();
-  const router = useRouter();
+  const API_URL = Constants.expoConfig?.extra?.API_URL;
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const translateX = useRef(new Animated.Value(-width)).current;
+  const pagerRef = useRef<PagerView>(null);
+  const router = useRouter();
+  const [page, setPage] = useState<any>(0);
+  const toast = useToast();
 
+  //this img --for cards
   const images = [
     require('@/assets/images/findYourBus.jpg'),
-    require('@/assets/images/accident.jpg'),
-    require('@/assets/images/Banner.png'),
+    require('@/assets/images/EmergencyCart.png'),
+    require('@/assets/images/NearByStops.png'),
   ];
-
   useEffect(() => {
-    toast.show(`Welcome passenger Happy journey !`, {
+    const interval = setInterval(() => {
+      const nextPage = (page + 1) % images.length;
+      setPage(nextPage);
+      pagerRef.current?.setPage(nextPage); // 👈 programmatically move PagerView
+    }, 1500);
+
+    return () => clearInterval(interval);
+  }, [page]);
+
+  //toast notification 
+  useEffect(() => {
+    toast.show(`Welcome passenger, Happy journey !`, {
       type: 'success',
-      duration: 3000,
+      duration: 2500,
     });
   }, []);
+  
+  //webstokets code here
+  // useEffect(() => {
+  //   // initialize socket
+  //   const socket: Socket = io(API_URL, {
+  //     transports: ["websocket"],
+  //     query: { role: "passenger", busId: "123" }, // pass role & busId in handshake
+  //   });
 
-  const toggleSidebar = () => {
-    const nextState = !sidebarOpen;
-    setSidebarOpen(nextState);
-    Animated.timing(translateX, {
-      toValue: nextState ? 0 : -width,
-      duration: 300,
-      useNativeDriver: true,
-    }).start();
-  };
+  //   // when connected
+  //   socket.on("connect", () => {
+  //     console.log("✅ Passenger connected:", socket.id);
 
-  const [page, setPage] = useState(0);
+  //     // join the bus room after successful connection
+  //     socket.emit("joinBusRoom", { busId: "123" });
+  //   });
+
+  //   // when bus location updates
+  //   socket.on("busLocationUpdate", (data: { lat: number; lng: number }) => {
+  //     console.log("📍 Bus moved:", data);
+  //     // 👉 here update your state for Google Maps marker
+  //     // setBusLocation(data); 
+  //   });
+
+  //   // when disconnected
+  //   socket.on("disconnect", () => {
+  //     console.log("❌ Passenger disconnected");
+  //   });
+
+  //   // cleanup on unmount
+  //   return () => {
+  //     socket.disconnect();
+  //     console.log("🔌 Socket closed on component unmount");
+  //   };
+  // }, []);
+
   return (
     <>
-      <ScrollView className='w-full px-10 h-screen bg-white'>
+      <ScrollView
+        className='w-full px-5 bg-white'
+        contentContainerStyle={{ paddingBottom: 200 }} // gives extra space at bottom
+        showsVerticalScrollIndicator={false}
+      >
         <WelcomeSection />
         <Text className="text-2xl font-semibold my-3">Features</Text>
-        <View className="flex-row flex-wrap justify-between">
+        <View className="flex-row flex-wrap justify-around">
           <TouchableOpacity className='border border-gray-200 rounded-3xl h-40 w-44 overflow-hidden mb-4' onPress={() => router.push('../SearchByNumber')} >
             <View className='flex-1 items-center justify-center bg-white'>
               <Image source={require('../../assets/images/license-plate.png')} className='w-20 h-20' />
@@ -57,8 +99,9 @@ const Home = () => {
             </View>
           </TouchableOpacity>
           {/* 🔥 Background Image Card */}
-          <View className="rounded-3xl h-60 w-full mb-4 overflow-hidden">
+          <View className="rounded-3xl h-[35%] w-full my-4 overflow-hidden">
             <PagerView
+              ref={pagerRef}
               style={{ flex: 1 }}
               initialPage={0}
               onPageSelected={(e) => setPage(e.nativeEvent.position)}
@@ -111,39 +154,7 @@ const Home = () => {
             </View>
           </TouchableOpacity>
         </View>
-        {/* </BlurView> */}
       </ScrollView >
-      {/* Sidebar */}
-      < Animated.View
-        style={{
-          transform: [{ translateX }],
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: width * 0.75,
-          height: '100%',
-          backgroundColor: '#060b22',
-          padding: 20,
-          zIndex: 10,
-        }
-        }
-      >
-        <View className='px-5 bg-white'>
-          <TouchableOpacity onPress={toggleSidebar} className="mb-4 self-end">
-            <X color="white" size={28} />
-          </TouchableOpacity>
-
-          <View className='text-white'>
-            <Text className="text-white text-2xl font-bold">Menu</Text>
-            <Text className="text-white text-md font-semibold mt-10">My Profile</Text>
-            <Text className="text-white text-md font-semibold mt-10">My Trips</Text>
-            <Text className="text-white text-md font-semibold mt-10">My Fvt</Text>
-            <Text className="text-white text-md font-semibold mt-10">Notification</Text>
-            <Text className="text-white text-md font-semibold mt-10">Feedback</Text>
-            <Text className="text-white text-md font-semibold mt-10">Log Out</Text>
-          </View>
-        </View>
-      </Animated.View >
     </>
   );
 };

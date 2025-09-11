@@ -46,17 +46,17 @@ const EmergencyScreen = () => {
     },
     {
       label: 'Report Breakdown',
-      icon: <Image source={require('../../assets/images/breakdown.jpg')} className="w-20 h-20"/>,
+      icon: <Image source={require('../../assets/images/breakdown.jpg')} className="w-20 h-20" />,
       route: '/emergency/report-breakdown',
     },
     {
       label: 'Medical Assistance',
-      icon: <Image source={require('../../assets/images/medical.jpg')} className="w-20 h-20"/>,
+      icon: <Image source={require('../../assets/images/medical.jpg')} className="w-20 h-20" />,
       route: '/emergency/medical-assistance',
     },
     {
       label: 'Report Accident',
-      icon: <Image source={require('../../assets/images/accident.jpg')} className="w-20 h-20"/>,
+      icon: <Image source={require('../../assets/images/accident.jpg')} className="w-20 h-20" />,
       route: '/emergency/report-accident',
     },
   ];

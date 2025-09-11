@@ -1,18 +1,48 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from "expo-router";
-import { useEffect } from "react";
+import { jwtDecode } from "jwt-decode";
+import { useEffect, useState } from "react";
 import { Image, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+
 export default function HomeScreen() {
   const router = useRouter();
+  const [login, setLogin] = useState(null)
+
+  type MyJwtPayload = {
+    role: any;
+    // add other properties if needed
+  };
+
+  useEffect(() => {
+    const fetchToken = async () => {
+      const storedToken = await AsyncStorage.getItem('access_token');
+      if (storedToken) {
+
+        const decoded = jwtDecode<MyJwtPayload>(storedToken);
+        setLogin(decoded.role)
+        console.log("Decoded JWT:", decoded);
+        console.log('role', decoded.role)
+      }
+    };
+    fetchToken();
+  }, []);
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      router.replace('/Login');
+      console.log(login, 'form login screen ')
+      if (login == 'PASSENGER') {
+        router.replace('/HomeScreen')
+      } else if (login == 'DRIVER') {
+        router.replace('/DriverHomeScreen')
+      } else {
+        router.replace('/Login');
+      }
     }, 500);
 
     return () => clearTimeout(timer);
-  }, [router]);
+  }, [login, router]);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#060b22' }}>

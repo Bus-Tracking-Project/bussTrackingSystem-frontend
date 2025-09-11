@@ -1,19 +1,20 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Contacts from "expo-contacts";
-import { Users } from "lucide-react-native"; // for nice icons
+import { Ambulance, Heart, Phone, Plus, Shield, Users, X } from "lucide-react-native"; // for nice icons
 import React, { useEffect, useState } from "react";
-import { Alert, Linking, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Alert, FlatList, Linking, Modal, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 const emergencyNumbers = [
-  { label: "All-in-one Helpline", number: "112" },
-  { label: "Police", number: "100" },
-  { label: "Ambulance", number: "108" },
+  { label: "All-in-one Helpline", number: "112", icon: "phone" },
+  { label: "Police", number: "100", icon: "shield" },
+  { label: "Ambulance", number: "108", icon: "ambulance" },
 ];
 
 const EmergencySOS = () => {
   const [userContacts, setUserContacts] = useState<{ name: string; number: string }[]>([]);
+  const [showContactPicker, setShowContactPicker] = useState(false);
+  const [availableContacts, setAvailableContacts] = useState<Contacts.Contact[]>([]);
 
-  // Load saved contacts
   useEffect(() => {
     (async () => {
       const saved = await AsyncStorage.getItem("emergencyContacts");
@@ -23,15 +24,26 @@ const EmergencySOS = () => {
     })();
   }, []);
 
-  // Call function
   const callNumber = (number: string) => {
     Linking.openURL(`tel://${number}`).catch(() => {
       Alert.alert("Oops!", "Could not open the dialer 😬");
     });
   };
 
-  // Pick from contacts
-  const pickContact = async () => {
+  const renderIcon = (iconType: string, size: number = 24, color: string = "white") => {
+    switch (iconType) {
+      case "phone":
+        return <Phone size={size} color={color} />;
+      case "shield":
+        return <Shield size={size} color={color} />;
+      case "ambulance":
+        return <Ambulance size={size} color={color} />;
+      default:
+        return <Phone size={size} color={color} />;
+    }
+  };
+
+  const showContactPickerModal = async () => {
     const { status } = await Contacts.requestPermissionsAsync();
     if (status !== "granted") {
       Alert.alert("Permission denied", "We need access to show your contacts");
@@ -39,30 +51,48 @@ const EmergencySOS = () => {
     }
 
     const { data } = await Contacts.getContactsAsync({
-      fields: [Contacts.Fields.PhoneNumbers],
+      fields: [Contacts.Fields.PhoneNumbers, Contacts.Fields.Name],
     });
 
-    if (data.length > 0) {
-      // Just picking the first contact for now — can add a picker UI
-      const picked = data.find((c) => c.phoneNumbers?.length);
-      if (picked) {
-        const newContact = {
-          name: picked.name,
-          number: picked.phoneNumbers?.[0]?.number ?? "",
-        };
-        const updated = [...userContacts, newContact];
-        setUserContacts(updated);
-        await AsyncStorage.setItem("emergencyContacts", JSON.stringify(updated));
-        Alert.alert("✅ Added!", `${picked.name} saved as emergency contact`);
-      }
+    // Filter contacts that have phone numbers
+    const contactsWithNumbers = data.filter(contact => 
+      contact.phoneNumbers && contact.phoneNumbers.length > 0
+    );
+
+    setAvailableContacts(contactsWithNumbers);
+    setShowContactPicker(true);
+  };
+
+  const addContactToFavorites = async (contact: Contacts.Contact) => {
+    const newContact = {
+      name: contact.name || "Unknown",
+      number: contact.phoneNumbers?.[0]?.number ?? "",
+    };
+    
+    // Check if contact already exists
+    const exists = userContacts.some(c => c.number === newContact.number);
+    if (exists) {
+      Alert.alert("Already Added", "This contact is already in your favorites");
+      return;
     }
+
+    const updated = [...userContacts, newContact];
+    setUserContacts(updated);
+    await AsyncStorage.setItem("emergencyContacts", JSON.stringify(updated));
+    setShowContactPicker(false);
+    Alert.alert("✅ Added!", `${newContact.name} saved as emergency contact`);
+  };
+
+  const removeContact = async (index: number) => {
+    const updated = userContacts.filter((_, i) => i !== index);
+    setUserContacts(updated);
+    await AsyncStorage.setItem("emergencyContacts", JSON.stringify(updated));
   };
 
   return (
     <View className="flex-1 bg-gray-100">
       <ScrollView contentContainerStyle={{ padding: 16 }}>
-        {/* Title */}
-        <Text className="text-3xl font-bold text-center mb-6">🚨 Emergency SOS</Text>
+        <Text className="text-gray-800 text-3xl font-bold text-center mb-6">Emergency SOS</Text>
 
         {/* Emergency Numbers */}
         <View className="space-y-4">
@@ -70,10 +100,15 @@ const EmergencySOS = () => {
             <TouchableOpacity
               key={index}
               onPress={() => callNumber(item.number)}
-              className="bg-red-500 py-4 px-6 mb-2 rounded-xl flex-row items-center justify-between shadow-md"
+              className="bg-[#f52f2f] py-4 px-6 mb-2 rounded-xl flex-row items-center justify-between shadow-md"
             >
-              <Text className="text-white font-bold text-lg">{item.label}</Text>
-              <Text className="text-white font-semibold">{item.number}</Text>
+              <View className="flex-row items-center">
+                <View className="mr-3">
+                  {renderIcon(item.icon, 28, "white")}
+                </View>
+                <Text className="text-white font-bold text-lg">{item.label}</Text>
+              </View>
+              <Text className="text-white font-semibold text-lg">{item.number}</Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -81,37 +116,114 @@ const EmergencySOS = () => {
         {/* Favorite Contacts */}
         <View className="mt-8">
           <View className="flex-row justify-between items-center mb-3">
-            <Text className="text-xl font-bold text-gray-800">❤️ Favorite Contacts</Text>
+            <View className="flex-row items-center">
+              <Heart size={28} color="#ef4444" className="mr-2" />
+              <Text className="text-2xl font-bold text-gray-800 ml-2">Favorite Contacts</Text>
+            </View>
             <TouchableOpacity
-              onPress={pickContact}
-              className="bg-blue-500 px-3 py-1 rounded-lg"
+              onPress={showContactPickerModal}
+              className="bg-blue-500 px-4 py-2 rounded-lg flex-row items-center"
             >
-              <Text className="text-white">+ Add</Text>
+              <Plus size={20} color="white" />
+              <Text className="text-white font-bold text-lg ml-1">Add</Text>
             </TouchableOpacity>
           </View>
 
           {userContacts.length === 0 ? (
-            <View className="bg-gray-200 p-6 rounded-xl items-center">
-              <Users size={40} color="#555" />
-              <Text className="text-gray-600 mt-2">No favorite contacts yet</Text>
-              <Text className="text-gray-500 text-sm text-center">
+            <View className="bg-gray-200 p-6 mt-10 rounded-xl items-center">
+              <View className="my-5">
+              <Users size={70} color="#555" />
+              </View>
+              <Text className="text-gray-600 mt-10 text-3xl">No favorite contacts yet</Text>
+              <Text className="text-gray-500 text-sm my-5 text-center">
                 Add someone from your phonebook so you can call them quickly in an emergency.
               </Text>
             </View>
           ) : (
             userContacts.map((contact, idx) => (
-              <TouchableOpacity
+              <View
                 key={idx}
-                onPress={() => callNumber(contact.number)}
-                className="bg-white p-4 rounded-xl shadow-sm mb-3 flex-row justify-between"
+                className="bg-white p-4 rounded-xl shadow-sm mb-3 flex-row justify-between items-center"
               >
-                <Text className="text-gray-800 font-medium">{contact.name}</Text>
-                <Text className="text-blue-600">{contact.number}</Text>
-              </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => callNumber(contact.number)}
+                  className="flex-1 flex-row justify-between items-center"
+                >
+                  <View className="flex-row items-center">
+                    <View className="bg-blue-100 p-2 rounded-full mr-3">
+                      <Phone size={16} color="#1e40af" />
+                    </View>
+                    <Text className="text-gray-800 font-medium text-lg">{contact.name}</Text>
+                  </View>
+                  <Text className="text-blue-600 font-semibold">{contact.number}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => removeContact(idx)}
+                  className="ml-3 p-2 bg-red-50 rounded-full"
+                >
+                  <X size={20} color="#ef4444" />
+                </TouchableOpacity>
+              </View>
             ))
           )}
         </View>
       </ScrollView>
+
+      {/* Contact Picker Modal */}
+      <Modal
+        visible={showContactPicker}
+        animationType="slide"
+        presentationStyle="pageSheet"
+      >
+        <View className="flex-1 bg-white">
+          {/* Header */}
+          <View className="flex-row justify-between items-center p-4 border-b border-gray-200">
+            <View className="flex-row items-center">
+              <Users size={24} color="#1e40af" />
+              <Text className="text-xl font-bold text-gray-800 ml-2">Select Contact</Text>
+            </View>
+            <TouchableOpacity
+              onPress={() => setShowContactPicker(false)}
+              className="p-2 bg-gray-100 rounded-full"
+            >
+              <X size={24} color="#666" />
+            </TouchableOpacity>
+          </View>
+
+          {/* Contacts List */}
+          <FlatList
+            data={availableContacts}
+            keyExtractor={(item) => item.id || item.name || Math.random().toString()}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                onPress={() => addContactToFavorites(item)}
+                className="p-4 border-b border-gray-100 flex-row justify-between items-center"
+              >
+                <View className="flex-1">
+                  <Text className="text-lg font-medium text-gray-800">
+                    {item.name || "Unknown"}
+                  </Text>
+                  {item.phoneNumbers && item.phoneNumbers.length > 0 && (
+                    <Text className="text-gray-600 mt-1">
+                      {item.phoneNumbers[0].number}
+                    </Text>
+                  )}
+                </View>
+                <Text className="text-blue-500 font-medium">Add</Text>
+              </TouchableOpacity>
+            )}
+            ListEmptyComponent={
+              <View className="flex-1 justify-center items-center p-8">
+                <Users size={60} color="#ccc" />
+                <Text className="text-gray-500 text-lg mt-4">No contacts found</Text>
+                <Text className="text-gray-400 text-center mt-2">
+                  Make sure you have contacts with phone numbers in your device
+                </Text>
+              </View>
+            }
+          />
+        </View>
+      </Modal>
     </View>
   );
 };

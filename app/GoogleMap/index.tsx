@@ -1,11 +1,10 @@
+import { Feather } from '@expo/vector-icons';
 import * as Location from 'expo-location';
+import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { Alert, StyleSheet, View } from 'react-native';
+import { Alert, Pressable, StyleSheet, View } from 'react-native';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import Icon from 'react-native-vector-icons/Ionicons';
-// import {  } from 'lucide-react-native';
-// import {  } from 'react-native-svg';
-// import busIcon from '../../assets/images/logo.jpg';
 
 const GOOGLE_API_KEY = 'AIzaSyDZNKiJhmxhMP0TikvbX6zCMef-1SlUwHQ';
 
@@ -41,9 +40,8 @@ const MapComponent = () => {
     },
   ];
 
-
+  //location permission
   useEffect(() => {
-    //permition
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
@@ -67,6 +65,22 @@ const MapComponent = () => {
 
   return (
     <View style={styles.container}>
+      <View className="flex-1 bg-white">
+        {/* Back Button */}
+        <Pressable
+          onPress={() => router.back()}
+          className="absolute top-3 left-5 z-10 bg-white/90 rounded-full p-2 shadow-lg"
+          style={{
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.25,
+            shadowRadius: 3.84,
+            elevation: 5,
+          }}
+        >
+          <Feather name="arrow-left" size={24} color="#1E40AF" />
+        </Pressable>
+      </View>
       <MapView
         provider={PROVIDER_GOOGLE}
         style={StyleSheet.absoluteFillObject}

@@ -1,6 +1,6 @@
-{ 
+{
   "expo": {
-    "name": "practice",
+    "name": "YatraQ",
     "slug": "practice",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -9,13 +9,22 @@
     "scheme": "Buss_tracking_app",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "extra": {
+      "API_URL": "http://10.115.129.97:3000",
+      "router": {},
+      "eas": {
+        "projectId": "10d261ad-a950-49aa-b72f-4aafe004f23d"
+      }
+    },
     "ios": {
       "supportsTablet": true,
+      "bundleIdentifier": "com.srinivas.practice",
       "config": {
         "googleMapsApiKey": "AIzaSyDZNKiJhmxhMP0TikvbX6zCMef-1SlUwHQ"
       }
     },
     "android": {
+      
       "permissions": [
         "ACCESS_FINE_LOCATION",
         "ACCESS_FINE_LOCATION"
@@ -30,7 +39,7 @@
           "apiKey": "AIzaSyDZNKiJhmxhMP0TikvbX6zCMef-1SlUwHQ"
         }
       },
-      "package": "com.anonymous.practice"
+      "package": "com.srinivas.practice"
     },
     "web": {
       "bundler": "metro",

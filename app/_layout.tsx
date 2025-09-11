@@ -12,8 +12,8 @@ import './globals.css';
 export default function RootLayout() {
   const pathname = usePathname();
 
-  // this routes, navbar will be hidden
-  const hideNavbarRoutes = ["/", "/Login", "/Register/OTP"];
+  // for this routes, navbar will be hidden
+  const hideNavbarRoutes = ["/", "/Login", "/Login/OTP"];
 
   const shouldShowNavbar = !hideNavbarRoutes.includes(pathname);
 
@@ -38,12 +38,10 @@ export default function RootLayout() {
           ),
         }}
       >
-        {/* <GestureHandlerRootView style={{ flex: 1 }}> */}
           <SafeAreaView style={{ flex: 1, backgroundColor: 'black' }}>
             {shouldShowNavbar && <BottomNavBar />}
             <Stack screenOptions={{ headerShown: false }} />
           </SafeAreaView>
-        {/* </GestureHandlerRootView> */}
       </ToastProvider>
       <Toast config={toastConfig} />
     </AuthProvider>

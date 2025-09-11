@@ -1,48 +1,63 @@
+import LoadingAnime from '@/components/LoadingAnime';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker from "@react-native-community/datetimepicker";
+import axios from "axios";
+import Constants from 'expo-constants';
 import * as ImagePicker from 'expo-image-picker';
+import { jwtDecode } from 'jwt-decode';
 import { Camera } from "lucide-react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Alert, Image, Text, TextInput, TouchableOpacity, View } from "react-native";
 import Toast from "react-native-toast-message";
-// import defaultImg from '@/assets/images/user.png'
 
 const Update = () => {
+  const API_URL = Constants.expoConfig?.extra?.API_URL;
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [address, setAddress] = useState("Current Location");
   const [otp, setOtp] = useState('')
   const [dob, setDob] = useState(new Date());
   const [showPicker, setShowPicker] = useState(false);
-  const [emailVerified, setEmailVerified] = useState(false);
-  const [avatar, setAvatar] = useState('https://i.pravatar.cc/150?img=12')
+  const [avatar, setAvatar] = useState('https://static.vecteezy.com/system/resources/thumbnails/020/765/399/small/default-profile-account-unknown-icon-black-silhouette-free-vector.jpg')
   const [gender, setGender] = useState<"male" | "female" | "notToSay" | null>(null);
+  const [Loading, setLoading] = useState(false)
+  const [user, setUser] = useState<any>(null);
+  const [selectedFile, setSelectedFile] = useState<RNFile | null>(null);
+
   type RNFile = {
     uri: string;
     type: string;
     name: string;
   };
-  const [selectedFile, setSelectedFile] = useState<RNFile | null>(null);
 
+  //decode token and fetching role form it 
+  useEffect(() => {
+    console.log('coming in use effect')
+    const fetchToken = async () => {
+      const storedToken = await AsyncStorage.getItem('access_token');
+      console.log(storedToken, 'this is profile token')
+      if (storedToken) {
+        const decoded = jwtDecode(storedToken);
+        setUser(decoded);
+      }
+    };
+    fetchToken();
+  }, []);
 
-  // <input
-  //   type="file"
-  //   accept="image/*"
-    // onChange={e => {
-    //   if (e.target.files && e.target.files[0]) {
-    //     setSelectedFile(e.target.files[0]); // Use File object directly
-    //     setAvatar(URL.createObjectURL(e.target.files[0])); // For preview
-    //   }
-    // }}
-  // />
-  // const BACKEND_URL = Constants.expoConfig?.extra?.BACKEND_URL;
-
+  //changing dob to normal fom
+  const formatDOB = (date: Date) => {
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}${month}${year}`;
+  };
+  //img pic select
   const pickImage = async () => {
     const { granted } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!granted) return Alert.alert("Permission Denied!");
 
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
+      aspect: [4, 3],
       quality: 1,
     });
 
@@ -60,57 +75,52 @@ const Update = () => {
     }
   };
 
-
+  //otp to mail for verify 
   const handleVerifyOtp = async () => {
-    if (otp === "123456") {
-      setEmailVerified(true);
-      alert("Email Verified ✅");
-    } else {
-      alert("OTP sent ");
-      try {
-        const formData = new FormData();
+    setLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append("fullname", name);
+      formData.append("email", email);
+      formData.append("DateofBirth", formatDOB(dob));
+      formData.append("Gender", gender === "male" ? "Male" : gender === "female" ? "Female" : "Prefer not to say");
 
-        if (selectedFile) {
-          formData.append("profile_url", {
-            uri: selectedFile.uri,
-            type: selectedFile.type,
-            name: selectedFile.name,
-          } as any);
-        }
-
-
-
-        formData.append("email", email);
-        formData.append("DateofBirth", dob.toISOString().split("T")[0]); // format: YYYY-MM-DD
-        formData.append("Gender", gender || "Male");
-        formData.append("fullname", name);
-
-        const res = await fetch(
-          "http://192.168.1.123:3000/profile/send-otp?phone=9876543021",
-          {
-            method: "PATCH",
-            body: formData,
-            // DO NOT set Content-Type manually 👈
-          }
-        );
-
-        const data = await res.json();
-        console.log(data, "response data");
-
-        if (res.ok) {
-          console.log("✅ Success");
-        } else {
-          console.log("❌ Failed:", data);
-        }
-      } catch (err) {
-        console.log("❌ Error:", err);
+      if (selectedFile) {
+        formData.append("profile_url", {
+          uri: selectedFile.uri,
+          type: "image/jpeg", // ✅ force correct type
+          name: selectedFile.name || "profile.jpg",
+        } as any);
       }
+
+      const res = await axios.patch(
+        `${API_URL}/profile/send-otp?phone=${user.phone}`,
+        formData,
+        {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      Toast.show({
+        type: "success",
+        text1: "OTP sent successfully 🎉",
+        visibilityTime: 2000,
+      });
+    } catch (err: any) {
+      console.log("❌ Error:", err.response?.data || err.message);
+      Toast.show({
+        type: "error",
+        text1: `❌Error:${err.message.message}`,
+        visibilityTime: 2000,
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
-
-
-
+  //submit btn
   const submitHandler = async () => {
     // name validation
     if (!name.trim() || name.length < 3) {
@@ -120,18 +130,6 @@ const Update = () => {
         visibilityTime: 2500,
       });
       return;
-    }
-    try {
-      const res = await fetch('http://192.168.1.128:3000/profile/send-otp?phone=9553026345', {
-        method: 'POST',
-        headers: { "Content-Type": "application/json" },
-
-      })
-      console.log(res, 'data form res')
-      const data = await res.json()
-      console.log(data, 'data form json')
-    } catch (err) {
-      console.log(err)
     }
 
     // email validation
@@ -175,19 +173,46 @@ const Update = () => {
       return;
     }
 
-    // ✅ if all validations passed
-    Toast.show({
-      type: "success",
-      text1: "Profile saved successfully 🎉",
-      visibilityTime: 2000,
-    });
-
+    setLoading(true);
+    try {
+      const res = await axios.patch(`${API_URL}/profile/verify-otp?phone=${user.phone}`, {
+        email: email,
+        userOtp: otp,
+        Gender: gender
+      }, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+      );
+      Toast.show({
+        type: "success",
+        text1: "Profile updated successfully 🎉",
+        visibilityTime: 2000,
+      });
+      setLoading(false);
+    } catch (err: any) {
+      console.error("❌ Error verifying OTP:", err);
+      let errorMsg = "Something went wrong!";
+      if (err.response?.data) {
+        errorMsg = err.response.data.message || JSON.stringify(err.response.data);
+      } else if (err.message) {
+        errorMsg = err.message;
+      }
+      Toast.show({
+        type: "error",
+        text1: errorMsg,
+        visibilityTime: 2000,
+      });
+      setLoading(false);
+    }
+    console.log(gender, 'gender form update')
     setName("");
     setEmail("");
     setOtp("");
     setDob(new Date());
     setGender(null);
-  };
+  }
 
   return (
     <View className="flex-1 bg-white p-4 gap-5">
@@ -299,6 +324,22 @@ const Update = () => {
           Save Profile
         </Text>
       </TouchableOpacity>
+      {Loading && (
+        <View
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0,0,0,0.6)",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <LoadingAnime />
+        </View>
+      )}
     </View>
   );
 }

@@ -1,50 +1,192 @@
 // app/DriverDashboard.tsx
 import LoadingAnime from "@/components/LoadingAnime";
 import WelcomeSection from "@/components/WelcomeSection";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
+import Constants from 'expo-constants';
 import * as Location from "expo-location";
-import * as TaskManager from "expo-task-manager";
-import React, { useEffect, useState } from "react";
+import { jwtDecode } from "jwt-decode";
+import React, { useEffect, useRef, useState } from "react";
 import { Alert, Button, ScrollView, Text, View } from "react-native";
+import Toast from "react-native-toast-message";
 import { useToast } from "react-native-toast-notifications";
+import io from "socket.io-client";
 
 const LOCATION_TASK_NAME = "driver-location-task";
 
 export default function DriverDashboard() {
-  const toast = useToast();
+  const API_URL = Constants.expoConfig?.extra?.API_URL;
   const [tripActive, setTripActive] = useState(false);
   const [Loading, setLoading] = useState(false)
+  const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const toast = useToast();
+  const [user, setUser] = useState<any>(null);
+  const [driverData, setDriverData] = useState<DriverApiResponse | null>(null);
+  // const [trips, setTrips] = useState<TripDetails[]>([]);
+  const ws = useRef<WebSocket | null>(null);
 
-  // Sample assignment data
-  const driverAssignment = {
-    driverName: "Ravi Kumar",
-    busNumber: "TS-09-BX-4321",
-    route: {
-      name: "Miyapur → LB Nagar",
-      start: "Miyapur",
-      end: "LB Nagar",
-      stops: ["KPHB", "Ameerpet", "Dilsukhnagar"],
-    },
-    busDetails: {
-      type: "AC Volvo",
-      capacity: 50,
-      regYear: 2020,
-    },
-    shiftTime: "6:00 AM - 2:00 PM",
-  };
+  interface Stop {
+    status: string;
+    stop_name: string;
+    arrival_time: string;
+    departure_time: string;
+  }
 
-  //tost notifications  
+
+  interface Assignment {
+    bus_number: string;
+    bus_type: string;
+    capacity: number;
+    status: string;
+    depo_code_number: string;
+    depo_name: string;
+    depo_location: string;
+    assigned_date: string;
+    shift_time: string;
+    route_name: string;
+    source_location: string;
+    destination_location: string;
+    stops: Stop[];
+  }
+
+  interface Driver {
+    Create_At: string;
+    DateofBirth: string;
+    Gender: string;
+    Update_At: string;
+    email: string;
+    fullname: string;
+    id: number;
+    phone: string;
+    profile_url: string;
+    role: string;
+    stops: Stop[];
+  }
+
+  interface DriverApiResponse {
+    assignment: Assignment | null
+    driver: Driver;
+    message: string;
+    success: boolean;
+  }
+
+  interface MyJwtPayload {
+    name: string;
+    email: string;
+    dateOfBirth: string;
+    gender: string;
+    role: string;
+    profile: string;
+    phone: string;
+    iat: number;
+    exp: number;
+  }
+
+  type LocationCoords = {
+    lat: number;
+    lng: number;
+  } | string | null;
+
+  //token and user details
   useEffect(() => {
-    toast.show(`OTP verifyd, Welcome to dashboard dear driver`, {
-      type: 'success',
-      duration: 2000,
-    });
+    const fetchToken = async () => {
+      const storedToken = await AsyncStorage.getItem('access_token');
+      if (storedToken) {
+        setLoading(true);
+        const decoded = jwtDecode<MyJwtPayload>(storedToken);
+        setUser(decoded);
+        try {
+          const { data } = await axios.get(`${API_URL}/driver/create-driver?phone=${decoded.phone}`, {
+            headers: {
+              Authorization: `Bearer ${storedToken}`,
+            },
+          });
+          setDriverData(data);
+          Toast.show({
+            type: "success",
+            text1: `${driverData?.message}`,
+            visibilityTime: 3000,
+            autoHide: true,
+          });
+          setLoading(false);
+        } catch (err) {
+          console.log(err, 'from catch');
+          Toast.show({
+            type: "error",
+            text1: `${err}`,
+            visibilityTime: 3000,
+            autoHide: true,
+          });
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchToken();
   }, []);
 
+  //websockets here
+  const startShering = () => {
+
+    const socket = io(API_URL, {
+      transports: ["websocket"],
+      query: { role: "driver", busId: "123" }
+    });
+
+    socket.on("connect", () => {
+      console.log("driver connected", socket.id);
+      socket.emit("joinBusRoom", { busId: "123" });
+    });
+
+    socket.on("busLocationUpdate", (data: any) => {
+      console.log("Live bus location:", data);
+    });
+
+    // 2. Request GPS permission & start interval
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        console.log("Permission denied");
+        return;
+      }
+      const interval = setInterval(async () => {
+        let loc = await Location.getCurrentPositionAsync({});
+        const coords = {
+          lat: loc.coords.latitude,
+          lng: loc.coords.longitude,
+        };
+        setLocation(coords);
+        // 3. Send location to backend
+        socket.emit("sendLocation", { busId: "123", ...coords });
+      }, 10000);
+      return () => clearInterval(interval);
+    })();
+
+    return () => {
+      socket.disconnect();
+    };
+  }
 
   // Start Trip Handler
   const startTrip = async () => {
+    if (driverData?.assignment === null) {
+      Toast.show({
+        type: "error",
+        text1: `You have not assigned to any bus, so can't start trip`,
+        visibilityTime: 4000,
+        autoHide: true,
+      });
+      return
+    } else {
+      Toast.show({
+        type: "success",
+        text1: `Trip started`,
+        visibilityTime: 3000,
+        autoHide: true,
+      });
+      startShering() //here start location shearing via webstokes
+    }
     setLoading(true)
-    // setTimeout(async () => {
 
     const { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== "granted") {
@@ -70,16 +212,20 @@ export default function DriverDashboard() {
     });
 
     setTripActive(true);
-    Alert.alert("Trip Started", "Location tracking started.");
     setLoading(false)
-    // }, 1000);
   };
 
   // Stop Trip Handler
   const stopTrip = async () => {
     await Location.stopLocationUpdatesAsync(LOCATION_TASK_NAME);
     setTripActive(false);
-    Alert.alert("Trip Ended", "Location tracking stopped.");
+    Toast.show({
+      type: "success",
+      text1: `Trip Ended, Location tracking stopped.`,
+      visibilityTime: 3000,
+      autoHide: true,
+    });
+    // socket.disconnect();
   };
 
   return (
@@ -87,46 +233,63 @@ export default function DriverDashboard() {
       <View className="p-5">
         <WelcomeSection />
         {/* Header */}
-        <Text className="text-xl font-bold mb-4">Welcome <Text className="text-blue-500">{driverAssignment.driverName}👋</Text> to driver dashboard</Text>
-
+        <View>
+          <Text className="text-xl font-bold mb-4">Welcome <Text className="text-blue-500">{`${driverData?.driver.fullname || 'name'}`}👋 to </Text>{driverData?.driver.role} dashboard</Text>
+        </View>
         {/* Assignment Info */}
         <View className="bg-blue-100 rounded-2xl p-4 mb-5">
-          <Text className="text-lg font-semibold">Assigned to:</Text>
-          <Text className="text-base">{driverAssignment.driverName}</Text>
-          <Text className="text-base mt-2">
-            Shift: {driverAssignment.shiftTime}
-          </Text>
+          <Text className="text-lg font-semibold">Assigned to: {driverData?.driver.fullname}</Text>
+          <Text className="text-base">Email: {driverData?.driver.email || "Null"}</Text>
+          <Text className="text-base mt-2">Phone number: {driverData?.driver.phone || "Null "}</Text>
+          <Text className="text-base mt-2">Date of birth: {driverData?.driver.DateofBirth || "Null"}</Text>
+          <Text className="text-base mt-2">Gender: {driverData?.driver.Gender}</Text>
         </View>
 
         {/* Bus Info */}
-        <View className="bg-yellow-100 rounded-2xl p-4 mb-5">
+        <View className="bg-white border border-gray-200 rounded-2xl p-4 my-2">
           <Text className="text-lg font-semibold">Bus Info</Text>
           <Text className="text-base mt-1">
-            Bus Number: {driverAssignment.busNumber}
+            date of assignment : {`${driverData?.assignment?.assigned_date || 'Not assigned'}`}
+          </Text>
+          <Text>
+            Bus Number: {`${driverData?.assignment?.bus_number || 'Not assigned'}`}
           </Text>
           <Text className="text-base">
-            Type: {driverAssignment.busDetails.type}
+            Type: {`${driverData?.assignment?.bus_type || 'Not assigned'}`}
           </Text>
           <Text className="text-base">
-            Capacity: {driverAssignment.busDetails.capacity} seats
+            Capacity: {`${driverData?.assignment?.capacity || 'Not assigned'}`} seats
           </Text>
           <Text className="text-base">
-            Registration Year: {driverAssignment.busDetails.regYear}
+            Deport code : {`${driverData?.assignment?.depo_code_number || 'Not assigned'}`}
+          </Text>
+          <Text className="text-base">
+            Deport Name : {`${driverData?.assignment?.depo_name || 'Not assigned'}`}
+          </Text>
+          <Text className="text-base">
+            Deport Location : {`${driverData?.assignment?.depo_location || 'Not assigned'}`}
+          </Text>
+          <Text className="text-base">
+            status: {`${driverData?.assignment?.status || 'Not assigned'}`}
+          </Text>
+          <Text className="text-base">
+            shift timings : {`${driverData?.assignment?.shift_time || 'Not assigned'}`}
           </Text>
         </View>
 
-        {/* Route Info */}
-        <View className="bg-green-100 rounded-2xl p-4 mb-5">
-          <Text className="text-lg font-semibold">Route Details</Text>
-          <Text className="text-base mt-1">Name: {driverAssignment.route.name}</Text>
-          <Text className="text-base">
-            From: {driverAssignment.route.start} → To: {driverAssignment.route.end}
+        {/* stops Info */}
+        <View className="bg-white border border-gray-200 rounded-2xl p-4 my-4">
+          <Text className="text-lg font-semibold mb-2">
+            Route: {driverData?.assignment?.route_name}
           </Text>
-          <Text className="text-base mt-2 font-medium">Stops:</Text>
-          {driverAssignment.route.stops.map((stop, idx) => (
-            <Text key={idx} className="text-base">
-              • {stop}
-            </Text>
+
+          {driverData?.assignment?.stops?.map((stop, idx) => (
+            <View key={idx} className="border-b border-gray-200 py-2">
+              <Text className="font-medium">{stop.stop_name}</Text>
+              <Text className="text-sm text-gray-600">
+                Arrival: {stop.arrival_time} | Departure: {stop.departure_time}
+              </Text>
+            </View>
           ))}
         </View>
 
@@ -160,29 +323,29 @@ export default function DriverDashboard() {
 }
 
 // Define background task
-TaskManager.defineTask(LOCATION_TASK_NAME, async ({ data, error }) => {
-  if (error) {
-    console.error(error);
-    return;
-  }
-  if (data) {
-    const { locations }: any = data;
-    const { latitude, longitude } = locations[0].coords;
-    console.log('lat:', latitude, 'lon:', longitude)
-    // Send to backend
-    // try {
-    //   await fetch("https://your-backend.com/api/location", {
-    //     method: "POST",
-    //     headers: { "Content-Type": "application/json" },
-    //     body: JSON.stringify({
-    //       driverId: 1, // Replace with real driver ID
-    //       latitude,
-    //       longitude,
-    //       timestamp: new Date().toISOString(),
-    //     }),
-    //   });
-    // } catch (err) {
-    //   console.error("Failed to send location:", err);
-    // }
-  }
-});
+// TaskManager.defineTask(LOCATION_TASK_NAME, async ({ data, error }) => {
+//   if (error) {
+//     console.error(error);
+//     return;
+//   }
+//   if (data) {
+//     const { locations }: any = data;
+//     const { latitude, longitude } = locations[0].coords;
+//     console.log('lat:', latitude, 'lon:', longitude)
+// Send to backend
+// try {
+//   await fetch("https://your-backend.com/api/location", {
+//     method: "POST",
+//     headers: { "Content-Type": "application/json" },
+//     body: JSON.stringify({
+//       driverId: 1, // Replace with real driver ID
+//       latitude,
+//       longitude,
+//       timestamp: new Date().toISOString(),
+//     }),
+//   });
+// } catch (err) {
+//   console.error("Failed to send location:", err);
+// }
+//   }
+// });

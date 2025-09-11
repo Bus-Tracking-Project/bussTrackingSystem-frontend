@@ -1,25 +1,31 @@
 // import verifyphone from '@/assets/animations/VerifyPhone.json';
-import verifyphone1 from '@/assets/animations/VerifyPhone1.json';
+import verifyphone1 from '@/assets/animations/VerifyPhone.json';
 import LoadingAnime from '@/components/LoadingAnime';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Constants from 'expo-constants';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { jwtDecode } from 'jwt-decode';
 import LottieView from 'lottie-react-native';
 import React, { useEffect, useRef, useState } from 'react';
-import { Alert, ImageBackground, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { ImageBackground, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Toast from "react-native-toast-message";
 import { useToast } from 'react-native-toast-notifications';
 import { useAuth } from '../context/AuthContext';
 
 export default function VerifyOtpScreen() {
+  const API_URL = Constants.expoConfig?.extra?.API_URL;
   const toast = useToast();
   const router = useRouter();
   const { setRole } = useAuth();
-  const { phone } = useLocalSearchParams<{ phone: string }>(); // ✅ Phone from Login
+  const { phone } = useLocalSearchParams<{ phone: string }>();
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [timer, setTimer] = useState(30);
   const [resendDisabled, setResendDisabled] = useState(true);
   const [roles, setRoles] = useState('passanger')
   const [Loading, setLoading] = useState(false)
+  const [user, setUser] = useState<any>(null);
+
 
   const inputs = useRef<Array<TextInput | null>>([]);
   //tost notifications  
@@ -40,6 +46,7 @@ export default function VerifyOtpScreen() {
     }
   }, [timer, resendDisabled]);
 
+
   const handleOtpChange = (text: string, index: number) => {
     if (!/^\d?$/.test(text)) return;
 
@@ -58,56 +65,51 @@ export default function VerifyOtpScreen() {
     }
   };
 
+  // decode JWT when component mounts
+  useEffect(() => {
+    const fetchToken = async () => {
+      const storedToken = await AsyncStorage.getItem("access_token");
+      if (storedToken) {
+        const decoded: any = jwtDecode(storedToken);
+        setUser(decoded);
+        console.log("Decoded JWT:", decoded);
+      }
+    };
+    fetchToken();
+  }, []);
+
   const verifyOtp = () => {
     setLoading(true);
-    const otpValue = otp.join('');
+    const otpValue = otp.join("");
+
     setTimeout(() => {
       setLoading(false);
-      if (otpValue === '111111') {
-        if (phone === '9090909090') {
-          setRole("driver")
-          router.replace('/DriverHomeScreen' as any); // Admin route
-        } else if (phone === '8080808080') {
-          setRole("conductor");
-          router.replace('/Conductor' as any);
+
+      if (otpValue === "111111") {
+        if (user?.role === "PASSENGER") {
+          router.replace("/HomeScreen" as any);
+        } else if (user?.role === "DRIVER" || "CONDUCTOR") {
+          router.replace("/DriverHomeScreen" as any);
         } else {
-          setRole("passenger")
-          router.replace('/HomeScreen')
+          Toast.show({
+            type: "error",
+            text1: "Invalid role 🚫",
+            visibilityTime: 2500,
+          });
         }
       } else {
         Toast.show({
           type: "error",
           text1: "Invalid OTP 🚫",
           visibilityTime: 2500,
-          autoHide: true,
         });
       }
-      // try {
-      //   const res = await fetch('http://localhost:3000/user/register/verify', {
-      //     method: 'POST',
-      //     headers: { 'Content-Type': 'application/json' },
-      //     body: JSON.stringify(payload),
-      //   });
+    }, 1500);
+  };
 
-      //   const data = await res.json();
-      //   if (res.ok) {
-      //     Alert.alert('Success 🎉', 'OTP Verified!');
-      //     router.replace('/home');
-      //   } else {
-      //     Alert.alert('Error ❌', data.message || 'Invalid OTP');
-      //   }
-      // } catch (err) {
-      //   Alert.alert('Network Error 🌐', 'Could not verify OTP');
-      // }
-
-      // Mock success:
-      // router.navigate('../HomeScreen');
-    }, 1500)
-  }
 
   const handleResend = () => {
     if (resendDisabled) return;
-
     // Reset countdown
     setTimer(30);
     setResendDisabled(true);
@@ -125,14 +127,18 @@ export default function VerifyOtpScreen() {
     // }
 
     // Mock resend:
-    Alert.alert('Mock Resent ✅', `OTP resent to ${phone}`);
+    Toast.show({
+      type: "error",
+      text1: `Mock Resent ✅ OTP resent to ${phone}`,
+      visibilityTime: 2500,
+      autoHide: true,
+    });
   };
 
   const getMaskedPhone = () => {
     const str = phone?.toString() || '';
     return '9*******' + str.slice(-3);
   };
-
   return (
 
     <KeyboardAwareScrollView

@@ -1,36 +1,38 @@
+import GoingBuss from '@/assets/animations/BusGoing.json';
 import LoadingAnime from '@/components/LoadingAnime';
 import { Feather } from '@expo/vector-icons';
-import { Link, useRouter } from 'expo-router';
-import { useState } from 'react';
-import { Image, ImageBackground, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-// import GoingBuss from '@/assets/animations/BusGoing.json'
-import GoingBuss from '@/assets/animations/BusGoing.json';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import Constants from 'expo-constants';
+import { useRouter } from 'expo-router';
 import LottieView from 'lottie-react-native';
+import { useState } from 'react';
+import { Image, ImageBackground, Keyboard, Pressable, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Toast from "react-native-toast-message";
 
 export default function LoginScreen() {
-
+  const API_URL = Constants.expoConfig?.extra?.API_URL;
   const router = useRouter();
   const [Phone, setPhone] = useState('');
-  const [password, setPassword] = useState('');
-  const [role, setRole] = useState('passenger');
   const [Loading, setLoading] = useState(false);
+  const [token, setToken] = useState<string | null>(null);
 
+  // form validation -- like phone number
   const validateForm = () => {
     const isPhone = /^[0-9]{10}$/.test(Phone);
     if (!Phone) {
       Toast.show({
-        type: "error",  
-        text1: "Invalid Number 🚫",
-        visibilityTime: 2500,
+        type: "error",
+        text1: "Invalid Number, Enter a valid 10-digit phone number 🚫",
+        visibilityTime: 3000,
         autoHide: true,
       });
       return false;
     }
     if (!isPhone) {
       Toast.show({
-        type: "error",  
+        type: "error",
         text1: "Enter a valid 10-digit phone number 🚫",
         visibilityTime: 3000,
         autoHide: true,
@@ -40,31 +42,51 @@ export default function LoginScreen() {
     return true;
   };
 
-  const handleLogin = () => {
+  //login logic here -- like sending otp 
+  const handleLogin = async () => {
     setLoading(true);
     if (!validateForm()) return setLoading(false);
-    setTimeout(() => {
-      router.push({
-        pathname: '/Register/OTP',
-        params: { phone: Phone },
-      });
+    
+    try {
+      const response = await axios.post(`${API_URL}/auth/create`, { phone: Phone });
+      const { access_token } = response.data;
+      await AsyncStorage.setItem('access_token', access_token); // Store token
+      setToken(access_token);
       setLoading(false);
-    }, 1000);
+      setTimeout(() => {
+        router.push({
+          pathname: '/Login/OTP',
+          params: { phone: Phone, tocken: access_token },
+        });
+        setLoading(false);
+      }, 1000);
+    } catch (err: any) {
+      setLoading(false);
+      console.log("❌ Error creating profile:", err.response?.data || err.message);
+      Toast.show({
+        type: "error",
+        text1: err.response?.data || err.message,
+        visibilityTime: 3000,
+        autoHide: true,
+      });
+      return;
+    }
+
+
   };
 
   return (
-    <KeyboardAwareScrollView
-      contentContainerStyle={{ flexGrow: 1, justifyContent: "space-between" }}
-      enableOnAndroid={true}
-    >
-      <ScrollView
-        className="flex-1 bg-white"
-        contentContainerStyle={{ flexGrow: 1 }}
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <KeyboardAwareScrollView
+        contentContainerStyle={{ flexGrow: 1, justifyContent: "space-between" }}
+        enableOnAndroid={true}
         keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+        extraScrollHeight={20}
       >
-        <View className="flex-1 justify-center items-center px-5">
+        <View className="flex-1 justify-center items-center px-5 bg-white">
           <ImageBackground
-            source={require("../../assets/images/Banner.png")} // ✅ local image
+            source={require("../../assets/images/Banner.png")}
             resizeMode="cover"
             className="flex-1 justify-center items-center w-screen"
           >
@@ -115,15 +137,13 @@ export default function LoginScreen() {
             </View>
             <View>
               {/* Login Button */}
-              <Pressable onPress={handleLogin} className="bg-[#1E40AF] py-3 rounded-3xl">
+              <Pressable
+                onPress={handleLogin}
+                className="bg-[#1E40AF] py-3 my-3 rounded-3xl"
+              >
                 <Text className="text-white text-center font-semibold text-lg">Verify</Text>
               </Pressable>
 
-              <Pressable onPress={() => router.push('../HomeScreen')} className="my-3">
-                <Link href="/HomeScreen" className="text-center text-base underline">
-                  continue without account?
-                </Link>
-              </Pressable>
             </View>
           </View>
         </View>
@@ -143,7 +163,7 @@ export default function LoginScreen() {
             <LoadingAnime />
           </View>
         )}
-      </ScrollView>
-    </KeyboardAwareScrollView>
+      </KeyboardAwareScrollView>
+    </TouchableWithoutFeedback>
   );
 }
