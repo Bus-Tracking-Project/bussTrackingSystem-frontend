@@ -19,9 +19,9 @@ const Home = () => {
 
   //this img --for cards
   const images = [
-    require('@/assets/images/findYourBus.jpg'),
-    require('@/assets/images/EmergencyCart.png'),
-    require('@/assets/images/NearByStops.png'),
+    require('@/assets/images/findyourbus.jpg'),
+    require('@/assets/images/emergencycart.png'),
+    require('@/assets/images/nearbystops.png'),
   ];
   useEffect(() => {
     const interval = setInterval(() => {
@@ -88,7 +88,7 @@ const Home = () => {
         <View className="flex-row flex-wrap justify-around">
           <TouchableOpacity className='border border-gray-200 rounded-3xl h-40 w-44 overflow-hidden mb-4' onPress={() => router.push('../SearchByNumber')} >
             <View className='flex-1 items-center justify-center bg-white'>
-              <Image source={require('../../assets/images/license-plate.png')} className='w-20 h-20' />
+              <Image source={require('../../assets/images/license_plate.png')} className='w-20 h-20' />
               <Text className='text-1xl font-semibold text-center bg-white'>Search By Number</Text>
             </View>
           </TouchableOpacity>
@@ -149,7 +149,7 @@ const Home = () => {
           </TouchableOpacity>
           <TouchableOpacity className='border border-gray-200 rounded-3xl h-40 w-44 overflow-hidden mb-4' onPress={() => router.push('../ContactUs')}>
             <View className='flex-1 items-center justify-center bg-white'>
-              <Image source={require('../../assets/images/help-desk.png')} className='w-20 h-20' />
+              <Image source={require('../../assets/images/help_desk.png')} className='w-20 h-20' />
               <Text className='text-1xl font-semibold text-center bg-white'>contact us</Text>
             </View>
           </TouchableOpacity>

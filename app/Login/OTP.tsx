@@ -7,7 +7,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { jwtDecode } from 'jwt-decode';
 import LottieView from 'lottie-react-native';
 import React, { useEffect, useRef, useState } from 'react';
-import { ImageBackground, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { ImageBackground, Keyboard, Pressable, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Toast from "react-native-toast-message";
 import { useToast } from 'react-native-toast-notifications';
@@ -140,19 +140,17 @@ export default function VerifyOtpScreen() {
     return '9*******' + str.slice(-3);
   };
   return (
-
-    <KeyboardAwareScrollView
-      contentContainerStyle={{ flexGrow: 1, justifyContent: "space-between" }}
-      enableOnAndroid={true}
-    >
-      <ScrollView
-        className="flex-1 bg-white"
-        contentContainerStyle={{ flexGrow: 1 }}
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <KeyboardAwareScrollView
+        contentContainerStyle={{ flexGrow: 1, justifyContent: "space-between" }}
+        enableOnAndroid={true}
         keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+        extraScrollHeight={5}
       >
-        <View className='flex-1 flex-col justify-center'>
+        <View className='flex-1 flex-col justify-center bg-white'>
           <ImageBackground
-            source={require("../../assets/images/Banner.png")}
+            source={require("../../assets/images/banner.png")}
             resizeMode="cover"
             className="flex-1 w-screen"
           >
@@ -217,7 +215,7 @@ export default function VerifyOtpScreen() {
             <LoadingAnime />
           </View>
         )}
-      </ScrollView>
-    </KeyboardAwareScrollView>
+      </KeyboardAwareScrollView>
+    </TouchableWithoutFeedback>
   );
 }

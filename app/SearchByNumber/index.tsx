@@ -150,7 +150,7 @@ const Index = () => {
       const res = await fetch(`${API_URL}/bustable/Busnumber`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ busnumber: busNumber }),
+        body: JSON.stringify({ busnumber: busNumber.toUpperCase() }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -189,7 +189,7 @@ const Index = () => {
       <View className="w-[100%] h-[25%] p-5">
         <View>
           <Image
-            source={require('@/assets/images/findYourBus.jpg')}
+            source={require('@/assets/images/findyourbus.jpg')}
             style={{
               width: '100%',
               height: '100%',
@@ -561,7 +561,6 @@ const Index = () => {
         </View>
       )}
     </View>
-    // </TouchableWithoutFeedback>
   );
 };
 

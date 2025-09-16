@@ -4,9 +4,8 @@
     "slug": "practice",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/logo.jpg",
-    "resizeMode": "cover",
-    "scheme": "Buss_tracking_app",
+    "icon": "./assets/images/applogo.png",
+    "scheme": "yatraq",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "extra": {
@@ -24,13 +23,12 @@
       }
     },
     "android": {
-      
       "permissions": [
         "ACCESS_FINE_LOCATION",
         "ACCESS_FINE_LOCATION"
       ],
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/adaptive_icon.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
@@ -51,9 +49,8 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/images/splash_icon.png",
           "imageWidth": 200,
-          "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
       ]

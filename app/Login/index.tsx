@@ -82,11 +82,11 @@ export default function LoginScreen() {
         enableOnAndroid={true}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
-        extraScrollHeight={20}
+        extraScrollHeight={5}
       >
         <View className="flex-1 justify-center items-center px-5 bg-white">
           <ImageBackground
-            source={require("../../assets/images/Banner.png")}
+            source={require("../../assets/images/banner.png")}
             resizeMode="cover"
             className="flex-1 justify-center items-center w-screen"
           >
