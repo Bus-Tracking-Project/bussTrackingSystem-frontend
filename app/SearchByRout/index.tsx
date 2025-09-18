@@ -1,8 +1,8 @@
-import BusCard from '@/components/BusCard';
-import LoadingAnime from '@/components/LoadingAnime';
 import { MapPin, Search } from 'lucide-react-native';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import BusCard from '../../components/BusCard';
+import LoadingAnime from '../../components/LoadingAnime';
 
 
 const FromToSearch = () => {

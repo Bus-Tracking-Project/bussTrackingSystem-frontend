@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Contacts from "expo-contacts";
 import { Ambulance, Heart, Phone, Plus, Shield, Users, X } from "lucide-react-native"; // for nice icons
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Alert, FlatList, Linking, Modal, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 const emergencyNumbers = [
@@ -193,7 +193,7 @@ const EmergencySOS = () => {
           {/* Contacts List */}
           <FlatList
             data={availableContacts}
-            keyExtractor={(item) => item.id || item.name || Math.random().toString()}
+            keyExtractor={(item, index) => item.name || index.toString()}
             renderItem={({ item }) => (
               <TouchableOpacity
                 onPress={() => addContactToFavorites(item)}

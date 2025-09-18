@@ -1,16 +1,16 @@
 // import verifyphone from '@/assets/animations/VerifyPhone.json';
-import verifyphone1 from '@/assets/animations/VerifyPhone.json';
-import LoadingAnime from '@/components/LoadingAnime';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Constants from 'expo-constants';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { jwtDecode } from 'jwt-decode';
 import LottieView from 'lottie-react-native';
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ImageBackground, Keyboard, Pressable, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Toast from "react-native-toast-message";
 import { useToast } from 'react-native-toast-notifications';
+import verifyphone1 from '../../assets/animations/VerifyPhone1.json';
+import LoadingAnime from '../../components/LoadingAnime';
 import { useAuth } from '../context/AuthContext';
 
 export default function VerifyOtpScreen() {
@@ -46,7 +46,6 @@ export default function VerifyOtpScreen() {
     }
   }, [timer, resendDisabled]);
 
-
   const handleOtpChange = (text: string, index: number) => {
     if (!/^\d?$/.test(text)) return;
 
@@ -54,15 +53,13 @@ export default function VerifyOtpScreen() {
     newOtp[index] = text;
     setOtp(newOtp);
 
-    // Auto-focus next
     if (text && index < 5) {
-      inputs.current[index + 1]?.focus();
+      setTimeout(() => inputs.current[index + 1]?.focus(), 100);
+    }
+    if (!text && index > 0) {
+      setTimeout(() => inputs.current[index - 1]?.focus(), 100);
     }
 
-    // Auto-focus previous if deleted
-    if (!text && index > 0) {
-      inputs.current[index - 1]?.focus();
-    }
   };
 
   // decode JWT when component mounts
@@ -88,7 +85,7 @@ export default function VerifyOtpScreen() {
       if (otpValue === "111111") {
         if (user?.role === "PASSENGER") {
           router.replace("/HomeScreen" as any);
-        } else if (user?.role === "DRIVER" || "CONDUCTOR") {
+        } else if (user?.role === "DRIVER" || user?.role === "CONDUCTOR") {
           router.replace("/DriverHomeScreen" as any);
         } else {
           Toast.show({

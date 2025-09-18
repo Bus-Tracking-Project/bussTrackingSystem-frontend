@@ -1,4 +1,3 @@
-// app/ContactUs.tsx
 import { Mail, Phone } from "lucide-react-native";
 import { Linking, Platform, SafeAreaView, Text, TouchableOpacity, View } from "react-native";
 

@@ -1,10 +1,10 @@
-import { useAuth } from '@/app/context/AuthContext';
-import LoadingAnime from '@/components/LoadingAnime';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import { Menu, X } from 'lucide-react-native';
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { Animated, Dimensions, Image, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { useAuth } from '../app/context/AuthContext';
+import LoadingAnime from '../components/LoadingAnime';
 
 const { width } = Dimensions.get('window');
 
@@ -78,7 +78,7 @@ const BottomNavBar = () => {
                 </View>
                 <TouchableOpacity onPress={() => router.push('../Profile')}>
                     <Image
-                        source={require('@/assets/images/user.png')}
+                        source={require('../assets/images/user.png')}
                         className="w-8 h-8 rounded-full border border-white"
                     />
                 </TouchableOpacity>

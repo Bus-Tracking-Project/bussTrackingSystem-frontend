@@ -1,8 +1,8 @@
-import EmergencyCard from '@/components/EmergenceCart';
-import LoadingAnime from '@/components/LoadingAnime';
 import * as Location from 'expo-location';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Alert, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import EmergencyCard from '../../components/EmergenceCart';
+import LoadingAnime from '../../components/LoadingAnime';
 
 const MedicalAssistanceForm = () => {
   const [name, setName] = useState('');

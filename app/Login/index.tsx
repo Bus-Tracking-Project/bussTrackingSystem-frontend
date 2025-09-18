@@ -1,5 +1,3 @@
-import GoingBuss from '@/assets/animations/BusGoing.json';
-import LoadingAnime from '@/components/LoadingAnime';
 import { Feather } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
@@ -10,6 +8,8 @@ import { useState } from 'react';
 import { Image, ImageBackground, Keyboard, Pressable, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Toast from "react-native-toast-message";
+import GoingBuss from '../../assets/animations/BusGoing.json';
+import LoadingAnime from '../../components/LoadingAnime';
 
 export default function LoginScreen() {
   const API_URL = Constants.expoConfig?.extra?.API_URL;
@@ -71,8 +71,6 @@ export default function LoginScreen() {
       });
       return;
     }
-
-
   };
 
   return (
@@ -95,7 +93,7 @@ export default function LoginScreen() {
             <View>
               <View className="flex flex-row items-center my-2">
                 <Text className="text-5xl font-bold text-gray-500">Yatra</Text>
-                <Image source={require('@/assets/images/btslogo.png')} className="w-10 h-10" />
+                <Image source={require('../../assets/images/btslogo.png')} className="w-10 h-10" />
                 <LottieView
                   source={GoingBuss}
                   autoPlay

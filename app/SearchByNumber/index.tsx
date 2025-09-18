@@ -1,4 +1,3 @@
-import LoadingAnime from '@/components/LoadingAnime';
 import Constants from 'expo-constants';
 import { router } from 'expo-router';
 import {
@@ -18,6 +17,7 @@ import {
   View
 } from 'react-native';
 import { io, Socket } from 'socket.io-client';
+import LoadingAnime from '../../components/LoadingAnime';
 
 const Index = () => {
   const API_URL = Constants.expoConfig?.extra?.API_URL;
@@ -114,7 +114,7 @@ const Index = () => {
     // initialize socket
     const socket: Socket = io(API_URL, {
       transports: ["websocket"],
-      query: { role: "passenger", busId: "123" }, // pass role & busId in handshake
+      query: { role: "passenger", busId: 'TS09Z1007' }, // pass role & busId in handshake
     });
 
     // when connected
@@ -122,7 +122,7 @@ const Index = () => {
       console.log("✅ Passenger connected:", socket.id);
 
       // join the bus room after successful connection
-      socket.emit("joinBusRoom", { busId: "123" });
+      socket.emit("joinBusRoom", { busId: 'TS09Z1007' });
     });
 
     // when bus location updates
@@ -177,11 +177,11 @@ const Index = () => {
   };
 
   const mapComponentHandler = async (busId: string) => {
-    console.log('opnning map...')
+    console.log('bus id from search by number...',busId)
     // console.log(busId,'this is search compo')
-    router.push({ pathname: "/LiveBusMap", params: { busId :'123' } });
+    router.push({ pathname: "/LiveBusMap", params: { busId : busId } });
   }
- 
+
   return (
     // <TouchableWithoutFeedback onPress={() => setIsInputFocused(false)}>
     <View className='bg-white h-screen'>
@@ -189,7 +189,7 @@ const Index = () => {
       <View className="w-[100%] h-[25%] p-5">
         <View>
           <Image
-            source={require('@/assets/images/findyourbus.jpg')}
+            source={require('../../assets/images/findyourbus.jpg')}
             style={{
               width: '100%',
               height: '100%',
@@ -201,24 +201,24 @@ const Index = () => {
       </View>
       <View className="w-full px-3 pb-4 gap-5 h-full">
         <View className="flex-1 mt-5 items-center pb-5 px-3">
-          {/* Input */}
+        {/* Input */}
           <View className="flex-row items-center border-b-2 border-gray-300 px-4 py-3 gap-3">
             <View className='border-0 pr-2 border-r-2 border-r-gray-300'>
               <Bus size={30} color="black" />
             </View>
-            <TextInput
-              className="flex-1 text-black"
+          <TextInput
+            className="flex-1 text-black"
               placeholder={placeholderText}
-              placeholderTextColor="gray"
-              value={busNumber}
-              onChangeText={setBusNumber}
+            placeholderTextColor="gray"
+            value={busNumber}
+            onChangeText={setBusNumber}
               onFocus={() => setIsInputFocused(true)}
               onBlur={() => setIsInputFocused(false)}
-            />
-            <TouchableOpacity onPress={handleSubmit}>
+          />
+          <TouchableOpacity onPress={handleSubmit}>
               <Search size={25} color="black" />
-            </TouchableOpacity>
-          </View>
+          </TouchableOpacity>
+        </View>
 
           {/* Search Suggestions 
           {isInputFocused && (
@@ -246,9 +246,9 @@ const Index = () => {
             </View>
           )}*/}
 
-          {/* Results */}
+        {/* Results */}
           <View className="border-none rounded-lg w-full h-[70%] my-1">
-            <ScrollView className="p-1">
+          <ScrollView className="p-1">
               {busData.length === 0 && !error ? (
                 <>
                   <Text className="text-center text-2xl font-bold text-gray-600 mb-4">
@@ -387,48 +387,48 @@ const Index = () => {
               ) : busData.length === 0 && error ? (
                 <Text className="text-center text-3xl font-extrabold text-gray-400">
                   Error: {error || "Something went wrong"}
-                </Text>
-              ) : (
-                busData.map((bus, idx) => {
-                  const expanded = expandedId === bus.bus_number;
+              </Text>
+            ) : (
+              busData.map((bus, idx) => {
+                const expanded = expandedId === bus.bus_number;
 
-                  return (
-                    <View
-                      key={idx}
-                      className="bg-white rounded-xl shadow-md mb-3"
-                    >
-                      {/* Card */}
-                      <TouchableOpacity
-                        className="flex-row items-center justify-between w-full p-4 active:opacity-80"
+                return (
+                  <View
+                    key={idx}
+                    className="bg-white rounded-xl shadow-md mb-3"
+                  >
+                    {/* Card */}
+                    <TouchableOpacity
+                      className="flex-row items-center justify-between w-full p-4 active:opacity-80"
                       // onPress={() =>
                       //   setExpandedId(expanded ? null : bus.bus_number)
                       // }
-                      >
-                        <View className="flex-row items-center space-x-3">
-                          <View className="w-12 h-12 bg-gray-100 rounded-xl items-center justify-center mx-2">
-                            <Bus size={24} color="#22c55e" strokeWidth={1.5} />
-                          </View>
-                          <View>
-                            <Text className="font-semibold text-gray-900">
-                              {bus.bus_number}
+                    >
+                      <View className="flex-row items-center space-x-3">
+                        <View className="w-12 h-12 bg-gray-100 rounded-xl items-center justify-center mx-2">
+                          <Bus size={24} color="#22c55e" strokeWidth={1.5} />
+                        </View>
+                        <View>
+                          <Text className="font-semibold text-gray-900">
+                            {bus.bus_number}
+                          </Text>
+                          <View className="flex-row items-center mt-1 gap-2">
+                            <MapPin
+                              size={14}
+                              color="#6b7280"
+                              strokeWidth={1.5}
+                              className=''
+                            />
+                            <Text className="text-gray-500 text-sm">
+                              {bus.trip_date}
                             </Text>
-                            <View className="flex-row items-center mt-1 gap-2">
-                              <MapPin
-                                size={14}
-                                color="#6b7280"
-                                strokeWidth={1.5}
-                                className=''
-                              />
-                              <Text className="text-gray-500 text-sm">
-                                {bus.trip_date}
-                              </Text>
-                            </View>
-                            <View className="flex-col gap-1 mt-1">
-                              <Text>Form : {bus.source_location_id}</Text>
-                              <Text>To : {bus.destination_location_id}</Text>
-                            </View>
+                          </View>
+                          <View className="flex-col gap-1 mt-1">
+                            <Text>Form : {bus.source_location_id}</Text>
+                            <Text>To : {bus.destination_location_id}</Text>
                           </View>
                         </View>
+                      </View>
 
                         {/* this is for map icon when user click on this map will open */}
 
@@ -439,108 +439,108 @@ const Index = () => {
                           <MapPin size={30} color="black" />
                         </TouchableOpacity>
 
-                        <View className="items-end">
-                          <View className="flex-row items-center gap-1">
-                            <Clock
-                              size={14}
-                              color="#6b7280"
-                              strokeWidth={1.5}
-                            />
-                            <Text className="font-semibold text-gray-900 text-sm">
-                              {bus.departure_time}
-                            </Text>
-                          </View>
-                          <Text className="text-green-500 text-sm font-medium">
-                            {bus.arrival_time}
+                      <View className="items-end">
+                        <View className="flex-row items-center gap-1">
+                          <Clock
+                            size={14}
+                            color="#6b7280"
+                            strokeWidth={1.5}
+                          />
+                          <Text className="font-semibold text-gray-900 text-sm">
+                            {bus.departure_time}
                           </Text>
                         </View>
-                      </TouchableOpacity>
+                        <Text className="text-green-500 text-sm font-medium">
+                          {bus.arrival_time}
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
 
-                      {expanded && (
-                        <View className="px-4 pb-4 py-2 gap-2">
-                          <Text className="text-gray-700">
-                            Driver:{" "}
-                            <Text className="font-semibold">{bus.drivercode}</Text>{" "}
-                            |{" "}
-                            <Text className="font-semibold">
-                              {bus.driver_phonenumber}
-                            </Text>
+                    {expanded && (
+                      <View className="px-4 pb-4 py-2 gap-2">
+                        <Text className="text-gray-700">
+                          Driver:{" "}
+                          <Text className="font-semibold">{bus.drivercode}</Text>{" "}
+                          |{" "}
+                          <Text className="font-semibold">
+                            {bus.driver_phonenumber}
                           </Text>
+                        </Text>
 
-                          <Text className="text-gray-700">
-                            Conductor:{" "}
-                            <Text className="font-semibold">
-                              {bus.conductor_code}
-                            </Text>{" "}
-                            |{" "}
-                            <Text className="font-semibold">
-                              {bus.conductor_phonenumber}
-                            </Text>
+                        <Text className="text-gray-700">
+                          Conductor:{" "}
+                          <Text className="font-semibold">
+                            {bus.conductor_code}
+                          </Text>{" "}
+                          |{" "}
+                          <Text className="font-semibold">
+                            {bus.conductor_phonenumber}
                           </Text>
+                        </Text>
 
-                          <Text className="text-gray-700">
-                            Type:{" "}
-                            <Text className="font-semibold">{bus.bus_type}</Text>
+                        <Text className="text-gray-700">
+                          Type:{" "}
+                          <Text className="font-semibold">{bus.bus_type}</Text>
+                        </Text>
+
+                        <Text className="text-gray-700">
+                          Time:{" "}
+                          <Text className="font-semibold">
+                            {bus.departure_time} - {bus.arrival_time}
                           </Text>
+                        </Text>
 
-                          <Text className="text-gray-700">
-                            Time:{" "}
-                            <Text className="font-semibold">
-                              {bus.departure_time} - {bus.arrival_time}
-                            </Text>
+                        <View>
+                          <Text className="text-gray-700 font-medium">
+                            Stops:
                           </Text>
+                          {bus.stops.map((stop, i) => (
+                            <View key={i} className="ml-6">
+                              <Text className="text-gray-600">
+                                • {stop.stop_name} ({stop.status})
+                              </Text>
+                              <Text className="text-gray-500 text-sm">
+                                Arr: {stop.arrival_time} | Dep:{" "}
+                                {stop.departure_time}
+                              </Text>
+                            </View>
+                          ))}
+                        </View>
 
-                          <View>
-                            <Text className="text-gray-700 font-medium">
-                              Stops:
-                            </Text>
-                            {bus.stops.map((stop, i) => (
-                              <View key={i} className="ml-6">
-                                <Text className="text-gray-600">
-                                  • {stop.stop_name} ({stop.status})
-                                </Text>
-                                <Text className="text-gray-500 text-sm">
-                                  Arr: {stop.arrival_time} | Dep:{" "}
-                                  {stop.departure_time}
-                                </Text>
-                              </View>
-                            ))}
-                          </View>
+                        <Text className="text-gray-700">
+                          Capacity:{" "}
+                          <Text className="font-semibold">{bus.capacity}</Text>
+                        </Text>
 
-                          <Text className="text-gray-700">
-                            Capacity:{" "}
-                            <Text className="font-semibold">{bus.capacity}</Text>
-                          </Text>
+                        <Text className="text-gray-700">
+                          Depo ID:{" "}
+                          <Text className="font-semibold">{bus.depo_id}</Text>
+                        </Text>
 
-                          <Text className="text-gray-700">
-                            Depo ID:{" "}
-                            <Text className="font-semibold">{bus.depo_id}</Text>
-                          </Text>
-
-                          {/* <View className="flex-row items-center gap-2">
+                        {/* <View className="flex-row items-center gap-2">
                           <AlertTriangle size={18} color="red" />
                           <Text className="text-red-600 font-medium">
                             Alerts: (coming soon)
                           </Text>
                         </View> */}
-                        </View>
-                      )}
+                      </View>
+                    )}
 
-                      <TouchableOpacity
-                        onPress={() =>
-                          setExpandedId(expanded ? null : bus.bus_number)
-                        }
-                        className="border-t border-gray-200 py-2 mx-3"
-                      >
-                        <Text className="text-center text-blue-600 font-medium">
-                          {expanded ? "Hide Details" : "See More"}
-                        </Text>
-                      </TouchableOpacity>
-                    </View>
-                  );
-                })
-              )}
-            </ScrollView>
+                    <TouchableOpacity
+                      onPress={() =>
+                        setExpandedId(expanded ? null : bus.bus_number)
+                      }
+                      className="border-t border-gray-200 py-2 mx-3"
+                    >
+                      <Text className="text-center text-blue-600 font-medium">
+                        {expanded ? "Hide Details" : "See More"}
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                );
+              })
+            )}
+          </ScrollView>
           </View>
         </View>
       </View>

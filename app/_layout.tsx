@@ -1,6 +1,6 @@
-import BottomNavBar from "@/components/Navbar";
 import { Stack, usePathname } from "expo-router";
 import { Text, View } from "react-native";
+import BottomNavBar from "../components/Navbar";
 // import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from 'react-native-toast-message';

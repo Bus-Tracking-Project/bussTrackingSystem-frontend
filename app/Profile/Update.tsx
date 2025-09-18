@@ -1,4 +1,3 @@
-import LoadingAnime from '@/components/LoadingAnime';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker from "@react-native-community/datetimepicker";
 import axios from "axios";
@@ -6,9 +5,10 @@ import Constants from 'expo-constants';
 import * as ImagePicker from 'expo-image-picker';
 import { jwtDecode } from 'jwt-decode';
 import { Camera } from "lucide-react-native";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Alert, Image, Text, TextInput, TouchableOpacity, View } from "react-native";
 import Toast from "react-native-toast-message";
+import LoadingAnime from '../../components/LoadingAnime';
 
 const Update = () => {
   const API_URL = Constants.expoConfig?.extra?.API_URL;
@@ -77,7 +77,28 @@ const Update = () => {
 
   //otp to mail for verify 
   const handleVerifyOtp = async () => {
+    // name validation
+    if (!name.trim() || name.length < 3) {
+      Toast.show({
+        type: "error",
+        text1: "Enter a valid name (min 3 chars) 🚫",
+        visibilityTime: 2500,
+      });
+      return;
+    }
+    // email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email.trim() || !emailRegex.test(email)) {
+      Toast.show({
+        type: "error",
+        text1: "Enter a valid email 📧",
+        visibilityTime: 2500,
+      });
+      return;
+    }
+    
     setLoading(true);
+
     try {
       const formData = new FormData();
       formData.append("fullname", name);
@@ -122,27 +143,8 @@ const Update = () => {
 
   //submit btn
   const submitHandler = async () => {
-    // name validation
-    if (!name.trim() || name.length < 3) {
-      Toast.show({
-        type: "error",
-        text1: "Enter a valid name (min 3 chars) 🚫",
-        visibilityTime: 2500,
-      });
-      return;
-    }
 
-    // email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!email.trim() || !emailRegex.test(email)) {
-      Toast.show({
-        type: "error",
-        text1: "Enter a valid email 📧",
-        visibilityTime: 2500,
-      });
-      return;
-    }
-
+    
     // otp validation
     if (!otp.trim() || otp.length !== 6) {
       Toast.show({

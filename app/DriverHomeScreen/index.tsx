@@ -1,16 +1,15 @@
-// app/DriverDashboard.tsx
-import LoadingAnime from "@/components/LoadingAnime";
-import WelcomeSection from "@/components/WelcomeSection";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import Constants from 'expo-constants';
 import * as Location from "expo-location";
 import { jwtDecode } from "jwt-decode";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Alert, Button, ScrollView, Text, View } from "react-native";
 import Toast from "react-native-toast-message";
 import { useToast } from "react-native-toast-notifications";
 import io from "socket.io-client";
+import LoadingAnime from "../../components/LoadingAnime";
+import WelcomeSection from "../../components/WelcomeSection";
 
 const LOCATION_TASK_NAME = "driver-location-task";
 
@@ -23,7 +22,9 @@ export default function DriverDashboard() {
   const [user, setUser] = useState<any>(null);
   const [driverData, setDriverData] = useState<DriverApiResponse | null>(null);
   // const [trips, setTrips] = useState<TripDetails[]>([]);
-  const ws = useRef<WebSocket | null>(null);
+ const socketRef = useRef<any>(null);
+  const locationTimerRef = useRef<any>(null);
+  const [roomId, setRoomId] = useState<string | null>(null);
 
   interface Stop {
     status: string;
@@ -31,7 +32,6 @@ export default function DriverDashboard() {
     arrival_time: string;
     departure_time: string;
   }
-
 
   interface Assignment {
     bus_number: string;
@@ -102,9 +102,14 @@ export default function DriverDashboard() {
             },
           });
           setDriverData(data);
+          console.log(data?.assignment?.bus_number,'from driver screen')
+          // derive a stable per-driver room id (prefer driver id, fallback to phone)
+          const derivedRoomId = (data?.assignment?.bus_number ? String(data.assignment.bus_number) : decoded.phone) || null;
+          setRoomId(derivedRoomId);
+
           Toast.show({
             type: "success",
-            text1: `${driverData?.message}`,
+            text1: `${data?.message || 'Driver loaded'}`,
             visibilityTime: 3000,
             autoHide: true,
           });
@@ -126,45 +131,58 @@ export default function DriverDashboard() {
   }, []);
 
   //websockets here
-  const startShering = () => {
+  const startShering = async () => {
+    if (!API_URL) {
+      Toast.show({ type: "error", text1: "API_URL not configured" });
+      return;
+    }
+    if (!roomId) {
+      Toast.show({ type: "error", text1: "Driver room not ready yet" });
+      return;
+    }
+
+    // Avoid duplicate connections/intervals
+    if (socketRef.current) {
+      try { socketRef.current.disconnect(); } catch {}
+      socketRef.current = null;
+    }
+    if (locationTimerRef.current) {
+      clearInterval(locationTimerRef.current);
+      locationTimerRef.current = null;
+    }
 
     const socket = io(API_URL, {
       transports: ["websocket"],
-      query: { role: "driver", busId: "123" }
+      query: { role: "driver", busId: roomId }
     });
+    socketRef.current = socket;
 
     socket.on("connect", () => {
-      console.log("driver connected", socket.id);
-      socket.emit("joinBusRoom", { busId: "123" });
+      // Optional: also explicitly join a room via event if your server expects it
+      socket.emit("joinBusRoom", { busId: roomId });
     });
 
     socket.on("busLocationUpdate", (data: any) => {
       console.log("Live bus location:", data);
     });
 
-    // 2. Request GPS permission & start interval
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        console.log("Permission denied");
-        return;
-      }
-      const interval = setInterval(async () => {
-        let loc = await Location.getCurrentPositionAsync({});
-        const coords = {
-          lat: loc.coords.latitude,
-          lng: loc.coords.longitude,
-        };
-        setLocation(coords);
-        // 3. Send location to backend
-        socket.emit("sendLocation", { busId: "123", ...coords });
-      }, 10000);
-      return () => clearInterval(interval);
-    })();
+    // Request GPS permission & start interval
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== "granted") {
+      console.log("Permission denied");
+      return;
+    }
 
-    return () => {
-      socket.disconnect();
-    };
+    locationTimerRef.current = setInterval(async () => {
+      const loc = await Location.getCurrentPositionAsync({});
+      const coords = {
+        lat: loc.coords.latitude,
+        lng: loc.coords.longitude,
+      };
+      setLocation(coords);
+      // Send location to backend to the specific bus room
+      socket.emit("sendLocation", { busId: roomId, ...coords });
+    }, 10000);
   }
 
   // Start Trip Handler
@@ -225,7 +243,14 @@ export default function DriverDashboard() {
       visibilityTime: 3000,
       autoHide: true,
     });
-    // socket.disconnect();
+    if (locationTimerRef.current) {
+      clearInterval(locationTimerRef.current);
+      locationTimerRef.current = null;
+    }
+    if (socketRef.current) {
+      try { socketRef.current.disconnect(); } catch {}
+      socketRef.current = null;
+    }
   };
 
   return (

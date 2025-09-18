@@ -1,12 +1,12 @@
-import LoadingAnime from '@/components/LoadingAnime';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Constants from 'expo-constants';
 import * as Location from "expo-location";
 import { router } from "expo-router";
 import { jwtDecode } from "jwt-decode";
 import { Calendar, Mail, MapPin, Phone, UserCircle } from "lucide-react-native";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import LoadingAnime from '../../components/LoadingAnime';
 
 const ProfileScreen = () => {
   const API_URL = Constants.expoConfig?.extra?.API_URL;
@@ -100,7 +100,7 @@ const ProfileScreen = () => {
               />
             ) : (
               <Image
-                source={require('@/assets/images/user.png')}
+                source={require('../../assets/images/user.png')}
                 className="w-24 h-24 rounded-full"
               />
             )}
