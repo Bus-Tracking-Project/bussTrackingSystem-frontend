@@ -1,5 +1,4 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
 import Constants from 'expo-constants';
 import * as Location from "expo-location";
 import { jwtDecode } from "jwt-decode";
@@ -95,35 +94,35 @@ export default function DriverDashboard() {
         setLoading(true);
         const decoded = jwtDecode<MyJwtPayload>(storedToken);
         setUser(decoded);
-        try {
-          const { data } = await axios.get(`${API_URL}/driver/create-driver?phone=${decoded.phone}`, {
-            headers: {
-              Authorization: `Bearer ${storedToken}`,
-            },
-          });
-          setDriverData(data);
-          console.log(data?.assignment?.bus_number,'from driver screen')
-          // derive a stable per-driver room id (prefer driver id, fallback to phone)
-          const derivedRoomId = (data?.assignment?.bus_number ? String(data.assignment.bus_number) : decoded.phone) || null;
-          setRoomId(derivedRoomId);
+        // try {
+        //   const { data } = await axios.get(`${API_URL}/driver/create-driver?phone=${decoded.phone}`, {
+        //     headers: {
+        //       Authorization: `Bearer ${storedToken}`,
+        //     },
+        //   });
+        //   setDriverData(data);
+        //   console.log(data?.assignment?.bus_number,'from driver screen')
+        //   // derive a stable per-driver room id (prefer driver id, fallback to phone)
+        //   const derivedRoomId = (data?.assignment?.bus_number ? String(data.assignment.bus_number) : decoded.phone) || null;
+        //   setRoomId(derivedRoomId);
 
-          Toast.show({
-            type: "success",
-            text1: `${data?.message || 'Driver loaded'}`,
-            visibilityTime: 3000,
-            autoHide: true,
-          });
-          setLoading(false);
-        } catch (err) {
-          console.log(err, 'from catch');
-          Toast.show({
-            type: "error",
-            text1: `${err}`,
-            visibilityTime: 3000,
-            autoHide: true,
-          });
-          setLoading(false);
-        }
+        //   Toast.show({
+        //     type: "success",
+        //     text1: `${data?.message || 'Driver loaded'}`,
+        //     visibilityTime: 3000,
+        //     autoHide: true,
+        //   });
+        //   setLoading(false);
+        // } catch (err) {
+        //   console.log(err, 'from catch');
+        //   Toast.show({
+        //     type: "error",
+        //     text1: `${err}`,
+        //     visibilityTime: 3000,
+        //     autoHide: true,
+        //   });
+        //   setLoading(false);
+        // }
       }
     };
 

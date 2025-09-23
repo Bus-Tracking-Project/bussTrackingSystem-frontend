@@ -1,4 +1,3 @@
-// import verifyphone from '@/assets/animations/VerifyPhone.json';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Constants from 'expo-constants';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -59,7 +58,6 @@ export default function VerifyOtpScreen() {
     if (!text && index > 0) {
       setTimeout(() => inputs.current[index - 1]?.focus(), 100);
     }
-
   };
 
   // decode JWT when component mounts
@@ -83,7 +81,7 @@ export default function VerifyOtpScreen() {
       setLoading(false);
 
       if (otpValue === "111111") {
-        if (user?.role === "PASSENGER") {
+        if (user?.role === "ADMIN") {
           router.replace("/HomeScreen" as any);
         } else if (user?.role === "DRIVER" || user?.role === "CONDUCTOR") {
           router.replace("/DriverHomeScreen" as any);
@@ -103,7 +101,6 @@ export default function VerifyOtpScreen() {
       }
     }, 1500);
   };
-
 
   const handleResend = () => {
     if (resendDisabled) return;

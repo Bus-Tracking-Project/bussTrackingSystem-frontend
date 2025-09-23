@@ -130,10 +130,10 @@ const Update = () => {
         visibilityTime: 2000,
       });
     } catch (err: any) {
-      console.log("❌ Error:", err.response?.data || err.message);
+      console.log("❌ Error:", err.message);
       Toast.show({
         type: "error",
-        text1: `❌Error:${err.message.message}`,
+        text1: `❌Error:${err.message}`,
         visibilityTime: 2000,
       });
     } finally {
@@ -144,7 +144,6 @@ const Update = () => {
   //submit btn
   const submitHandler = async () => {
 
-    
     // otp validation
     if (!otp.trim() || otp.length !== 6) {
       Toast.show({

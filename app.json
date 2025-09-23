@@ -9,7 +9,7 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "extra": {
-      "API_URL": "http://192.168.1.44:3000",
+      "API_URL": "https://bustrackingsystemnew-production.up.railway.app",
       "router": {},
       "eas": {
         "projectId": "10d261ad-a950-49aa-b72f-4aafe004f23d"

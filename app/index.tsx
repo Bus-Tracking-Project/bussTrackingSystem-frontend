@@ -18,11 +18,9 @@ export default function HomeScreen() {
     const fetchToken = async () => {
       const storedToken = await AsyncStorage.getItem('access_token');
       if (storedToken) {
-
         const decoded = jwtDecode<MyJwtPayload>(storedToken);
         setLogin(decoded.role)
         console.log("Decoded JWT:", decoded);
-        console.log('role', decoded.role)
       }
     };
     fetchToken();
@@ -30,8 +28,7 @@ export default function HomeScreen() {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      console.log(login, 'form login screen ')
-      if (login == 'PASSENGER') {
+      if (login == 'ADMIN') {
         router.replace('/HomeScreen')
       } else if (login == 'DRIVER') {
         router.replace('/DriverHomeScreen')
