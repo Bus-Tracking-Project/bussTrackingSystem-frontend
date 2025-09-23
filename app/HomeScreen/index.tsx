@@ -27,9 +27,9 @@ const Home = () => {
 
   // 👉 card slider images
   const images = [
-    require("../../assets/images/findyourbus.jpg"),
-    require("../../assets/images/emergencycart.png"),
-    require("../../assets/images/nearbystops.png"),
+    require("../../assets/images/findyourbuss.jpg"),
+    require("../../assets/images/emergencycard.png"),
+    require("../../assets/images/nearbystop.png"),
   ];
 
   // 👉 auto-scroll pager every 1.5s

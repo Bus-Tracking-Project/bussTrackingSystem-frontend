@@ -189,7 +189,7 @@ const Index = () => {
       <View className="w-[100%] h-[25%] p-5">
         <View>
           <Image
-            source={require('../../assets/images/findyourbus.jpg')}
+            source={require('../../assets/images/findyourbuss.jpg')}
             style={{
               width: '100%',
               height: '100%',
