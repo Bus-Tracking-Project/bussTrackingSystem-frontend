@@ -81,7 +81,7 @@ export default function VerifyOtpScreen() {
       setLoading(false);
 
       if (otpValue === "111111") {
-        if (user?.role === "ADMIN") {
+        if (user?.role === "PASSENGER") {
           router.replace("/HomeScreen" as any);
         } else if (user?.role === "DRIVER" || user?.role === "CONDUCTOR") {
           router.replace("/DriverHomeScreen" as any);

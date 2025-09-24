@@ -113,7 +113,7 @@ const Update = () => {
           name: selectedFile.name || "profile.jpg",
         } as any);
       }
-
+      
       const res = await axios.patch(
         `${API_URL}/profile/send-otp?phone=${user.phone}`,
         formData,
@@ -124,6 +124,7 @@ const Update = () => {
           },
         }
       );
+      console.log(res.data,'this is from res')
       Toast.show({
         type: "success",
         text1: "OTP sent successfully 🎉",
