@@ -1,10 +1,14 @@
+import Constants from 'expo-constants';
 import * as Location from 'expo-location';
 import { useEffect, useState } from 'react';
 import { Alert, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import Toast from 'react-native-toast-message';
 import EmergencyCard from '../../components/EmergenceCart';
 import LoadingAnime from '../../components/LoadingAnime';
 
+
 const ReportAccidentForm = () => {
+  const API_URL = Constants.expoConfig?.extra?.API_URL;
   const [reporterName, setReporterName] = useState('');
   const [accidentDetails, setAccidentDetails] = useState('');
   const [userNumber, setUserNumber] = useState('')
@@ -14,11 +18,17 @@ const ReportAccidentForm = () => {
   const [longitude, setLongitude] = useState('')
   const [loading, setLoading] = useState(false)
 
+  //location permission
   useEffect(() => {
     (async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
-        Alert.alert('Location permission denied');
+        Toast.show({
+          type: "error",
+          text1: 'Location permission denied',
+          visibilityTime: 3000,
+          autoHide: true,
+        });
         return;
       }
 
@@ -36,7 +46,7 @@ const ReportAccidentForm = () => {
     }
     setLoading(true);
     try {
-      const response = await fetch("http://10.73.213.97:3000/reportaccident/create", {
+      const response = await fetch(`${API_URL}/reportaccident/create`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -54,14 +64,29 @@ const ReportAccidentForm = () => {
       const data = await response.json();
 
       if (response.ok) {
-        Alert.alert("✅ Success", "Accident reported successfully!");
+        Toast.show({
+          type: "success",
+          text1: "Success, Accident reported successfully!",
+          visibilityTime: 3000,
+          autoHide: true,
+        });
         console.log("Success:", data);
       } else {
-        Alert.alert("❌ Failed", data?.message || "Something went wrong!");
+        Toast.show({
+        type: "error",
+        text1: `Failed, ${data?.message}, Something went wrong!`,
+        visibilityTime: 3000,
+        autoHide: true,
+      });
       }
     } catch (error) {
       console.error("Error:", error);
-      Alert.alert("⚠️ Error", "Unable to connect to server!");
+      Toast.show({
+        type: "error",
+        text1: "Error, Unable to connect to server!",
+        visibilityTime: 3000,
+        autoHide: true,
+      });
     } finally {
       setLoading(false);
     }
@@ -73,7 +98,9 @@ const ReportAccidentForm = () => {
 
   return (
     <View className="flex-1 justify-center py-5 px-5">
+      
       <EmergencyCard />
+      
       <View className="flex-1 px-5 py-8">
         <Text className="text-2xl font-bold text-gray-800 mt-10 mb-6">Report an Accident</Text>
 
@@ -118,22 +145,24 @@ const ReportAccidentForm = () => {
           </Text>
         )}
       </View>
+      
       {loading && (
-          <View
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              backgroundColor: "rgba(0,0,0,0.6)",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <LoadingAnime />
-          </View>
-        )}
+        <View
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0,0,0,0.6)",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <LoadingAnime />
+        </View>
+      )}
+    
     </View>
   );
 };

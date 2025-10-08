@@ -1,16 +1,18 @@
 import * as Location from 'expo-location';
 import { useRouter } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Image, Linking, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 
 const EmergencyScreen = () => {
   const router = useRouter();
   const [location, setLocation] = useState<string>('Fetching location...');
-  const [contacts, setContacts] = useState([
-    { name: ' NHAI’s highway helpline', phone: '1033 ' },
-    { name: 'Ambulance', phone: '108' },
+  
+  
+  const contacts = [
+    { name: "NHAI's highway helpline", phone: "1033"},
+    { name: 'Ambulance', phone: '108'},
     { name: 'Fire Brigade', phone: '101' },
-  ]);
+  ]
 
   // Fetch live location
   useEffect(() => {
@@ -29,9 +31,7 @@ const EmergencyScreen = () => {
 
       if (reverseGeocode.length > 0) {
         let addr = reverseGeocode[0];
-        setLocation(
-          `${addr.name || ''} ${addr.street || ''}, ${addr.city || ''}, ${addr.region || ''}, ${addr.postalCode || ''}`
-        );
+        setLocation(`${addr.name || ''} ${addr.street || ''}, ${addr.city || ''}, ${addr.region || ''}, ${addr.postalCode || ''}`);
       } else {
         setLocation(`Lat: ${loc.coords.latitude}, Lng: ${loc.coords.longitude}`);
       }

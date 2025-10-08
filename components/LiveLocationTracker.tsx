@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { Text, View, Alert, Button } from 'react-native';
 import * as Location from 'expo-location';
+import { useEffect, useState } from 'react';
+import { Alert, Button, Text, View } from 'react-native';
 
 export default function LocationComponent() {
   const [location, setLocation] = useState<any>(null);

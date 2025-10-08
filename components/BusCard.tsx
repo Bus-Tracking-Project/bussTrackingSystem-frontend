@@ -1,4 +1,3 @@
-// components/BusCard.tsx
 import { AlertTriangle, Bus, Clock, Star } from "lucide-react-native";
 import { Text, TouchableOpacity, View } from "react-native";
 
@@ -9,7 +8,6 @@ type Basic = {
     routeName: string;
     busStatus: string;
 };
-
 type More = {
     currentLocation: string;
     nextStop: string;
@@ -25,7 +23,6 @@ type More = {
     alerts: string[];
     isFavorite: boolean;
 };
-
 type Bus = {
     busNumber: string;
     basicInfo: Basic;
@@ -63,6 +60,7 @@ function normalizeBusData(data: any[]): Bus[] {
 export default function BusCard({ bus }: { bus: Bus }) {
     return (
         <View className="bg-white rounded-2xl shadow-md p-4 mb-4">
+            
             {/* Header */}
             <View className="flex-row justify-between items-center">
                 <View className="flex-row items-center space-x-3">
@@ -70,16 +68,10 @@ export default function BusCard({ bus }: { bus: Bus }) {
                         <Bus size={24} color="#22c55e" strokeWidth={1.5} />
                     </View>
                     <View>
-                        <Text className="text-lg font-bold text-gray-900">
-                            {bus.busNumber}
-                        </Text>
-                        <Text className="text-sm text-gray-500">
-                            {bus.basicInfo.routeName}
-                        </Text>
+                        <Text className="text-lg font-bold text-gray-900">{bus.busNumber}</Text>
+                        <Text className="text-sm text-gray-500">{bus.basicInfo.routeName}</Text>
                     </View>
                 </View>
-
-                {/* Favorite toggle */}
                 <TouchableOpacity>
                     <Star
                         size={20}
@@ -93,13 +85,9 @@ export default function BusCard({ bus }: { bus: Bus }) {
             <View className="flex-row justify-between mt-3">
                 <View className="flex-row items-center space-x-1">
                     <Clock size={14} color="#6b7280" />
-                    <Text className="text-gray-700 text-sm">
-                        {bus.moreInfo.startTime} - {bus.moreInfo.endTime}
-                    </Text>
+                    <Text className="text-gray-700 text-sm">{bus.moreInfo.startTime} - {bus.moreInfo.endTime}</Text>
                 </View>
-                <Text className="text-green-500 text-sm font-medium">
-                    ETA: {bus.moreInfo.etaToNextStop}
-                </Text>
+                <Text className="text-green-500 text-sm font-medium">ETA: {bus.moreInfo.etaToNextStop}</Text>
             </View>
 
             {/* Info */}
@@ -116,45 +104,28 @@ export default function BusCard({ bus }: { bus: Bus }) {
                 </Text>
                 <Text className="text-gray-700">
                     Status:{" "}
-                    <Text
-                        className={`font-semibold ${bus.basicInfo.busStatus === "ACTIVE"
-                                ? "text-green-600"
-                                : "text-red-500"
-                            }`}
-                    >
-                        {bus.basicInfo.busStatus}
-                    </Text>
+                    <Text className={`font-semibold ${bus.basicInfo.busStatus === "ACTIVE" ? "text-green-600" : "text-red-500"}`}>{bus.basicInfo.busStatus}</Text>
                 </Text>
             </View>
 
             {/* Stops */}
             <View className="mt-3">
-                <Text className="text-gray-700 font-medium">
-                    Stops ({bus.moreInfo.totalStops.length}):
-                </Text>
-                <Text className="text-gray-500 text-sm">
-                    {bus.moreInfo.totalStops.join(" → ")}
-                </Text>
+                <Text className="text-gray-700 font-medium">Stops ({bus.moreInfo.totalStops.length}):</Text>
+                <Text className="text-gray-500 text-sm">{bus.moreInfo.totalStops.join(" → ")}</Text>
             </View>
 
             {/* Alerts */}
             {bus.moreInfo.alerts.length > 0 && (
                 <View className="flex-row items-center mt-3">
                     <AlertTriangle size={16} color="red" />
-                    <Text className="text-red-600 ml-2 font-medium">
-                        {bus.moreInfo.alerts.join(", ")}
-                    </Text>
+                    <Text className="text-red-600 ml-2 font-medium">{bus.moreInfo.alerts.join(", ")}</Text>
                 </View>
             )}
 
             {/* Footer */}
             <View className="mt-3 flex-row justify-between">
-                <Text className="text-gray-500 text-xs">
-                    Last updated: {bus.moreInfo.lastUpdated}
-                </Text>
-                <Text className="text-gray-500 text-xs">
-                    {bus.moreInfo.passengerCountStatus}
-                </Text>
+                <Text className="text-gray-500 text-xs">Last updated: {bus.moreInfo.lastUpdated}</Text>
+                <Text className="text-gray-500 text-xs">{bus.moreInfo.passengerCountStatus}</Text>
             </View>
         </View>
     );

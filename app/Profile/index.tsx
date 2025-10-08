@@ -6,6 +6,7 @@ import { jwtDecode } from "jwt-decode";
 import { Calendar, Mail, MapPin, Phone, UserCircle } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import Toast from 'react-native-toast-message';
 import LoadingAnime from '../../components/LoadingAnime';
 
 const ProfileScreen = () => {
@@ -23,7 +24,8 @@ const ProfileScreen = () => {
         // decode token
         const decoded = jwtDecode(storedToken);
         setUser(decoded);
-        console.log("Decoded JWT:", user);
+        // clg
+        console.log("Decoded JWT:", user[0]);
       }
     };
     // Fetch live location
@@ -50,7 +52,7 @@ const ProfileScreen = () => {
       }
     })();
     fetchToken();
-  }, [ProfileScreen]);
+  }, []);
 
   const LogOutHandler = async () => {
     console.log('pressd logout')
@@ -60,11 +62,17 @@ const ProfileScreen = () => {
       router.replace('/Login'); // navigate to login screen
     } catch (error) {
       console.log("Error clearing async storage:", error);
+      Toast.show({
+        type: "error",
+        text1: "Getting error in logout!",
+        visibilityTime: 3000,
+        autoHide: true,
+      });
     } finally {
       setLoading(false)
     }
   }
-
+// console.log(user?.profile,'from profile ')
   // const createProfile = async () => {
   //   try {
   //     const response = await axios.post(`${API_URL}/auth/create`, {
@@ -95,7 +103,7 @@ const ProfileScreen = () => {
           <View className="flex-1 flex-row items-center border-gray-500 rounded-3xl bg-white py-4 px-4 my-2 shadow-md">
             {user?.profile ? (
               <Image
-                source={{ uri: `${API_URL}/uploads/${user?.profile}`, }}
+                source={{ uri: user?.profile,}}
                 className="w-24 h-24 rounded-full"
               />
             ) : (
@@ -155,6 +163,7 @@ const ProfileScreen = () => {
           </View>
         </View>
       </ScrollView>
+
       {Loading && (
         <View
           style={{
@@ -171,6 +180,7 @@ const ProfileScreen = () => {
           <LoadingAnime />
         </View>
       )}
+    
     </>
   );
 }

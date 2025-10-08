@@ -31,10 +31,9 @@ const Update = () => {
 
   //decode token and fetching role form it 
   useEffect(() => {
-    console.log('coming in use effect')
     const fetchToken = async () => {
       const storedToken = await AsyncStorage.getItem('access_token');
-      console.log(storedToken, 'this is profile token')
+      // console.log(storedToken, 'this is profile token')
       if (storedToken) {
         const decoded = jwtDecode(storedToken);
         setUser(decoded);
@@ -53,8 +52,10 @@ const Update = () => {
   //img pic select
   const pickImage = async () => {
     const { granted } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (!granted) return Alert.alert("Permission Denied!");
-
+    if (!granted) {
+      Alert.alert("Permission Denied!");
+      return 
+    }
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       aspect: [4, 3],
@@ -96,6 +97,16 @@ const Update = () => {
       });
       return;
     }
+
+    // gender validation
+    if (!gender) {
+      Toast.show({
+        type: "error",
+        text1: "Please select a gender 🚻",
+        visibilityTime: 2500,
+      });
+      return;
+    }
     
     setLoading(true);
 
@@ -113,7 +124,7 @@ const Update = () => {
           name: selectedFile.name || "profile.jpg",
         } as any);
       }
-      
+
       const res = await axios.patch(
         `${API_URL}/profile/send-otp?phone=${user.phone}`,
         formData,
@@ -124,7 +135,7 @@ const Update = () => {
           },
         }
       );
-      console.log(res.data,'this is from res')
+      console.log(res.data, 'this is from res')
       Toast.show({
         type: "success",
         text1: "OTP sent successfully 🎉",
@@ -150,16 +161,6 @@ const Update = () => {
       Toast.show({
         type: "error",
         text1: "Enter a valid 6 digit OTP 🔑",
-        visibilityTime: 2500,
-      });
-      return;
-    }
-
-    // gender validation
-    if (!gender) {
-      Toast.show({
-        type: "error",
-        text1: "Please select a gender 🚻",
         visibilityTime: 2500,
       });
       return;
@@ -247,40 +248,6 @@ const Update = () => {
           Date of birth : {dob.toDateString()}
         </Text>
       </TouchableOpacity>
-      <View className="flex-row items-center justify-between w-full gap-3 mb-3">
-        <TextInput
-          className="flex-1 border-0 border-gray-500 rounded-xl py-4 px-4 bg-white shadow-md"
-          placeholder="Enter Email"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-        />
-
-        <TouchableOpacity className="bg-blue-500 px-4 py-4 rounded-xl" onPress={handleVerifyOtp}>
-          <Text className="text-white font-bold">Send OTP</Text>
-        </TouchableOpacity>
-      </View>
-
-      <TextInput
-        className="flex-row items-center mb-3 self-start border-0 border-gray-500 rounded-xl w-full py-4 px-4 bg-white shadow-md"
-        placeholder="Enter 6 digits OTP"
-        value={otp}
-        onChangeText={setOtp}
-        keyboardType="number-pad"
-      />
-
-      {showPicker && (
-        <DateTimePicker
-          value={dob}
-          mode="date"
-          display="spinner"
-          onChange={(event, selectedDate) => {
-            setShowPicker(false);
-            if (selectedDate) setDob(selectedDate);
-          }}
-        />
-      )}
-
       <View className="flex-row justify-around mb-5 gap-3">
         <TouchableOpacity
           onPress={() => setGender("male")}
@@ -320,6 +287,41 @@ const Update = () => {
           </Text>
         </TouchableOpacity>
       </View>
+      <View className="flex-row items-center justify-between w-full gap-3 mb-3">
+        <TextInput
+          className="flex-1 border-0 border-gray-500 rounded-xl py-4 px-4 bg-white shadow-md"
+          placeholder="Enter Email"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+        />
+
+        <TouchableOpacity className="bg-blue-500 px-4 py-4 rounded-xl" onPress={handleVerifyOtp}>
+          <Text className="text-white font-bold">Send OTP</Text>
+        </TouchableOpacity>
+      </View>
+
+      <TextInput
+        className="flex-row items-center mb-3 self-start border-0 border-gray-500 rounded-xl w-full py-4 px-4 bg-white shadow-md"
+        placeholder="Enter 6 digits OTP"
+        value={otp}
+        onChangeText={setOtp}
+        keyboardType="number-pad"
+      />
+
+      {showPicker && (
+        <DateTimePicker
+          value={dob}
+          mode="date"
+          display="spinner"
+          onChange={(event, selectedDate) => {
+            setShowPicker(false);
+            if (selectedDate) setDob(selectedDate);
+          }}
+        />
+      )}
+
+
 
       <TouchableOpacity className="bg-blue-600 rounded-xl py-3" onPress={submitHandler}>
         <Text className="text-white text-center text-lg font-semibold">

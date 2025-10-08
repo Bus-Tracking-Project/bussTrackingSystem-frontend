@@ -1,29 +1,29 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 import Constants from 'expo-constants';
 import * as Location from "expo-location";
 import { jwtDecode } from "jwt-decode";
 import { useEffect, useRef, useState } from "react";
-import { Alert, Button, ScrollView, Text, View } from "react-native";
+import { Button, ScrollView, Text, View } from "react-native";
 import Toast from "react-native-toast-message";
 import { useToast } from "react-native-toast-notifications";
 import io from "socket.io-client";
 import LoadingAnime from "../../components/LoadingAnime";
 import WelcomeSection from "../../components/WelcomeSection";
 
-const LOCATION_TASK_NAME = "driver-location-task";
 
 export default function DriverDashboard() {
+  const LOCATION_TASK_NAME = "driver-location-task";
   const API_URL = Constants.expoConfig?.extra?.API_URL;
   const [tripActive, setTripActive] = useState(false);
   const [Loading, setLoading] = useState(false)
+  const [driverData, setDriverData] = useState<DriverApiResponse | null>(null);
+  const [roomId, setRoomId] = useState<string | null>(null);
+  const socketRef = useRef<any>(null);
+  const locationTimerRef = useRef<any>(null);
   const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
   const toast = useToast();
   const [user, setUser] = useState<any>(null);
-  const [driverData, setDriverData] = useState<DriverApiResponse | null>(null);
-  // const [trips, setTrips] = useState<TripDetails[]>([]);
- const socketRef = useRef<any>(null);
-  const locationTimerRef = useRef<any>(null);
-  const [roomId, setRoomId] = useState<string | null>(null);
 
   interface Stop {
     status: string;
@@ -31,7 +31,6 @@ export default function DriverDashboard() {
     arrival_time: string;
     departure_time: string;
   }
-
   interface Assignment {
     bus_number: string;
     bus_type: string;
@@ -47,7 +46,6 @@ export default function DriverDashboard() {
     destination_location: string;
     stops: Stop[];
   }
-
   interface Driver {
     Create_At: string;
     DateofBirth: string;
@@ -61,14 +59,12 @@ export default function DriverDashboard() {
     role: string;
     stops: Stop[];
   }
-
   interface DriverApiResponse {
     assignment: Assignment | null
     driver: Driver;
     message: string;
     success: boolean;
   }
-
   interface MyJwtPayload {
     name: string;
     email: string;
@@ -80,7 +76,6 @@ export default function DriverDashboard() {
     iat: number;
     exp: number;
   }
-
   type LocationCoords = {
     lat: number;
     lng: number;
@@ -94,35 +89,35 @@ export default function DriverDashboard() {
         setLoading(true);
         const decoded = jwtDecode<MyJwtPayload>(storedToken);
         setUser(decoded);
-        // try {
-        //   const { data } = await axios.get(`${API_URL}/driver/create-driver?phone=${decoded.phone}`, {
-        //     headers: {
-        //       Authorization: `Bearer ${storedToken}`,
-        //     },
-        //   });
-        //   setDriverData(data);
-        //   console.log(data?.assignment?.bus_number,'from driver screen')
-        //   // derive a stable per-driver room id (prefer driver id, fallback to phone)
-        //   const derivedRoomId = (data?.assignment?.bus_number ? String(data.assignment.bus_number) : decoded.phone) || null;
-        //   setRoomId(derivedRoomId);
+        try {
+          const { data } = await axios.get(`${API_URL}/driver/create-driver?phone=${decoded.phone}`, {
+            headers: {
+              Authorization: `Bearer ${storedToken}`,
+            },
+          });
+          setDriverData(data);
+          console.log(data?.assignment?.bus_number,'from driver screen')
+          // derive a stable per-driver room id (prefer driver id, fallback to phone)
+          const derivedRoomId = (data?.assignment?.bus_number ? String(data.assignment.bus_number) : decoded.phone) || null;
+          setRoomId(derivedRoomId);
 
-        //   Toast.show({
-        //     type: "success",
-        //     text1: `${data?.message || 'Driver loaded'}`,
-        //     visibilityTime: 3000,
-        //     autoHide: true,
-        //   });
-        //   setLoading(false);
-        // } catch (err) {
-        //   console.log(err, 'from catch');
-        //   Toast.show({
-        //     type: "error",
-        //     text1: `${err}`,
-        //     visibilityTime: 3000,
-        //     autoHide: true,
-        //   });
-        //   setLoading(false);
-        // }
+          Toast.show({
+            type: "success",
+            text1: `${data?.message}, 'Driver loaded'`,
+            visibilityTime: 3000,
+            autoHide: true,
+          });
+          setLoading(false);
+        } catch (err) {
+          console.log(err, 'from catch');
+          Toast.show({
+            type: "error",
+            text1: `Error!, ${err}`,
+            visibilityTime: 3000,
+            autoHide: true,
+          });
+          setLoading(false);
+        }
       }
     };
 
@@ -201,19 +196,29 @@ export default function DriverDashboard() {
         visibilityTime: 3000,
         autoHide: true,
       });
-      startShering() //here start location shearing via webstokes
+      startShering() // calling function start location shearing via webstokes
     }
     setLoading(true)
 
     const { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== "granted") {
-      Alert.alert("Permission Denied", "Location permission is required.");
+      Toast.show({
+        type: "error",
+        text1: "Permission Denied, Location permission is required.",
+        visibilityTime: 3000,
+        autoHide: true,
+      });
       return;
     }
 
     const bgStatus = await Location.requestBackgroundPermissionsAsync();
     if (bgStatus.status !== "granted") {
-      Alert.alert("Permission Denied", "Background location is required.");
+      Toast.show({
+        type: "error",
+        text1: "Permission Denied, Background location is required.",
+        visibilityTime: 3000,
+        autoHide: true,
+      });
       return;
     }
 

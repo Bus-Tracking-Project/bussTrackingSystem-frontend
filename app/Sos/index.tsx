@@ -2,19 +2,23 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Contacts from "expo-contacts";
 import { Ambulance, Heart, Phone, Plus, Shield, Users, X } from "lucide-react-native"; // for nice icons
 import { useEffect, useState } from "react";
-import { Alert, FlatList, Linking, Modal, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { FlatList, Linking, Modal, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import Toast from "react-native-toast-message";
 
-const emergencyNumbers = [
-  { label: "All-in-one Helpline", number: "112", icon: "phone" },
-  { label: "Police", number: "100", icon: "shield" },
-  { label: "Ambulance", number: "108", icon: "ambulance" },
-];
 
 const EmergencySOS = () => {
   const [userContacts, setUserContacts] = useState<{ name: string; number: string }[]>([]);
   const [showContactPicker, setShowContactPicker] = useState(false);
   const [availableContacts, setAvailableContacts] = useState<Contacts.Contact[]>([]);
+  
+  //emergency numbers list
+  const emergencyNumbers = [
+    { label: "All-in-one Helpline", number: "112", icon: "phone" },
+    { label: "Police", number: "100", icon: "shield" },
+    { label: "Ambulance", number: "108", icon: "ambulance" },
+  ];
 
+  //saved contacts get from the local storage
   useEffect(() => {
     (async () => {
       const saved = await AsyncStorage.getItem("emergencyContacts");
@@ -24,9 +28,15 @@ const EmergencySOS = () => {
     })();
   }, []);
 
+  //opne dialler 
   const callNumber = (number: string) => {
     Linking.openURL(`tel://${number}`).catch(() => {
-      Alert.alert("Oops!", "Could not open the dialer 😬");
+      Toast.show({
+        type: "error",
+        text1: "Oops!, Could not open the dialer",
+        visibilityTime: 3000,
+        autoHide: true,
+      });
     });
   };
 
@@ -43,10 +53,16 @@ const EmergencySOS = () => {
     }
   };
 
+  //show contacts in a model
   const showContactPickerModal = async () => {
     const { status } = await Contacts.requestPermissionsAsync();
     if (status !== "granted") {
-      Alert.alert("Permission denied", "We need access to show your contacts");
+      Toast.show({
+        type: "error",
+        text1: "Permission denied, We need access to show your contacts",
+        visibilityTime: 3000,
+        autoHide: true,
+      });
       return;
     }
 
@@ -55,7 +71,7 @@ const EmergencySOS = () => {
     });
 
     // Filter contacts that have phone numbers
-    const contactsWithNumbers = data.filter(contact => 
+    const contactsWithNumbers = data.filter(contact =>
       contact.phoneNumbers && contact.phoneNumbers.length > 0
     );
 
@@ -68,11 +84,16 @@ const EmergencySOS = () => {
       name: contact.name || "Unknown",
       number: contact.phoneNumbers?.[0]?.number ?? "",
     };
-    
+
     // Check if contact already exists
     const exists = userContacts.some(c => c.number === newContact.number);
     if (exists) {
-      Alert.alert("Already Added", "This contact is already in your favorites");
+      Toast.show({
+        type: "error",
+        text1: "Already Added, This contact is already in your favorites",
+        visibilityTime: 3000,
+        autoHide: true,
+      });
       return;
     }
 
@@ -80,13 +101,26 @@ const EmergencySOS = () => {
     setUserContacts(updated);
     await AsyncStorage.setItem("emergencyContacts", JSON.stringify(updated));
     setShowContactPicker(false);
-    Alert.alert("✅ Added!", `${newContact.name} saved as emergency contact`);
+    Toast.show({
+      type: "success",
+      text1: `Added!, ${newContact.name} saved as emergency contact`,
+      visibilityTime: 3000,
+      autoHide: true,
+    });
   };
 
   const removeContact = async (index: number) => {
     const updated = userContacts.filter((_, i) => i !== index);
     setUserContacts(updated);
     await AsyncStorage.setItem("emergencyContacts", JSON.stringify(updated));
+
+    //this toast added but not chicked 🚫
+    Toast.show({
+      type: "success",
+      text1: "contact removed",
+      visibilityTime: 3000,
+      autoHide: true,
+    });
   };
 
   return (
@@ -132,7 +166,7 @@ const EmergencySOS = () => {
           {userContacts.length === 0 ? (
             <View className="bg-gray-200 p-6 mt-10 rounded-xl items-center">
               <View className="my-5">
-              <Users size={70} color="#555" />
+                <Users size={70} color="#555" />
               </View>
               <Text className="text-gray-600 mt-10 text-3xl">No favorite contacts yet</Text>
               <Text className="text-gray-500 text-sm my-5 text-center">

@@ -1,7 +1,7 @@
 import { Feather } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import { router } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Alert, Pressable, StyleSheet, View } from 'react-native';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -40,7 +40,7 @@ const MapComponent = () => {
     },
   ];
 
-  //location permission
+  //location permission and show near by bus stops 
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -134,7 +134,6 @@ const MapComponent = () => {
           // </Marker>
         )}*/}
 
-
         {/* this is fake bus stops with dummy data */}
         {nearBusStops.map((stop) => (
           <Marker
@@ -148,7 +147,6 @@ const MapComponent = () => {
             <Icon name="bus" size={32} color="red" />
           </Marker>
         ))}
-
 
       </MapView>
     </View>

@@ -61,15 +61,16 @@ export default function LoginScreen() {
         setLoading(false);
       }, 1000);
     } catch (err: any) {
-      setLoading(false);
       console.log("❌ Error creating profile:", err.response?.data || err.message);
       Toast.show({
         type: "error",
-        text1: err.response?.data || err.message,
+        text1: err.message,
         visibilityTime: 3000,
         autoHide: true,
       });
-      return;
+    }finally{
+      setLoading(false);
+      return
     }
   };
 

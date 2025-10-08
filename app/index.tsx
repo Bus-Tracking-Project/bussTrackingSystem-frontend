@@ -1,7 +1,7 @@
+// import 'nativewind/types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from "expo-router";
 import { jwtDecode } from "jwt-decode";
-// import 'nativewind/types';
 import { useEffect, useState } from "react";
 import { Image, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -14,6 +14,7 @@ export default function HomeScreen() {
     role: any;
   };
 
+  //check token and decode it, already login or not - logic
   useEffect(() => {
     const fetchToken = async () => {
       const storedToken = await AsyncStorage.getItem('access_token');
@@ -26,13 +27,20 @@ export default function HomeScreen() {
     fetchToken();
   }, []);
 
+  //open dashboard acording to role - logic
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (login == 'ADMIN') {
+      if (login == 'PASSENGER') {
         router.replace('/HomeScreen')
       } else if (login == 'DRIVER') {
         router.replace('/DriverHomeScreen')
       } else {
+        // Toast.show({
+        //   type: "error",
+        //   text1: 'invalid role',
+        //   visibilityTime: 3000,
+        //   autoHide: true,
+        // });
         router.replace('/Login');
       }
     }, 500);
@@ -54,3 +62,4 @@ export default function HomeScreen() {
     </SafeAreaView>
   );
 }
+ 

@@ -1,17 +1,16 @@
 import { Stack, usePathname } from "expo-router";
 import { Text, View } from "react-native";
-import BottomNavBar from "../components/Navbar";
-// import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from 'react-native-toast-message';
 import { ToastProvider } from 'react-native-toast-notifications';
 import { toastConfig } from "../components/CustomToastConfig";
+import BottomNavBar from "../components/Navbar";
 import { AuthProvider } from "./context/AuthContext";
 import './globals.css';
+// import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 export default function RootLayout() {
   const pathname = usePathname();
-
   // for this routes, navbar will be hidden
   const hideNavbarRoutes = ["/", "/Login", "/Login/OTP"];
 
@@ -38,10 +37,10 @@ export default function RootLayout() {
           ),
         }}
       >
-          <SafeAreaView style={{ flex: 1, backgroundColor: 'black' }}>
-            {shouldShowNavbar && <BottomNavBar />}
-            <Stack screenOptions={{ headerShown: false }} />
-          </SafeAreaView>
+        <SafeAreaView style={{ flex: 1, backgroundColor: 'black' }}>
+          {shouldShowNavbar && <BottomNavBar />}
+          <Stack screenOptions={{ headerShown: false }} />
+        </SafeAreaView>
       </ToastProvider>
       <Toast config={toastConfig} />
     </AuthProvider>

@@ -1,5 +1,4 @@
-import React from 'react';
-import { View, TextInput, Image, Pressable, Text, SafeAreaView } from 'react-native';
+import { Image, Pressable, SafeAreaView, Text, TextInput, View } from 'react-native';
 
 const SearchHeader = () => {
   const handleSearch = () => {
@@ -35,3 +34,4 @@ const SearchHeader = () => {
 };
 
 export default SearchHeader;
+//currently im not using this component

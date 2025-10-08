@@ -1,38 +1,29 @@
-import Constants from "expo-constants";
 import { useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
-import {
-  Animated,
-  Dimensions,
-  Image,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { useToast } from "react-native-toast-notifications";
 import WelcomeSection from "../../components/WelcomeSection";
 
-const { width } = Dimensions.get("window");
+// const { width } = Dimensions.get("window");
 
 const Home = () => {
-  const API_URL = Constants.expoConfig?.extra?.API_URL;
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const translateX = useRef(new Animated.Value(-width)).current;
+  // const [sidebarOpen, setSidebarOpen] = useState(false);
+  // const API_URL = Constants.expoConfig?.extra?.API_URL;
+  // const translateX = useRef(new Animated.Value(-width)).current;
+  const [page, setPage] = useState<number>(0);
   const pagerRef = useRef<PagerView>(null);
   const router = useRouter();
-  const [page, setPage] = useState<number>(0);
   const toast = useToast();
 
-  // 👉 card slider images
+  //card slider images
   const images = [
     require("../../assets/images/findyourbuss.jpg"),
     require("../../assets/images/emergencycard.png"),
     require("../../assets/images/nearbystop.png"),
   ];
 
-  // 👉 auto-scroll pager every 1.5s
+  //auto-scroll imgs every - logic
   useEffect(() => {
     const interval = setInterval(() => {
       const nextPage = (page + 1) % images.length;
@@ -43,7 +34,7 @@ const Home = () => {
     return () => clearInterval(interval);
   }, [page]);
 
-  // 👉 toast notification on mount
+  //toast notification on mount
   useEffect(() => {
     toast.show("Welcome passenger, Happy journey !", {
       type: "success",
@@ -62,7 +53,7 @@ const Home = () => {
       <Text className="text-2xl font-semibold my-3">Features</Text>
 
       <View className="flex-row flex-wrap justify-around">
-        {/* 🚍 Search By Number */}
+        {/*Search By Number */}
         <TouchableOpacity
           className="border border-gray-200 rounded-3xl h-40 w-44 overflow-hidden mb-4"
           onPress={() => router.push("../SearchByNumber")}
@@ -72,13 +63,11 @@ const Home = () => {
               source={require("../../assets/images/license_plate.png")}
               className="w-20 h-20"
             />
-            <Text className="text-1xl font-semibold text-center bg-white">
-              Search By Number
-            </Text>
+            <Text className="text-1xl font-semibold text-center bg-white">Search By Number</Text>
           </View>
         </TouchableOpacity>
 
-        {/* 🛣 Search By Route */}
+        {/*Search By Route */}
         <TouchableOpacity
           className="border border-gray-200 rounded-3xl h-40 w-44 overflow-hidden mb-4"
           onPress={() => router.push("../SearchByRout")}
@@ -94,7 +83,7 @@ const Home = () => {
           </View>
         </TouchableOpacity>
 
-        {/* 🔥 Background Image Carousel */}
+        {/*Background Image Carousel */}
         <View className="rounded-3xl h-[35%] w-full my-4 overflow-hidden">
           <PagerView
             ref={pagerRef}
@@ -114,20 +103,19 @@ const Home = () => {
             ))}
           </PagerView>
 
-          {/* Dots Indicator */}
+          {/*Dots Indicator */}
           <View className="absolute bottom-2 w-full flex-row justify-center gap-2">
             {images.map((_, index) => (
               <View
                 key={index}
-                className={`h-2 rounded-full ${
-                  page === index ? "bg-blue-600 w-4" : "bg-gray-300 w-2"
-                }`}
+                className={`h-2 rounded-full ${page === index ? "bg-blue-600 w-4" : "bg-gray-300 w-2"
+                  }`}
               />
             ))}
           </View>
         </View>
 
-        {/* 📍 Nearby Bus Stops */}
+        {/*Nearby Bus Stops */}
         <TouchableOpacity
           className="border border-gray-200 rounded-3xl h-40 w-44 overflow-hidden mb-4"
           onPress={() => router.push("../GoogleMap")}
@@ -137,13 +125,11 @@ const Home = () => {
               source={require("../../assets/images/nearby.png")}
               className="w-20 h-20"
             />
-            <Text className="text-1xl font-semibold text-center bg-white">
-              Nearby Bus Stops
-            </Text>
+            <Text className="text-1xl font-semibold text-center bg-white">Nearby Bus Stops</Text>
           </View>
         </TouchableOpacity>
 
-        {/* 🚨 SOS */}
+        {/*SOS */}
         <TouchableOpacity
           className="border border-gray-200 rounded-3xl h-40 w-44 overflow-hidden mb-4"
           onPress={() => router.push("../Sos")}
@@ -153,13 +139,11 @@ const Home = () => {
               source={require("../../assets/images/sos.png")}
               className="w-20 h-20"
             />
-            <Text className="text-1xl font-semibold text-center bg-white">
-              SOS
-            </Text>
+            <Text className="text-1xl font-semibold text-center bg-white">SOS</Text>
           </View>
         </TouchableOpacity>
 
-        {/* 🚑 Emergency */}
+        {/*Emergency */}
         <TouchableOpacity
           className="border border-gray-200 rounded-3xl h-40 w-44 overflow-hidden mb-4"
           onPress={() => router.push("../emergency")}
@@ -169,13 +153,11 @@ const Home = () => {
               source={require("../../assets/images/ambulance.png")}
               className="w-20 h-20"
             />
-            <Text className="text-1xl font-semibold text-center bg-white">
-              Emergency
-            </Text>
+            <Text className="text-1xl font-semibold text-center bg-white">Emergency</Text>
           </View>
         </TouchableOpacity>
 
-        {/* ☎ Contact Us */}
+        {/*Contact Us */}
         <TouchableOpacity
           className="border border-gray-200 rounded-3xl h-40 w-44 overflow-hidden mb-4"
           onPress={() => router.push("../ContactUs")}
@@ -185,11 +167,10 @@ const Home = () => {
               source={require("../../assets/images/help_desk.png")}
               className="w-20 h-20"
             />
-            <Text className="text-1xl font-semibold text-center bg-white">
-              Contact Us
-            </Text>
+            <Text className="text-1xl font-semibold text-center bg-white">Contact Us</Text>
           </View>
         </TouchableOpacity>
+
       </View>
     </ScrollView>
   );

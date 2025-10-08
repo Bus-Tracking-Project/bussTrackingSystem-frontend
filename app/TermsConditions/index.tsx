@@ -1,4 +1,3 @@
-import React from 'react'
 import { ScrollView, Text, View } from 'react-native'
 
 const index = () => {
@@ -7,6 +6,7 @@ const index = () => {
       <View className='py-2 px-4'>
         <Text className='text-gray-500 p-3'>
           <Text className='underline my-2 text-xl text-blue-500'>Terms and Conditions</Text>:{"\n"}
+          Welcome to YatraQ. These Terms & Conditions (“Terms”) govern your use of the YatraQ mobile application, website, and related services (collectively, the “Services”). By accessing or using YatraQ, you agree to be bound by these Terms. If you do not agree, please do not use the Services.
           General Terms & Conditions The arrival and departure timings are scheduled departure and arrival timings. Buses may be delayed, or pick up points changed, due to unavoidable reasons like traffic jams, etc.
           Passengers are requested to furnish the following at the time of boarding the bus. Failing to do so, they shall not be allowed to board the bus :
           A copy of the e-Ticket/ Ticket booking Text message

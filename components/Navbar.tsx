@@ -1,7 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
+import { jwtDecode } from 'jwt-decode';
 import { Menu, X } from 'lucide-react-native';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Animated, Dimensions, Image, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { useAuth } from '../app/context/AuthContext';
 import LoadingAnime from '../components/LoadingAnime';
@@ -16,8 +17,47 @@ const BottomNavBar = () => {
     const [touchStart, setTouchStart] = useState(null);
     const [touchEnd, setTouchEnd] = useState(null);
     const [Loading, setLoading] = useState(false)
+    const [user, setUser] = useState<any>(null);
 
     const minSwipeDistance = 50;
+
+    useEffect(() => {
+        const fetchToken = async () => {
+          const storedToken = await AsyncStorage.getItem('access_token');
+          console.log(storedToken, 'this is nav bar token')
+          if (storedToken) {
+            // decode token
+            const decoded = jwtDecode(storedToken);
+            setUser(decoded);
+            // clg
+            console.log("Decoded JWT:", user[0]);
+          }
+        };
+        // Fetch live location
+        // (async () => {
+        //   let { status } = await Location.requestForegroundPermissionsAsync();
+        //   if (status !== 'granted') {
+        //     setLocation('Permission denied');
+        //     return;
+        //   }
+    
+        //   let loc = await Location.getCurrentPositionAsync({});
+        //   let reverseGeocode = await Location.reverseGeocodeAsync({
+        //     latitude: loc.coords.latitude,
+        //     longitude: loc.coords.longitude,
+        //   });
+    
+        //   if (reverseGeocode.length > 0) {
+        //     let addr = reverseGeocode[0];
+        //     setLocation(
+        //       `${addr.name || ''} ${addr.street || ''}, ${addr.city || ''}, ${addr.region || ''}, ${addr.postalCode || ''}`
+        //     );
+        //   } else {
+        //     setLocation(`Lat: ${loc.coords.latitude}, Lng: ${loc.coords.longitude}`);
+        //   }
+        // })();
+        fetchToken();
+      }, []);
 
     const onTouchStart = (e: any) => {
         setTouchEnd(null);
@@ -62,7 +102,7 @@ const BottomNavBar = () => {
             setLoading(false)
         }
     }
-
+console.log(user?.role,'from navbar')
     return (
         <View className='z-10 py-2 bg-gray-50'>
             <View className="flex-row items-center justify-between px-4 py-2">
@@ -78,8 +118,8 @@ const BottomNavBar = () => {
                 </View>
                 <TouchableOpacity onPress={() => router.push('../Profile')}>
                     <Image
-                        source={require('../assets/images/user.png')}
-                        className="w-8 h-8 rounded-full border border-white"
+                        source={{ uri: user?.profile, }}
+                        className="w-12 h-12 rounded-full"
                     />
                 </TouchableOpacity>
 
@@ -121,21 +161,21 @@ const BottomNavBar = () => {
                         <View>
                             <Text className="text-black text-4xl font-bold">Menu</Text>
                             <Text
-                                className="text-black text-md font-semibold mt-10 border-b border-gray-300 px-3 py-5"
+                                className="text-black text-md font-semibold mt-5 border-b border-gray-300 px-3 py-5"
                                 onPress={() => {
-                                    router.push(`../${role === 'passenger' ? 'HomeScreen' : 'DriverHomeScreen'}`);
+                                    router.push(`../${user?.role === 'PASSENGER' ? 'HomeScreen' : 'DriverHomeScreen'}`);
                                     toggleSidebar();
                                 }}
                             >
                                 <View className='flex-1 flex-row gap-2'>
                                     <Image source={require('../assets/images/house.png')} className='w-7 h-7' />
-                                    <Text className='text-3xl'>Home</Text>
+                                    <Text className='text-2xl'>Home</Text>
                                 </View>
                             </Text>
-                            {role === 'passenger' && (
+                            {user?.role === 'PASSENGER' && (
                                 <View>
                                     <Text
-                                        className="text-black text-md font-semibold mt-10 border-b border-gray-300 px-3 py-5"
+                                        className="text-black text-md font-semibold mt-5 border-b border-gray-300 px-3 py-5"
                                         onPress={() => {
                                             router.push('../Trips');
                                             toggleSidebar();
@@ -143,11 +183,11 @@ const BottomNavBar = () => {
                                     >
                                         <View className='flex-1 flex-row gap-2'>
                                             <Image source={require('../assets/images/map.png')} className='w-7 h-7' />
-                                            <Text className='text-3xl'>My Trips</Text>
+                                            <Text className='text-2xl'>My Trips</Text>
                                         </View>
                                     </Text>
                                     <Text
-                                        className="text-black text-md font-semibold mt-10 border-b border-gray-300 px-3 py-5"
+                                        className="text-black text-md font-semibold mt-5 border-b border-gray-300 px-3 py-5"
                                         onPress={() => {
                                             router.push('../MyFvt');
                                             toggleSidebar();
@@ -155,13 +195,13 @@ const BottomNavBar = () => {
                                     >
                                         <View className='flex-1 flex-row gap-2'>
                                             <Image source={require('../assets/images/favourite.png')} className='w-7 h-7' />
-                                            <Text className='text-3xl'>My fvt</Text>
+                                            <Text className='text-2xl'>My fvt</Text>
                                         </View>
                                     </Text>
                                 </View>
                             )}
                             <Text
-                                className="text-black text-md font-semibold mt-10 border-b border-gray-300 px-3 py-5"
+                                className="text-black text-md font-semibold mt-5 border-b border-gray-300 px-3 py-5"
                                 onPress={() => {
                                     router.push('../Notification')
                                     toggleSidebar();
@@ -197,7 +237,7 @@ const BottomNavBar = () => {
                                 </View>
                             </Text>
                             <Text
-                                className="text-black text-md font-semibold mt-10 border-b border-gray-300 px-3 py-5"
+                                className="text-black text-md font-semibold mt-5 border-b border-gray-300 px-3 py-5"
                                 onPress={() => {
                                     router.push('../AboutUs');
                                     toggleSidebar();
@@ -209,7 +249,7 @@ const BottomNavBar = () => {
                                 </View>
                             </Text>
                             <Text
-                                className="text-black text-md font-semibold mt-10 border-b border-gray-300 px-3 py-5"
+                                className="text-black text-md font-semibold mt-5 border-b border-gray-300 px-3 py-5"
                                 onPress={LogOutHandler}>
                                 <View className='flex-1 flex-row gap-2'>
                                     <Image source={require('../assets/images/logout.png')} className='w-8 h-8' />
@@ -220,6 +260,7 @@ const BottomNavBar = () => {
                     </View>
                 </Animated.View>
             </View>
+            
             {Loading && (
                 <View
                     style={{
@@ -236,6 +277,7 @@ const BottomNavBar = () => {
                     <LoadingAnime />
                 </View>
             )}
+            
         </View>
     );
 };
