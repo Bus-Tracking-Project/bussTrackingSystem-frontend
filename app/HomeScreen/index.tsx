@@ -5,8 +5,6 @@ import PagerView from "react-native-pager-view";
 import { useToast } from "react-native-toast-notifications";
 import WelcomeSection from "../../components/WelcomeSection";
 
-// const { width } = Dimensions.get("window");
-
 const Home = () => {
   // const [sidebarOpen, setSidebarOpen] = useState(false);
   // const API_URL = Constants.expoConfig?.extra?.API_URL;
