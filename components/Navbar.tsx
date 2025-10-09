@@ -11,9 +11,9 @@ const { width } = Dimensions.get('window');
 
 const BottomNavBar = () => {
     const { role, setRole } = useAuth()
+    const translateX = useRef(new Animated.Value(-width)).current;
     const router = useRouter();
     const [sidebarOpen, setSidebarOpen] = useState(false);
-    const translateX = useRef(new Animated.Value(-width)).current;
     const [touchStart, setTouchStart] = useState(null);
     const [touchEnd, setTouchEnd] = useState(null);
     const [Loading, setLoading] = useState(false)
@@ -23,15 +23,15 @@ const BottomNavBar = () => {
 
     useEffect(() => {
         const fetchToken = async () => {
-          const storedToken = await AsyncStorage.getItem('access_token');
-          console.log(storedToken, 'this is nav bar token')
-          if (storedToken) {
-            // decode token
-            const decoded = jwtDecode(storedToken);
-            setUser(decoded);
-            // clg
-            console.log("Decoded JWT:", user[0]);
-          }
+            const storedToken = await AsyncStorage.getItem('access_token');
+            // console.log(storedToken, 'this is nav bar token')
+            if (storedToken) {
+                // decode token
+                const decoded = jwtDecode(storedToken);
+                setUser(decoded);
+                // clg
+                // console.log("Decoded JWT:", decoded);
+            }
         };
         // Fetch live location
         // (async () => {
@@ -40,13 +40,13 @@ const BottomNavBar = () => {
         //     setLocation('Permission denied');
         //     return;
         //   }
-    
+
         //   let loc = await Location.getCurrentPositionAsync({});
         //   let reverseGeocode = await Location.reverseGeocodeAsync({
         //     latitude: loc.coords.latitude,
         //     longitude: loc.coords.longitude,
         //   });
-    
+
         //   if (reverseGeocode.length > 0) {
         //     let addr = reverseGeocode[0];
         //     setLocation(
@@ -57,7 +57,7 @@ const BottomNavBar = () => {
         //   }
         // })();
         fetchToken();
-      }, []);
+    }, []);
 
     const onTouchStart = (e: any) => {
         setTouchEnd(null);
@@ -102,7 +102,7 @@ const BottomNavBar = () => {
             setLoading(false)
         }
     }
-console.log(user?.role,'from navbar')
+    console.log(user?.role, 'from navbar')
     return (
         <View className='z-10 py-2 bg-gray-50'>
             <View className="flex-row items-center justify-between px-4 py-2">
@@ -260,7 +260,7 @@ console.log(user?.role,'from navbar')
                     </View>
                 </Animated.View>
             </View>
-            
+
             {Loading && (
                 <View
                     style={{
@@ -277,7 +277,7 @@ console.log(user?.role,'from navbar')
                     <LoadingAnime />
                 </View>
             )}
-            
+
         </View>
     );
 };

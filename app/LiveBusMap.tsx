@@ -1,5 +1,6 @@
 import { Feather } from '@expo/vector-icons';
 import Constants from "expo-constants";
+import { useKeepAwake } from 'expo-keep-awake';
 import { router, useLocalSearchParams } from "expo-router";
 import { View } from "lucide-react-native";
 import { useEffect, useState } from "react";
@@ -12,6 +13,7 @@ const API_URL = Constants.expoConfig?.extra?.API_URL;
 type Location = { lat: number; lng: number };
 
 const LiveBusMap = () => {
+  useKeepAwake(); // keeps screen on when this component is in active
   const { busId } = useLocalSearchParams<{ busId: string }>();
   const [busLocation, setBusLocation] = useState<Location | null>(null);
   console.log(busId, 'from map component')
