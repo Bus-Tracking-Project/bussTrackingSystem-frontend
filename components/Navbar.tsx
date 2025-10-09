@@ -281,5 +281,5 @@ const BottomNavBar = () => {
         </View>
     );
 };
-
+ 
 export default BottomNavBar;
