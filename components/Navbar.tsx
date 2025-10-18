@@ -102,7 +102,6 @@ const BottomNavBar = () => {
             setLoading(false)
         }
     }
-    console.log(user?.role, 'from navbar')
     return (
         <View className='z-10 py-2 bg-gray-50'>
             <View className="flex-row items-center justify-between px-4 py-2">

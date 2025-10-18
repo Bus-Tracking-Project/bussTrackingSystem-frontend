@@ -27,9 +27,11 @@ export default function DriverDashboard() {
 
   interface Stop {
     status: string;
-    stop_name: string;
+    stop: string;
     arrival_time: string;
     departure_time: string;
+    latitude: string;
+    longitude: string;
   }
   interface Assignment {
     bus_number: string;
@@ -96,7 +98,8 @@ export default function DriverDashboard() {
             },
           });
           setDriverData(data);
-          console.log(data?.assignment?.bus_number,'from driver screen')
+          console.log(data?.assignment?.bus_number, 'from driver screen')
+          console.log(data?.assignment?.stops, 'this is data driver screen')
           // derive a stable per-driver room id (prefer driver id, fallback to phone)
           const derivedRoomId = (data?.assignment?.bus_number ? String(data.assignment.bus_number) : decoded.phone) || null;
           setRoomId(derivedRoomId);
@@ -123,7 +126,6 @@ export default function DriverDashboard() {
 
     fetchToken();
   }, []);
-
   //websockets here
   const startShering = async () => {
     if (!API_URL) {
@@ -137,7 +139,7 @@ export default function DriverDashboard() {
 
     // Avoid duplicate connections/intervals
     if (socketRef.current) {
-      try { socketRef.current.disconnect(); } catch {}
+      try { socketRef.current.disconnect(); } catch { }
       socketRef.current = null;
     }
     if (locationTimerRef.current) {
@@ -252,7 +254,7 @@ export default function DriverDashboard() {
       locationTimerRef.current = null;
     }
     if (socketRef.current) {
-      try { socketRef.current.disconnect(); } catch {}
+      try { socketRef.current.disconnect(); } catch { }
       socketRef.current = null;
     }
   };
@@ -314,12 +316,13 @@ export default function DriverDashboard() {
 
           {driverData?.assignment?.stops?.map((stop, idx) => (
             <View key={idx} className="border-b border-gray-200 py-2">
-              <Text className="font-medium">{stop.stop_name}</Text>
+              <Text className="font-medium">{stop.stop}</Text>
               <Text className="text-sm text-gray-600">
-                Arrival: {stop.arrival_time} | Departure: {stop.departure_time}
+                Lat: {stop.latitude}, Lng: {stop.longitude}
               </Text>
             </View>
           ))}
+
         </View>
 
         {/* Trip Controls */}

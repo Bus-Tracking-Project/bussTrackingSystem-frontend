@@ -117,15 +117,15 @@ export default function LoginScreen() {
                   value={Phone}
                   onChangeText={(text) => {
                     const cleaned = text.replace(/\D/g, '');
-                    const isValid =
-                      cleaned === '' ||
-                      (/^[6-9]/.test(cleaned) &&
-                        !/(\d)\1{5,}/.test(cleaned) &&
-                        cleaned.length <= 10);
+                    // const isValid =
+                    //   cleaned === '' ||
+                    //   (/^[6-9]/.test(cleaned) &&
+                    //     !/(\d)\1{5,}/.test(cleaned) &&
+                    //     cleaned.length <= 10);
 
-                    if (isValid) {
+                    // if (isValid) {
                       setPhone(cleaned);
-                    }
+                    // }
                   }}
                   keyboardType="phone-pad"
                   maxLength={10}

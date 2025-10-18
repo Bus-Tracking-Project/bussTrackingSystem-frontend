@@ -17,6 +17,7 @@ const LiveBusMap = () => {
   const { busId } = useLocalSearchParams<{ busId: string }>();
   const [busLocation, setBusLocation] = useState<Location | null>(null);
   console.log(busId, 'from map component')
+  
   useEffect(() => {
     if (!busId) return; // Don't connect if busId is not available
 

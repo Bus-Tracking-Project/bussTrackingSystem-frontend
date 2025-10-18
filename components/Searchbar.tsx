@@ -1,37 +1,50 @@
-import { Image, Pressable, SafeAreaView, Text, TextInput, View } from 'react-native';
+import { Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { useState } from 'react';
+import { Text, TextInput, TouchableOpacity, View } from 'react-native';
 
-const SearchHeader = () => {
+const SearchBar = () => {
+  const [fromLocation, setFromLocation] = useState('');
+  const [toLocation, setToLocation] = useState('');
+
   const handleSearch = () => {
-    console.log("Searching...");
-    // You can trigger API or search logic here
+    console.log('Searching from', fromLocation, 'to', toLocation);
+    // You can call API or navigate here
   };
 
   return (
-    <SafeAreaView className="bg-transparent">
-      <View className="px-4 py-2">
-        <View className="flex-row items-center bg-white rounded-full px-4 py-2 shadow-sm">
-          {/* Input Field */}
-          <TextInput
-            placeholder="Search Google or type a URL"
-            placeholderTextColor="#999"
-            className="flex-1 text-base text-black"
-          />
-
-          {/* Search Icon Button */}
-          <Pressable onPress={handleSearch} className="mr-2">
-            <Text className="text-xl">🔍</Text>
-          </Pressable>
-
-          {/* Profile Pic */}
-          <Image
-            source={{ uri: 'https://i.pravatar.cc/100' }}
-            className="w-8 h-8 rounded-full"
-          />
-        </View>
+    <View className="p-4 bg-white rounded-xl shadow-md">
+      {/* From Input */}
+      <View className="flex-row items-center mb-3 bg-gray-100 p-3 rounded-lg">
+        <Ionicons name="location-sharp" size={20} color="#4B5563" />
+        <TextInput
+          className="ml-2 flex-1 text-gray-700"
+          placeholder="From"
+          value={fromLocation}
+          onChangeText={setFromLocation}
+        />
       </View>
-    </SafeAreaView>
+
+      {/* To Input */}
+      <View className="flex-row items-center mb-3 bg-gray-100 p-3 rounded-lg">
+        <Ionicons name="location-outline" size={20} color="#4B5563" />
+        <TextInput
+          className="ml-2 flex-1 text-gray-700"
+          placeholder="To"
+          value={toLocation}
+          onChangeText={setToLocation}
+        />
+      </View>
+
+      {/* Search Button */}
+      <TouchableOpacity
+        className="flex-row items-center justify-center bg-blue-600 p-3 rounded-lg"
+        onPress={handleSearch}
+      >
+        <MaterialIcons name="search" size={20} color="white" />
+        <Text className="ml-2 text-white font-semibold">Search</Text>
+      </TouchableOpacity>
+    </View>
   );
 };
 
-export default SearchHeader;
-//currently im not using this component
+export default SearchBar;

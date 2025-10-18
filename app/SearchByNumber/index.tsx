@@ -146,6 +146,7 @@ const Index = () => {
   const handleSubmit = async () => {
     setLoading(true);
     try {
+      console.log(`${API_URL}/bustable/Busnumber`,'from number')
       const res = await fetch(`${API_URL}/bustable/Busnumber`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -246,7 +247,7 @@ const Index = () => {
           )}*/}
 
           {/* Results */}
-          <View className="border-none rounded-lg w-full h-[70%] my-1">
+          <View className="border-none rounded-lg w-full h-[60%] my-1">
             <ScrollView className="p-1">
               {busData.length === 0 && !error ? (
                 <>
@@ -267,8 +268,8 @@ const Index = () => {
                             setExpandedId(expanded ? null : bus.bus_number)
                           }
                         >
-                          <View className="flex-row items-center space-x-3">
-                            <View className="w-12 h-12 bg-blue-100 rounded-xl items-center justify-center mx-2">
+                          <View className="flex-row items-center">
+                            <View className="w-8 h-12 bg-blue-100 rounded-xl items-center justify-center mx-2">
                               <Bus size={24} color="#3b82f6" strokeWidth={1.5} />
                             </View>
                             <View>
@@ -280,7 +281,7 @@ const Index = () => {
                                   size={14}
                                   color="#6b7280"
                                   strokeWidth={1.5}
-                                  className=''
+                                // className=''
                                 />
                                 <Text className="text-gray-500 text-sm">
                                   {bus.trip_date}
@@ -384,8 +385,8 @@ const Index = () => {
                   })}
                 </>
               ) : busData.length === 0 && error ? (
-                <Text className="text-center text-3xl font-extrabold text-gray-400">
-                  Error: {error || "Something went wrong"}
+                <Text className="text-center text-1xl font-extrabold text-gray-400 my-12">
+                  {error || "Something went wrong"}
                 </Text>
               ) : (
                 busData.map((bus, idx) => {
@@ -403,7 +404,7 @@ const Index = () => {
                       //   setExpandedId(expanded ? null : bus.bus_number)
                       // }
                       >
-                        <View className="flex-row items-center space-x-3">
+                        <View className="flex-row items-center">
                           <View className="w-12 h-12 bg-gray-100 rounded-xl items-center justify-center mx-2">
                             <Bus size={24} color="#22c55e" strokeWidth={1.5} />
                           </View>
@@ -431,14 +432,14 @@ const Index = () => {
 
                         {/* this is for map icon when user click on this map will open */}
 
-                        <TouchableOpacity
-                          className='border-0 pr-2 border-r-2 border-r-gray-300'
-                          onPress={() => mapComponentHandler(bus.bus_number)}
-                        >
-                          <MapPin size={30} color="black" />
-                        </TouchableOpacity>
+                        <View className="items-center">
+                          <TouchableOpacity
+                            className='border-0 border-b-2 my-1 py-1 border-r-gray-400'
+                            onPress={() => mapComponentHandler(bus.bus_number)}
+                          >
+                            <MapPin size={30} color="black" />
+                          </TouchableOpacity>
 
-                        <View className="items-end">
                           <View className="flex-row items-center gap-1">
                             <Clock
                               size={14}

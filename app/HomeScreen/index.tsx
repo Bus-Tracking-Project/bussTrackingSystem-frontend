@@ -171,6 +171,9 @@ const Home = () => {
 
       </View>
     </ScrollView>
+    // <ScrollView>
+    //   <SearchBar/>
+    // </ScrollView>
   );
 };
 
