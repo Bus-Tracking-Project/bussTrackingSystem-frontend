@@ -80,6 +80,8 @@ const FromToSearch = () => {
     const handleSubmit = async () => {
         setLoading(true);
         try {
+            console.log('coming in try')
+            console.log(`${API_URL}/timing/sourcedestination`)
             const res = await axios.post(`${API_URL}/timing/sourcedestination`, {
                 source_location_id: from,
                 destination_location_id: to

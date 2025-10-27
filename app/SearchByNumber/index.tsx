@@ -276,7 +276,7 @@ const Index = () => {
                               <Text className="font-semibold text-gray-900">
                                 {bus.bus_number}
                               </Text>
-                              <View className="flex-row items-center mt-1 gap-2">
+                              <View className="flex-row items-center mt-10 gap-2">
                                 <MapPin
                                   size={14}
                                   color="#6b7280"

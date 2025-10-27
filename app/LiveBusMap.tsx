@@ -1,23 +1,64 @@
-import { Feather } from '@expo/vector-icons';
+import { Feather } from "@expo/vector-icons";
 import Constants from "expo-constants";
 import { useKeepAwake } from 'expo-keep-awake';
+import * as Location from "expo-location";
 import { router, useLocalSearchParams } from "expo-router";
-import { View } from "lucide-react-native";
-import { useEffect, useState } from "react";
-import { Pressable, StyleSheet } from "react-native";
-import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
+import { useEffect, useRef, useState } from "react";
+import { Pressable, StyleSheet, View } from "react-native";
+import MapView, { Marker, Polyline, PROVIDER_GOOGLE } from "react-native-maps";
 import Icon from "react-native-vector-icons/Ionicons";
 import { io } from "socket.io-client";
 
-const API_URL = Constants.expoConfig?.extra?.API_URL;
 type Location = { lat: number; lng: number };
+
+const API_URL = Constants.expoConfig?.extra?.API_URL;
+const ORS_API_KEY = "eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6ImVhMDYzMzY3Y2UxODQxY2RiYzM1YTM3OTE3MjVmMGViIiwiaCI6Im11cm11cjY0In0=";
 
 const LiveBusMap = () => {
   useKeepAwake(); // keeps screen on when this component is in active
   const { busId } = useLocalSearchParams<{ busId: string }>();
-  const [busLocation, setBusLocation] = useState<Location | null>(null);
+  const [busLocation, setBusLocation] = useState<Location | null>({
+    lat: 17.3850,
+    lng: 78.4867, // Hyderabad center
+  });
+  const [userLocation, setUserLocation] = useState<Location | null>({
+    lat: 17.4500,
+    lng: 78.3800, // Gachibowli area
+  });
+
+  const [routeCoords, setRouteCoords] = useState<any[]>([]);
+  const mapRef = useRef<MapView>(null);
   console.log(busId, 'from map component')
-  
+
+  // 🔹 Get user's current location
+  useEffect(() => {
+    (async () => {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        console.log("Permission to access location denied");
+        return;
+      }
+
+      const location = await Location.getCurrentPositionAsync({});
+      setUserLocation({
+        lat: location.coords.latitude,
+        lng: location.coords.longitude,
+      });
+
+      // Track user live movement
+      Location.watchPositionAsync(
+        { accuracy: Location.Accuracy.High, distanceInterval: 5 },
+        (loc) => {
+          setUserLocation({
+            lat: loc.coords.latitude,
+            lng: loc.coords.longitude,
+          });
+        }
+      );
+    })();
+  }, []);
+
+
   useEffect(() => {
     if (!busId) return; // Don't connect if busId is not available
 
@@ -41,8 +82,48 @@ const LiveBusMap = () => {
     };
   }, [busId]);
 
+  // 🔹 Auto-fit map to show both locations
+  useEffect(() => {
+    if (busLocation && userLocation && mapRef.current) {
+      mapRef.current.fitToCoordinates(
+        [
+          { latitude: busLocation.lat, longitude: busLocation.lng },
+          { latitude: userLocation.lat, longitude: userLocation.lng },
+        ],
+        {
+          edgePadding: { top: 100, right: 100, bottom: 100, left: 100 },
+          animated: true,
+        }
+      );
+    }
+  }, [busLocation, userLocation]);
+
+  // 🔹 Fetch route when both locations exist
+  useEffect(() => {
+    if (!busLocation || !userLocation) return;
+
+    const fetchRoute = async () => {
+      try {
+        const response = await fetch(
+          `https://api.openrouteservice.org/v2/directions/driving-car?api_key=${ORS_API_KEY}&start=${busLocation.lng},${busLocation.lat}&end=${userLocation.lng},${userLocation.lat}`
+        );
+        const json = await response.json();
+        const coords = json.features[0].geometry.coordinates.map(([lng, lat]: [number, number]) => ({
+          latitude: lat,
+          longitude: lng,
+        }));
+        setRouteCoords(coords);
+      } catch (error) {
+        console.error("Error fetching route:", error);
+      }
+    };
+
+    fetchRoute();
+  }, [busLocation, userLocation]);
+
+
   return (
-    <View>
+    <View style={{ flex: 1 }}>
       {/* Back Button */}
       <Pressable
         onPress={() => router.back()}
@@ -87,6 +168,23 @@ const LiveBusMap = () => {
           >
             <Icon name="bus" size={32} color="green" />
           </Marker>
+        )}
+        {/* 👤 User Marker */}
+        {userLocation && (
+          <Marker
+            coordinate={{
+              latitude: userLocation.lat,
+              longitude: userLocation.lng,
+            }}
+            title="You"
+            description="Your Current Location"
+          >
+            <Icon name="person-circle" size={40} color="blue" />
+          </Marker>
+        )}
+        {/* 🛣️ Route Polyline */}
+        {routeCoords.length > 0 && (
+          <Polyline coordinates={routeCoords} strokeWidth={4} strokeColor="blue" />
         )}
       </MapView>
     </View>

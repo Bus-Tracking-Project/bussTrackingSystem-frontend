@@ -2,14 +2,17 @@ import { Feather } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import Constants from 'expo-constants';
+import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
 import { useRouter } from 'expo-router';
+import { ApplicationVerifier, ConfirmationResult } from "firebase/auth";
 import LottieView from 'lottie-react-native';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Image, ImageBackground, Keyboard, Pressable, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Toast from "react-native-toast-message";
 import GoingBuss from '../../assets/animations/BusGoing.json';
 import LoadingAnime from '../../components/LoadingAnime';
+import { auth, signInWithPhoneNumber } from "../../firebaseConfig";
 
 export default function LoginScreen() {
   const API_URL = Constants.expoConfig?.extra?.API_URL;
@@ -17,7 +20,9 @@ export default function LoginScreen() {
   const [Phone, setPhone] = useState('');
   const [Loading, setLoading] = useState(false);
   const [token, setToken] = useState<string | null>(null);
-
+  const [confirm, setConfirm] = useState<ConfirmationResult | null>(null);
+  const recaptchaVerifier = useRef<FirebaseRecaptchaVerifierModal | null>(null);
+  // const recaptchaVerifier = useRef(null);
   // form validation -- like phone number
   const validateForm = () => {
     const isPhone = /^[0-9]{10}$/.test(Phone);
@@ -46,20 +51,25 @@ export default function LoginScreen() {
   const handleLogin = async () => {
     setLoading(true);
     if (!validateForm()) return setLoading(false);
-    
+
     try {
       const response = await axios.post(`${API_URL}/auth/create`, { phone: Phone });
       const { access_token } = response.data;
       await AsyncStorage.setItem('access_token', access_token); // Store token
       setToken(access_token);
-      setLoading(false);
-      setTimeout(() => {
-        router.push({
-          pathname: '/Login/OTP',
-          params: { phone: Phone, tocken: access_token },
-        });
-        setLoading(false);
-      }, 1000);
+      const formattedPhone = Phone.startsWith('+91') ? Phone : `+91${Phone}`;
+      console.log(formattedPhone, 'formated phone number')
+      const confirmation = await signInWithPhoneNumber(
+        auth,
+        formattedPhone,
+        recaptchaVerifier.current as ApplicationVerifier
+      );
+      setConfirm(confirmation);
+      router.push({
+        pathname: '/Login/OTP',
+        params: { phone: formattedPhone, tocken: access_token },
+      });
+      // }, 1000);
     } catch (err: any) {
       console.log("❌ Error creating profile:", err.response?.data || err.message);
       Toast.show({
@@ -68,7 +78,7 @@ export default function LoginScreen() {
         visibilityTime: 3000,
         autoHide: true,
       });
-    }finally{
+    } finally {
       setLoading(false);
       return
     }
@@ -76,6 +86,7 @@ export default function LoginScreen() {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+
       <KeyboardAwareScrollView
         contentContainerStyle={{ flexGrow: 1, justifyContent: "space-between" }}
         enableOnAndroid={true}
@@ -84,6 +95,10 @@ export default function LoginScreen() {
         extraScrollHeight={5}
       >
         <View className="flex-1 justify-center items-center px-5 bg-white">
+          <FirebaseRecaptchaVerifierModal
+            ref={recaptchaVerifier}
+            firebaseConfig={auth.app.options}
+          />
           <ImageBackground
             source={require("../../assets/images/banner.png")}
             resizeMode="cover"
@@ -124,7 +139,7 @@ export default function LoginScreen() {
                     //     cleaned.length <= 10);
 
                     // if (isValid) {
-                      setPhone(cleaned);
+                    setPhone(cleaned);
                     // }
                   }}
                   keyboardType="phone-pad"

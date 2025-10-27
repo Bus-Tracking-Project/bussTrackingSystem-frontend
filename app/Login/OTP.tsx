@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Constants from 'expo-constants';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { ConfirmationResult } from "firebase/auth";
 import { jwtDecode } from 'jwt-decode';
 import LottieView from 'lottie-react-native';
 import { useEffect, useRef, useState } from 'react';
@@ -17,8 +18,9 @@ export default function VerifyOtpScreen() {
   const toast = useToast();
   const router = useRouter();
   const { setRole } = useAuth();
-  const { phone } = useLocalSearchParams<{ phone: string }>();
-  const [otp, setOtp] = useState(['', '', '', '', '', '']);
+  const { phone, tocken } = useLocalSearchParams<{ phone: string, tocken: any }>();
+  const [confirm, setConfirm] = useState<ConfirmationResult | null>(null);
+  const [otp, setOtp] = useState<string[]>(Array(6).fill(''));
   const [timer, setTimer] = useState(30);
   const [resendDisabled, setResendDisabled] = useState(true);
   const [roles, setRoles] = useState('passanger')
@@ -28,14 +30,15 @@ export default function VerifyOtpScreen() {
 
   const inputs = useRef<Array<TextInput | null>>([]);
   //tost notifications  
-  useEffect(() => {
-    toast.show('Your phone number verifyd and sent you a OTP!', {
-      type: 'success',
-      duration: 2000,
-    });
-  }, []);
+  // useEffect(() => {
+  //   toast.show('Your phone number verifyd and sent you a OTP!', {
+  //     type: 'success',
+  //     duration: 2000,
+  //   });
+  // }, []);
 
   // Countdown logic
+
   useEffect(() => {
     if (resendDisabled && timer > 0) {
       const interval = setInterval(() => setTimer((prev) => prev - 1), 1000);
@@ -51,6 +54,7 @@ export default function VerifyOtpScreen() {
     const newOtp = [...otp];
     newOtp[index] = text;
     setOtp(newOtp);
+
 
     if (text && index < 5) {
       setTimeout(() => inputs.current[index + 1]?.focus(), 100);
@@ -77,28 +81,37 @@ export default function VerifyOtpScreen() {
     setLoading(true);
     const otpValue = otp.join("");
 
-    setTimeout(() => {
-      setLoading(false);
 
-      if (otpValue === "111111") {
-        if (user?.role === "PASSENGER") {
-          router.replace("/HomeScreen" as any);
-        } else if (user?.role === "DRIVER" || user?.role === "CONDUCTOR") {
-          router.replace("/DriverHomeScreen" as any);
-        } else {
-          Toast.show({
-            type: "error",
-            text1: "Invalid role 🚫",
-            visibilityTime: 2500,
-          });
-        }
-      } else {
+    setTimeout(async () => {
+      setLoading(false);
+      if (!confirm) {
         Toast.show({
           type: "error",
-          text1: "Invalid OTP 🚫",
-          visibilityTime: 2500,
+          text1: "OTP session expired. Please resend OTP.",
         });
+        return;
       }
+      const result = await confirm?.confirm(otpValue);
+      console.log(result, 'this is from otp screen of result')
+      // if (otpValue === "111111") {
+      //   if (user?.role === "PASSENGER") {
+      //     router.replace("/HomeScreen" as any);
+      //   } else if (user?.role === "DRIVER" || user?.role === "CONDUCTOR") {
+      //     router.replace("/DriverHomeScreen" as any);
+      //   } else {
+      //     Toast.show({
+      //       type: "error",
+      //       text1: "Invalid role 🚫",
+      //       visibilityTime: 2500,
+      //     });
+      //   }
+      // } else {
+      //   Toast.show({
+      //     type: "error",
+      //     text1: "Invalid OTP 🚫",
+      //     visibilityTime: 2500,
+      //   });
+      // }
     }, 1500);
   };
 
@@ -107,7 +120,6 @@ export default function VerifyOtpScreen() {
     // Reset countdown
     setTimer(30);
     setResendDisabled(true);
-
     // try {
     //   await fetch('http://localhost:3000/user/register/send-otp', {
     //     method: 'POST',

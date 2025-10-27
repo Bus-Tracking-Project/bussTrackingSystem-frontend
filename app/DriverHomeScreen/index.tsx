@@ -4,7 +4,7 @@ import Constants from 'expo-constants';
 import * as Location from "expo-location";
 import { jwtDecode } from "jwt-decode";
 import { useEffect, useRef, useState } from "react";
-import { Button, ScrollView, Text, View } from "react-native";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import Toast from "react-native-toast-message";
 import { useToast } from "react-native-toast-notifications";
 import io from "socket.io-client";
@@ -322,15 +322,14 @@ export default function DriverDashboard() {
               </Text>
             </View>
           ))}
-
         </View>
 
         {/* Trip Controls */}
         <View className="mb-10">
           {!tripActive ? (
-            <Button title="Start Trip" onPress={startTrip} />
+            <TouchableOpacity onPress={startTrip} className="bg-blue-500 rounded-lg my-2 py-4 px-2"> <Text className="text-xl font-bold text-center text-white">Start Trip </Text> </TouchableOpacity>
           ) : (
-            <Button title="Stop Trip" color="red" onPress={stopTrip} />
+            <TouchableOpacity onPress={stopTrip} className="bg-red-500 rounded-lg my-2 py-4 px-2"> <Text className="text-xl font-bold text-center text-white">Stop Trip </Text> </TouchableOpacity>
           )}
         </View>
       </View>
