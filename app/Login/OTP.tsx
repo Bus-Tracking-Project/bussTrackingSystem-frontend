@@ -11,7 +11,7 @@ import Toast from "react-native-toast-message";
 import { useToast } from 'react-native-toast-notifications';
 import verifyphone1 from '../../assets/animations/VerifyPhone1.json';
 import LoadingAnime from '../../components/LoadingAnime';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 
 export default function VerifyOtpScreen() {
   const API_URL = Constants.expoConfig?.extra?.API_URL;

@@ -4,7 +4,7 @@ import axios from 'axios';
 import Constants from 'expo-constants';
 import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
 import { useRouter } from 'expo-router';
-import { ApplicationVerifier, ConfirmationResult } from "firebase/auth";
+import { signInWithPhoneNumber } from "firebase/auth/react-native";
 import LottieView from 'lottie-react-native';
 import { useRef, useState } from 'react';
 import { Image, ImageBackground, Keyboard, Pressable, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
@@ -12,7 +12,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import Toast from "react-native-toast-message";
 import GoingBuss from '../../assets/animations/BusGoing.json';
 import LoadingAnime from '../../components/LoadingAnime';
-import { auth, signInWithPhoneNumber } from "../../firebaseConfig";
+import { auth } from "../../firebaseConfig";
 
 export default function LoginScreen() {
   const API_URL = Constants.expoConfig?.extra?.API_URL;
@@ -20,10 +20,10 @@ export default function LoginScreen() {
   const [Phone, setPhone] = useState('');
   const [Loading, setLoading] = useState(false);
   const [token, setToken] = useState<string | null>(null);
-  const [confirm, setConfirm] = useState<ConfirmationResult | null>(null);
   const recaptchaVerifier = useRef<FirebaseRecaptchaVerifierModal | null>(null);
   // const recaptchaVerifier = useRef(null);
   // form validation -- like phone number
+
   const validateForm = () => {
     const isPhone = /^[0-9]{10}$/.test(Phone);
     if (!Phone) {
@@ -51,7 +51,7 @@ export default function LoginScreen() {
   const handleLogin = async () => {
     setLoading(true);
     if (!validateForm()) return setLoading(false);
-
+    // const sendOtp = async (phoneNumber: string) => {
     try {
       const response = await axios.post(`${API_URL}/auth/create`, { phone: Phone });
       const { access_token } = response.data;
@@ -59,16 +59,19 @@ export default function LoginScreen() {
       setToken(access_token);
       const formattedPhone = Phone.startsWith('+91') ? Phone : `+91${Phone}`;
       console.log(formattedPhone, 'formated phone number')
-      const confirmation = await signInWithPhoneNumber(
-        auth,
-        formattedPhone,
-        recaptchaVerifier.current as ApplicationVerifier
-      );
-      setConfirm(confirmation);
-      router.push({
-        pathname: '/Login/OTP',
-        params: { phone: formattedPhone, tocken: access_token },
-      });
+      // @ts-expect-error firebase typings are wrong in React Native
+      const confirmation = await signInWithPhoneNumber(auth, formattedPhone);
+      console.log("OTP sent successfully:", confirmation);
+      // const confirmation = await signInWithPhoneNumber(
+      //   auth,
+      //   formattedPhone,
+      //   recaptchaVerifier.current as ApplicationVerifier
+      // );
+      // setConfirm(confirmation);
+      // router.push({
+      //   pathname: '/Login/OTP',
+      //   params: { phone: formattedPhone, tocken: access_token },
+      // });
       // }, 1000);
     } catch (err: any) {
       console.log("❌ Error creating profile:", err.response?.data || err.message);

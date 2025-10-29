@@ -4,8 +4,8 @@ import { jwtDecode } from 'jwt-decode';
 import { Menu, X } from 'lucide-react-native';
 import { useEffect, useRef, useState } from 'react';
 import { Animated, Dimensions, Image, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
-import { useAuth } from '../app/context/AuthContext';
 import LoadingAnime from '../components/LoadingAnime';
+import { useAuth } from '../context/AuthContext';
 
 const { width } = Dimensions.get('window');
 

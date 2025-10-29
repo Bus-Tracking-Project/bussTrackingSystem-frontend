@@ -5,7 +5,7 @@ import Toast from 'react-native-toast-message';
 import { ToastProvider } from 'react-native-toast-notifications';
 import { toastConfig } from "../components/CustomToastConfig";
 import BottomNavBar from "../components/Navbar";
-import { AuthProvider } from "./context/AuthContext";
+import { AuthProvider } from "../context/AuthContext";
 import './globals.css';
 // import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
