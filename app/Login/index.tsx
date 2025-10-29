@@ -4,7 +4,7 @@ import axios from 'axios';
 import Constants from 'expo-constants';
 import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
 import { useRouter } from 'expo-router';
-import { signInWithPhoneNumber } from "firebase/auth/react-native";
+import { signInWithPhoneNumber } from "firebase/auth";
 import LottieView from 'lottie-react-native';
 import { useRef, useState } from 'react';
 import { Image, ImageBackground, Keyboard, Pressable, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';

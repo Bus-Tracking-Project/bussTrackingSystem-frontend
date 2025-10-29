@@ -1,9 +1,5 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getApp, getApps, initializeApp } from "firebase/app";
-import {
-    getReactNativePersistence,
-    initializeAuth
-} from "firebase/auth/react-native";
+import { getAuth } from "firebase/auth";
 
 
 // ✅ Firebase Config
@@ -19,10 +15,8 @@ const firebaseConfig = {
 // ✅ Initialize only once
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 
-// ✅ Initialize Auth with persistence
-const auth = initializeAuth(app, {
-  persistence: getReactNativePersistence(AsyncStorage),
-});
+// ✅ Initialize Auth (Metro config fix should handle module resolution)
+const auth = getAuth(app);
 
 export { app, auth };
 
